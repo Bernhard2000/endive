@@ -5,10 +5,6 @@ import java.nio.charset.StandardCharsets;
 
 public final class Encoding {
 
-    // https://webassembly.github.io/spec/core/binary/values.html#integers
-    public static final int MAX_VARINT_LEN_32 = 5; // ceil(32/7)
-    public static final int MAX_VARINT_LEN_64 = 10; // ceil(64/7)
-
     private Encoding() {}
 
     static int readInt(ByteBuffer buffer) {
@@ -32,11 +28,6 @@ public final class Encoding {
         buffer.get(dest);
     }
 
-    // https://webassembly.github.io/spec/core/syntax/values.html#integers
-    public static final long MIN_SIGNED_INT = Integer.MIN_VALUE; // -2^(32-1)
-    public static final long MAX_SIGNED_INT = Integer.MAX_VALUE; // 2^(32-1)-1
-    public static final long MAX_UNSIGNED_INT = 0xFFFFFFFFL; // 2^(32)-1
-
     /**
      * Read an unsigned I32 from the buffer. We can't fit an unsigned 32bit int
      * into a java int, so we must use a long.
@@ -46,11 +37,7 @@ public final class Encoding {
      * @return the resulting long
      */
     public static long readVarUInt32(ByteBuffer buffer) {
-        var value = readUnsignedLeb128(buffer, MAX_VARINT_LEN_32);
-        if (value < 0 || value > MAX_UNSIGNED_INT) {
-            throw new MalformedException("integer too large");
-        }
-        return value;
+        return readLeb128(buffer, 32, false);
     }
 
     /**
@@ -61,11 +48,7 @@ public final class Encoding {
      * @return the resulting long
      */
     public static long readVarSInt32(ByteBuffer buffer) {
-        var value = readSigned32Leb128(buffer);
-        if (value < MIN_SIGNED_INT || value > MAX_SIGNED_INT) {
-            throw new MalformedException("integer too large");
-        }
-        return value;
+        return readLeb128(buffer, 32, true);
     }
 
     /**
@@ -76,7 +59,7 @@ public final class Encoding {
      * @return the resulting long
      */
     public static long readVarSInt64(ByteBuffer buffer) {
-        return readSigned64Leb128(buffer);
+        return readLeb128(buffer, 64, true);
     }
 
     /**
@@ -136,98 +119,52 @@ public final class Encoding {
     }
 
     /**
-     * Reads an unsigned integer from {@code byteBuffer}.
+     * Reads a LEB128 integer of {@code bits} width.
+     * See <a href="https://webassembly.github.io/spec/core/binary/values.html#integers">5.2.2. Integers</a>
+     * of the WebAssembly Core Specification.
+     *
+     * <p>The grammar bounds the byte count to {@code ceil(bits/7)} and, on the terminal byte,
+     * bounds the payload to the unconsumed bit budget {@code r}: {@code uN} requires
+     * {@code payload < 2^r}, {@code sN} requires the payload to be a sign extension over those
+     * {@code r} bits. Overlong encodings within the byte budget remain valid.
+     *
+     * @param buffer the byte buffer
+     * @param bits the width of the encoded integer, 32 or 64
+     * @param signed whether to decode as {@code sN} rather than {@code uN}
+     * @return the resulting long
      */
-    public static long readUnsignedLeb128(ByteBuffer byteBuffer, int maxVarInt) {
+    private static long readLeb128(ByteBuffer buffer, int bits, boolean signed) {
         long result = 0;
         int shift = 0;
-        int i = 0;
         while (true) {
-            i++;
-            if (byteBuffer.remaining() == 0) {
+            if (!buffer.hasRemaining()) {
                 throw new MalformedException(
                         "integer too large, integer representation too long, length out of bounds");
             }
-            byte b = byteBuffer.get();
-            result |= (long) (b & 0x7F) << shift;
+            byte b = buffer.get();
+            int payload = b & 0x7F;
+            int budget = bits - shift;
+
+            if (budget <= 7) {
+                // Terminal byte: no continuation allowed, and the payload must fit the budget.
+                if ((b & 0x80) != 0) {
+                    throw new MalformedException("integer representation too long");
+                }
+                int limit = 1 << (signed ? budget - 1 : budget);
+                if (signed ? (payload >= limit && payload < 0x80 - limit) : payload >= limit) {
+                    throw new MalformedException("integer too large");
+                }
+            }
+
+            result |= (long) payload << shift;
+            shift += 7;
 
             if ((b & 0x80) == 0) {
-                break;
+                if (signed && shift < 64 && (b & 0x40) != 0) {
+                    result |= -1L << shift;
+                }
+                return result;
             }
-
-            if (i >= maxVarInt || byteBuffer.remaining() == 0) {
-                throw new MalformedException("integer representation too long");
-            }
-
-            shift += 7;
         }
-
-        return result;
-    }
-
-    /**
-     * Reads an unsigned integer from {@code byteBuffer}.
-     */
-    public static long readSigned32Leb128(ByteBuffer byteBuffer) {
-        long result = 0;
-        int shift = 0;
-        int i = 0;
-        byte currentByte;
-
-        do {
-            i++;
-            if (byteBuffer.remaining() == 0) {
-                throw new MalformedException(
-                        "integer representation too long, length out of bounds");
-            }
-
-            currentByte = byteBuffer.get();
-            if ((currentByte & 0x80) != 0 && i >= MAX_VARINT_LEN_32) {
-                throw new MalformedException("integer representation too long");
-            }
-            result |= (long) (currentByte & 0x7F) << shift;
-            shift += 7;
-        } while ((currentByte & 0x80) != 0);
-
-        // If the final byte read has its sign bit set (0x40), then sign-extend the result
-        if ((currentByte & 0x40) != 0) {
-            result |= -(1L << shift);
-        }
-
-        return result;
-    }
-
-    public static long readSigned64Leb128(ByteBuffer byteBuffer) {
-        long result = 0;
-        int shift = 0;
-        int i = 0;
-        byte currentByte;
-        int size = 64; // 64 bits for i64
-
-        do {
-            i++;
-            if (byteBuffer.remaining() == 0) {
-                throw new MalformedException(
-                        "integer representation too long, length out of bounds");
-            }
-
-            currentByte = byteBuffer.get();
-            if ((currentByte & 0x80) != 0 && i >= MAX_VARINT_LEN_64) {
-                throw new MalformedException("integer representation too long");
-            }
-            result |= (long) (currentByte & 0x7F) << shift;
-            shift += 7;
-        } while ((currentByte & 0x80) != 0);
-
-        // If the final byte read has its sign bit set (0x40), then sign-extend the result
-        if (shift < size && (currentByte & 0x40) != 0) {
-            result |= -1L << shift;
-        }
-
-        if (i >= MAX_VARINT_LEN_64 && currentByte != 0 && currentByte < 0x7F) {
-            throw new MalformedException("integer too large");
-        }
-
-        return result;
     }
 }
