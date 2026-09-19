@@ -191,6 +191,21 @@ final class Emitters {
         emitPop(asm, type);
     }
 
+    public static void SELECT_COND(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        var type = valType(ins.operand(0), ctx);
+        var condition = BranchCondition.fromId(ins.operand(1));
+        var endLabel = new Label();
+        condition.emitJump(asm, endLabel, ins.operand(2) != 0);
+        if (slotCount(type) == 1) {
+            asm.swap();
+        } else {
+            asm.dup2X2();
+            asm.pop2();
+        }
+        asm.mark(endLabel);
+        emitPop(asm, type);
+    }
+
     private static void emitBoxValuesOnStack(
             Context ctx, InstructionAdapter asm, List<ValType> types) {
 

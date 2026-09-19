@@ -11,8 +11,7 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
     TRYCATCHBLOCK L9 L10 L7 run/endive/runtime/WasmException
    L0
     ILOAD 0
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQZ (I)I
-    IFEQ L3
+    IFNE L3
     ICONST_0
     NEWARRAY T_LONG
     ICONST_0
@@ -26,8 +25,7 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
    L3
     ILOAD 0
     ICONST_1
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQ (II)I
-    IFEQ L5
+    IF_ICMPNE L5
     ICONST_0
     NEWARRAY T_LONG
     ICONST_1
@@ -108,8 +106,7 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
   public static func_1(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
     ILOAD 0
     ICONST_0
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_NE (II)I
-    IFEQ L0
+    IF_ICMPEQ L0
     ICONST_0
     NEWARRAY T_LONG
     ICONST_0

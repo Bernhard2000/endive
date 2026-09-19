@@ -117,8 +117,7 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
     ICONST_1
     ISTORE 3
     ILOAD 0
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQZ (I)I
-    IFNE L0
+    IFEQ L0
    L1
     ILOAD 3
     ILOAD 0
@@ -129,8 +128,7 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
     IADD
     DUP
     ISTORE 0
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQZ (I)I
-    IFNE L0
+    IFEQ L0
     INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
     GOTO L1
    L0

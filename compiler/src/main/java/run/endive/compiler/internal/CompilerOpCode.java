@@ -13,6 +13,10 @@ enum CompilerOpCode {
     IFEQ,
     IFNE,
     SWITCH,
+    // fused comparison + conditional jump: [label, BranchCondition id, jump when true (0/1)]
+    COND_JUMP,
+    // fused comparison + select: [ValType id, BranchCondition id, keep first when true (0/1)]
+    SELECT_COND,
     RETURN(OpCode.RETURN),
     CALL(OpCode.CALL),
     CALL_INDIRECT(OpCode.CALL_INDIRECT),

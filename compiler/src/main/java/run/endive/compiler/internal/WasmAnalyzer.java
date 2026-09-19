@@ -797,8 +797,78 @@ final class WasmAnalyzer {
         reverse(tryCatchBlockInstructions);
         result.addAll(0, tryCatchBlockInstructions);
 
+        result = fuseBranchConditions(result);
+
         return new AnalysisResult(
                 result, computeMaxTempSlots(result, EmitterMap.TEMP_SLOT_CALCULATORS));
+    }
+
+    /**
+     * Fuses comparisons into the conditional jump or select that consumes their result.
+     *
+     * <p>Comparisons and {@code i32.eqz} are otherwise lowered on their own, as a helper call that
+     * produces a 0/1 {@code i32}, which the following {@code ifeq}/{@code ifne} then tests
+     * against zero again. When the comparison directly precedes its consumer, this rewrites the
+     * pair into a single {@link CompilerOpCode#COND_JUMP} or {@link CompilerOpCode#SELECT_COND},
+     * which the JVM tests natively ({@code if_icmp<cond>}, {@code lcmp}/{@code fcmp<op>} +
+     * {@code if<cond>}). Any number of {@code i32.eqz} between the two is absorbed by negating the
+     * jump.
+     *
+     * <p>Only adjacent instructions are fused. Jump targets are explicit {@link
+     * CompilerOpCode#LABEL} instructions, so adjacency guarantees that no control flow enters
+     * between the comparison and its consumer.
+     */
+    static List<CompilerInstruction> fuseBranchConditions(List<CompilerInstruction> in) {
+        List<CompilerInstruction> out = new ArrayList<>(in.size());
+        for (var ins : in) {
+            var opcode = ins.opcode();
+            if (opcode != CompilerOpCode.IFEQ
+                    && opcode != CompilerOpCode.IFNE
+                    && opcode != CompilerOpCode.SELECT) {
+                out.add(ins);
+                continue;
+            }
+
+            // IFEQ jumps when its operand is zero; IFNE and SELECT's "keep first" when non-zero
+            var condition = BranchCondition.I32_NEZ;
+            boolean whenTrue = opcode != CompilerOpCode.IFEQ;
+            boolean fused = false;
+            while (!out.isEmpty()) {
+                var prev = out.get(out.size() - 1).opcode();
+                if (prev == CompilerOpCode.I32_EQZ) {
+                    out.remove(out.size() - 1);
+                    whenTrue = !whenTrue;
+                    fused = true;
+                    continue;
+                }
+                var comparison = BranchCondition.ofComparison(prev);
+                if (comparison.isPresent()) {
+                    out.remove(out.size() - 1);
+                    condition = comparison.get();
+                    fused = true;
+                }
+                break;
+            }
+
+            if (!fused) {
+                out.add(ins);
+            } else if (opcode == CompilerOpCode.SELECT) {
+                out.add(
+                        new CompilerInstruction(
+                                CompilerOpCode.SELECT_COND,
+                                ins.operand(0),
+                                condition.id(),
+                                whenTrue ? 1 : 0));
+            } else {
+                out.add(
+                        new CompilerInstruction(
+                                CompilerOpCode.COND_JUMP,
+                                ins.operand(0),
+                                condition.id(),
+                                whenTrue ? 1 : 0));
+            }
+        }
+        return out;
     }
 
     private int computeMaxTempSlots(

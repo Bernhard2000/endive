@@ -115,12 +115,10 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
     ICONST_0
     ISTORE 3
     ILOAD 0
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQZ (I)I
-    IFNE L0
+    IFEQ L0
     ILOAD 0
     ICONST_1
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQ (II)I
-    IFNE L1
+    IF_ICMPEQ L1
     BIPUSH 7
     ISTORE 3
     GOTO L2

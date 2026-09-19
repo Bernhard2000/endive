@@ -25,6 +25,7 @@ final class EmitterMap {
                 .intrinsic(CompilerOpCode.DROP, Emitters::DROP)
                 .intrinsic(CompilerOpCode.ELEM_DROP, Emitters::ELEM_DROP)
                 .intrinsic(CompilerOpCode.SELECT, Emitters::SELECT)
+                .intrinsic(CompilerOpCode.SELECT_COND, Emitters::SELECT_COND)
 
                 // ====== Control Flow ======
                 .intrinsic(CompilerOpCode.CALL, Emitters::CALL, TempSlotCalculators::call)
