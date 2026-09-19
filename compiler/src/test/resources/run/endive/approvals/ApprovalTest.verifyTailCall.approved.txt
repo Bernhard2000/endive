@@ -165,15 +165,13 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
 
   public static func_0(IIILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
     ILOAD 0
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQZ (I)I
-    IFEQ L0
+    IFNE L0
     ILOAD 1
     GOTO L1
    L0
     ILOAD 0
     ICONST_1
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EQ (II)I
-    IFEQ L2
+    IF_ICMPNE L2
     ILOAD 2
     GOTO L1
    L2
