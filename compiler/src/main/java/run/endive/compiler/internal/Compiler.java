@@ -14,6 +14,7 @@ import static org.objectweb.asm.Type.getInternalName;
 import static org.objectweb.asm.Type.getMethodDescriptor;
 import static org.objectweb.asm.Type.getType;
 import static org.objectweb.asm.commons.InstructionAdapter.OBJECT_TYPE;
+import static run.endive.compiler.internal.CompilerUtil.argumentSlots;
 import static run.endive.compiler.internal.CompilerUtil.asmType;
 import static run.endive.compiler.internal.CompilerUtil.callDispatchMethodName;
 import static run.endive.compiler.internal.CompilerUtil.callIndirectMethodName;
@@ -29,7 +30,9 @@ import static run.endive.compiler.internal.CompilerUtil.emitInvokeFunction;
 import static run.endive.compiler.internal.CompilerUtil.emitInvokeStatic;
 import static run.endive.compiler.internal.CompilerUtil.emitInvokeVirtual;
 import static run.endive.compiler.internal.CompilerUtil.emitJvmToLong;
+import static run.endive.compiler.internal.CompilerUtil.emitLoadArguments;
 import static run.endive.compiler.internal.CompilerUtil.emitLongToJvm;
+import static run.endive.compiler.internal.CompilerUtil.hasBoxedRefArgs;
 import static run.endive.compiler.internal.CompilerUtil.hasTooManyParameters;
 import static run.endive.compiler.internal.CompilerUtil.internalClassName;
 import static run.endive.compiler.internal.CompilerUtil.jvmReturnType;
@@ -1392,6 +1395,9 @@ public final class Compiler {
 
         if (hasTooManyParameters(type)) {
             asm.load(2, LONG_ARRAY_TYPE);
+            if (hasBoxedRefArgs(type)) {
+                asm.load(3, OBJECT_TYPE); // refArgs
+            }
         } else {
             // unbox the arguments from long[] (and Object[] refArgs for GC refs)
             for (int i = 0; i < type.params().size(); i++) {
@@ -1485,6 +1491,9 @@ public final class Compiler {
 
         if (hasTooManyParameters(type)) {
             asm.load(2, LONG_ARRAY_TYPE);
+            if (hasBoxedRefArgs(type)) {
+                asm.load(3, OBJECT_TYPE); // refArgs
+            }
         } else {
             // unbox the arguments from long[] (and Object[] refArgs for GC refs)
             for (int i = 0; i < type.params().size(); i++) {
@@ -1618,10 +1627,7 @@ public final class Compiler {
     private void compileCallIndirect(
             String internalClassName, int typeId, FunctionType type, InstructionAdapter asm) {
 
-        int slots = type.params().stream().mapToInt(CompilerUtil::slotCount).sum();
-        if (hasTooManyParameters(type)) {
-            slots = 1; // for long[]
-        }
+        int slots = argumentSlots(type);
 
         List<Integer> validIds = new ArrayList<>();
         for (int i = 0; i < functionTypes.size(); i++) {
@@ -1692,15 +1698,7 @@ public final class Compiler {
 
         // local: call function in this module
         asm.mark(local);
-        if (hasTooManyParameters(type)) {
-            asm.load(0, LONG_ARRAY_TYPE);
-        } else {
-            int slot = 0;
-            for (ValType param : type.params()) {
-                asm.load(slot, asmType(param));
-                slot += slotCount(param);
-            }
-        }
+        emitLoadArguments(asm, type);
         asm.load(memory, OBJECT_TYPE);
         asm.load(instance, OBJECT_TYPE);
 
@@ -1791,12 +1789,11 @@ public final class Compiler {
 
         if (type.hasObjectRefParams() || type.hasObjectRefReturns()) {
             if (hasTooManyParameters(type)) {
-                asm.load(0, LONG_ARRAY_TYPE);
-                asm.aconst(null); // Object[] refArgs
+                emitLoadBoxedArgumentsWithRefs(asm, type);
             } else {
                 emitBoxArgumentsWithRefs(asm, type.params());
-                // stack: long[], Object[]
             }
+            // stack: long[], Object[]
             asm.load(instance, OBJECT_TYPE);
             asm.iconst(typeId);
             emitInvokeVirtual(asm, INSTANCE_GET_TYPE);
@@ -1832,10 +1829,7 @@ public final class Compiler {
             int startFunc,
             int endFunc) {
 
-        int slots = type.params().stream().mapToInt(CompilerUtil::slotCount).sum();
-        if (hasTooManyParameters(type)) {
-            slots = 1; // for long[]
-        }
+        int slots = argumentSlots(type);
 
         // extra params...
         int memory = slots;
@@ -1854,9 +1848,7 @@ public final class Compiler {
         Label[] labels = validIds.stream().map(x -> new Label()).toArray(Label[]::new);
 
         // push the call args on to the stack...
-        for (int i = 0; i < type.params().size(); i++) {
-            asm.load(i, asmType(type.params().get(i)));
-        }
+        emitLoadArguments(asm, type);
         asm.load(memory, OBJECT_TYPE);
         asm.load(instance, OBJECT_TYPE);
 
@@ -1889,11 +1881,15 @@ public final class Compiler {
     // public static <TypeR> func_xx(<TypeN> argN..., Memory memory, Instance instance)
     private static void compileHostFunction(int funcId, FunctionType type, InstructionAdapter asm) {
 
-        int slot = type.params().stream().mapToInt(CompilerUtil::slotCount).sum();
+        int slot = argumentSlots(type);
         if (type.hasObjectRefParams() || type.hasObjectRefReturns()) {
             asm.load(slot + 1, OBJECT_TYPE); // instance
             asm.iconst(funcId);
-            emitBoxArgumentsWithRefs(asm, type.params());
+            if (hasTooManyParameters(type)) {
+                emitLoadBoxedArgumentsWithRefs(asm, type);
+            } else {
+                emitBoxArgumentsWithRefs(asm, type.params());
+            }
             // stack: instance, funcId, long[], Object[]
             emitInvokeStatic(asm, CALL_HOST_FUNCTION_WITH_REFS);
             // returns CallResult
@@ -1901,7 +1897,11 @@ public final class Compiler {
         } else {
             asm.load(slot + 1, OBJECT_TYPE); // instance
             asm.iconst(funcId);
-            emitBoxArguments(asm, type.params());
+            if (hasTooManyParameters(type)) {
+                asm.load(0, LONG_ARRAY_TYPE);
+            } else {
+                emitBoxArguments(asm, type.params());
+            }
             emitInvokeStatic(asm, CALL_HOST_FUNCTION);
             emitUnboxResult(type, asm);
         }
@@ -1995,6 +1995,20 @@ public final class Compiler {
                 }
                 slot += slotCount(valType);
             }
+        } else {
+            asm.aconst(null);
+        }
+    }
+
+    /**
+     * Loads the already boxed arguments of a function with too many parameters as dual
+     * long[] + Object[] arrays.
+     * After this method, the stack has: [..., long[], Object[]]
+     */
+    private static void emitLoadBoxedArgumentsWithRefs(InstructionAdapter asm, FunctionType type) {
+        asm.load(0, LONG_ARRAY_TYPE);
+        if (hasBoxedRefArgs(type)) {
+            asm.load(1, OBJECT_TYPE);
         } else {
             asm.aconst(null);
         }
@@ -2102,13 +2116,11 @@ public final class Compiler {
             if (type.hasObjectRefParams() || type.hasObjectRefReturns()) {
                 // WithRefs path: use dual long[] + Object[] boxing
                 if (hasTooManyParameters(type)) {
-                    asm.load(0, LONG_ARRAY_TYPE);
-                    asm.aconst(null); // Object[] refArgs
-                    slots = 1;
+                    emitLoadBoxedArgumentsWithRefs(asm, type);
                 } else {
                     emitBoxArgumentsWithRefs(asm, type.params());
-                    slots = type.params().stream().mapToInt(CompilerUtil::slotCount).sum();
                 }
+                slots = argumentSlots(type);
                 var refInstance = slots + 1;
                 asm.iconst(funcId);
                 asm.load(refInstance, OBJECT_TYPE);
@@ -2118,11 +2130,10 @@ public final class Compiler {
             } else {
                 if (hasTooManyParameters(type)) {
                     asm.load(0, LONG_ARRAY_TYPE);
-                    slots = 1;
                 } else {
                     emitBoxArguments(asm, type.params());
-                    slots = type.params().stream().mapToInt(CompilerUtil::slotCount).sum();
                 }
+                slots = argumentSlots(type);
                 var refInstance = slots + 1;
                 asm.iconst(funcId);
                 asm.load(refInstance, OBJECT_TYPE);
@@ -2151,14 +2162,24 @@ public final class Compiler {
                         analysis.maxTempSlots(),
                         this::methodName);
 
-        int localsCount = type.params().size();
         if (hasTooManyParameters(type)) {
-            // unbox the arguments from long[]
+            if (hasBoxedRefArgs(type)) {
+                // callers without object refs may pass a null Object[]
+                Label hasRefArgs = new Label();
+                asm.load(1, OBJECT_TYPE);
+                asm.ifnonnull(hasRefArgs);
+                asm.iconst(type.params().size());
+                asm.newarray(OBJECT_TYPE);
+                asm.store(1, OBJECT_TYPE);
+                asm.mark(hasRefArgs);
+            }
+            // unbox the arguments from long[] and Object[]
             for (int i = 0; i < type.params().size(); i++) {
                 var param = type.params().get(i);
                 if (param.isObjectRef()) {
-                    // Object refs can't be stored in long[] — use null as default
-                    asm.aconst(null);
+                    asm.load(1, OBJECT_TYPE);
+                    asm.iconst(i);
+                    asm.aload(OBJECT_TYPE);
                 } else {
                     asm.load(0, OBJECT_TYPE);
                     asm.iconst(i);
@@ -2167,13 +2188,11 @@ public final class Compiler {
                 }
                 asm.store(ctx.localSlotIndex(i), asmType(param));
             }
-            // since we just converted the arguments to long[].
-            localsCount = 1;
         }
 
         // initialize local variables to their default values
-        localsCount += body.localTypes().size();
-        for (int i = type.params().size(); i < localsCount; i++) {
+        int localsEnd = type.params().size() + body.localTypes().size();
+        for (int i = type.params().size(); i < localsEnd; i++) {
             var localType = localType(type, body, i);
             var defVal = defaultValue(localType);
             if (defVal == null) {
