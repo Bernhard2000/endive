@@ -60,6 +60,8 @@ enum BranchCondition {
         return VALUES[(int) id];
     }
 
+    // The id only lives inside one compilation, as an operand read back by fromId
+    @SuppressWarnings("EnumOrdinal")
     long id() {
         return ordinal();
     }
