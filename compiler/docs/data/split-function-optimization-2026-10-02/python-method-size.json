@@ -1,0 +1,22 @@
+{
+  "module": "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/endive-benchmark/src/main/resources/python_base.wasm",
+  "module_sha256": "43af342b99207576c27a2151354b98e986230fd047a4b3883020102df2a3e132",
+  "methods": {
+    "baseline": {
+      "name": "_PyUnicode_ToNumeric_3281",
+      "descriptor": "(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)D",
+      "code_length": 65469,
+      "max_stack": 2,
+      "max_locals": 5,
+      "interpreter_fallback_functions": 2
+    },
+    "final": {
+      "name": "_PyUnicode_ToNumeric_3281",
+      "descriptor": "(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)D",
+      "code_length": 47793,
+      "max_stack": 3,
+      "max_locals": 5,
+      "interpreter_fallback_functions": 2
+    }
+  }
+}
