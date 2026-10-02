@@ -1,0 +1,3 @@
+numeric callee run/endive/$gen/CompiledMachineShaded.i32_lt_u(II)I
+numeric callee run/endive/$gen/CompiledMachineShaded.i32_lt_u(II)I
+MATCH 1114118 selectors

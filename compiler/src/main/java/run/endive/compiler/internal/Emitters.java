@@ -157,13 +157,48 @@ final class Emitters {
 
     public static void RETURN(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
         if (ctx.getType().returns().size() > 1) {
-            asm.invokestatic(
-                    ctx.internalClassName(),
-                    valueMethodName(ctx.getType().returns()),
-                    valueMethodType(ctx.getType().returns()).toMethodDescriptorString(),
-                    false);
+            if (CompilerUtil.needsInlineResultBoxing(ctx.getType().returns())) {
+                emitBoxResultOnStack(ctx, asm, ctx.getType().returns());
+            } else {
+                asm.invokestatic(
+                        ctx.internalClassName(),
+                        valueMethodName(ctx.getType().returns()),
+                        valueMethodType(ctx.getType().returns()).toMethodDescriptorString(),
+                        false);
+            }
         }
         asm.areturn(getType(jvmReturnType(ctx.getType())));
+    }
+
+    private static void emitBoxResultOnStack(
+            Context ctx, InstructionAdapter asm, List<ValType> types) {
+        int slotsNeeded = types.stream().mapToInt(CompilerUtil::slotCount).sum();
+        assertTempSlotInRange(ctx, slotsNeeded);
+        int slot = ctx.tempSlot() + slotsNeeded;
+        for (int i = types.size() - 1; i >= 0; i--) {
+            var type = types.get(i);
+            slot -= slotCount(type);
+            asm.store(slot, asmType(type));
+        }
+
+        boolean hasObjectRefs = types.stream().anyMatch(ValType::isObjectRef);
+        asm.iconst(types.size());
+        asm.newarray(hasObjectRefs ? OBJECT_TYPE : LONG_TYPE);
+        slot = ctx.tempSlot();
+        for (int i = 0; i < types.size(); i++) {
+            var type = types.get(i);
+            asm.dup();
+            asm.iconst(i);
+            asm.load(slot, asmType(type));
+            if (!type.isObjectRef()) {
+                emitJvmToLong(asm, type);
+                if (hasObjectRefs) {
+                    asm.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
+                }
+            }
+            asm.astore(hasObjectRefs ? OBJECT_TYPE : LONG_TYPE);
+            slot += slotCount(type);
+        }
     }
 
     public static void DROP(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {

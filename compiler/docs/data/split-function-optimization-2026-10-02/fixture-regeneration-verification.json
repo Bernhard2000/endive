@@ -1,0 +1,20 @@
+{
+  "checked_at_utc": "2026-10-02T21:26:44.799325+00:00",
+  "tools_sha256": {
+    "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/binaryen/bin/wasm-opt": "31bea5858455b76f8b08620b546cadcc36be16796c4a4af731ea4183713c9d78",
+    "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/binaryen/bin/wasm-as": "e675e7cc0f7e4e2ec271d65be07c29a3fc3a6b5b4ee98581ec95a0bf48926b90",
+    "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/binaryen/bin/lib/libbinaryen.so": "7561739869055446ce08bd89bd84639928959f39c23ea32dd4cb854235f0847a"
+  },
+  "tools_unchanged_during_run": true,
+  "fixture_sha256_before": {
+    "compiler-tests/src/test/resources/run/endive/testing/binaryen-split-tuples.wasm": "e33e6065f730443ae046fd45ead9377a0b94890d39f4740b89c804446a459af3",
+    "compiler-tests/src/test/resources/run/endive/testing/binaryen-split-mailbox.wasm": "9a6bd21dbe545a95d40c0a94350c979048ea0340e01c3d4afc4c800d50596aa1",
+    "compiler-tests/src/test/resources/run/endive/testing/split-helper-returns.wasm": "928ad1fe69d661fb047489145e89849a8c6ba3005014c2cdb0811fb085cfc737"
+  },
+  "fixture_sha256_after": {
+    "compiler-tests/src/test/resources/run/endive/testing/binaryen-split-tuples.wasm": "e33e6065f730443ae046fd45ead9377a0b94890d39f4740b89c804446a459af3",
+    "compiler-tests/src/test/resources/run/endive/testing/binaryen-split-mailbox.wasm": "9a6bd21dbe545a95d40c0a94350c979048ea0340e01c3d4afc4c800d50596aa1",
+    "compiler-tests/src/test/resources/run/endive/testing/split-helper-returns.wasm": "928ad1fe69d661fb047489145e89849a8c6ba3005014c2cdb0811fb085cfc737"
+  },
+  "byte_identical": true
+}

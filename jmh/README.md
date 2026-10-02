@@ -2,6 +2,11 @@
 
 This module is used to run JMH performance tests on Endive and make it easy to compare results.
 
+`BenchmarkSplitFunctionBoundaries` measures four forwarding helper calls with 2, 8, or 32
+results, and sparse dispatch with 128 or 4,096 entries. Run it with `-prof gc` to check
+allocation as well as execution time. These synthetic cases diagnose compiler lowering;
+real Binaryen split workloads still need their own correctness and benchmark checks.
+
 ## Dependencies
 
 There a few additional tools that are needed to see the benchmark results:
