@@ -55,11 +55,8 @@ public final class ByteBufferMemory implements Memory {
         }
         this.nPages = limits.initialPages();
 
-        if (limits.shared()) {
-            waitStates = new ConcurrentHashMap<>();
-        } else {
-            waitStates = null;
-        }
+        // Also needed for non-shared memories, atomics lock on wait states
+        waitStates = new ConcurrentHashMap<>();
     }
 
     /**
@@ -93,10 +90,6 @@ public final class ByteBufferMemory implements Memory {
     @Override
     @SuppressWarnings("removal")
     public Object lock(int address) {
-        if (!shared()) {
-            // disable locking
-            return new Object();
-        }
         return waitStates.computeIfAbsent(address, k -> new WaitState());
     }
 
