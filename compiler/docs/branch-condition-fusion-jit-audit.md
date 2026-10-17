@@ -1,5 +1,13 @@
 # Audit: branch-condition fusion vs. the C2 `fold_compares` bug
 
+> **Status (2026-10-17):** recommendation 1 (Error Prone) is done in `854e77ca`.
+> Recommendation 2 is done in `5a02a7dd`: the `ofComparison` javadoc now names the JIT bug,
+> and the only unsigned `i32` rewrites added are bias-free (sign tests and shifts,
+> [extensions §3.3](branch-condition-fusion-extensions.md#33-why-only-these-constants-the-c2-fold_compares-bug)).
+> Recommendation 3 is done for `5a02a7dd`: `compiler`, `wabt` and `machine-tests` pass on
+> Temurin 17.0.20.1. Recommendations 4 (8000-byte inlining measurement) and 5
+> (`MemCopyWorkaround` property NPE, `I32_GT_U`/`I32_LE_U` coverage) remain open.
+
 Audited change: commit `f5225324` ("Fuse comparisons into the branches and selects that consume
 them"), described in [branch-condition-fusion.md](branch-condition-fusion.md).
 

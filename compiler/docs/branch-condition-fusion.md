@@ -3,6 +3,12 @@
 Branch `perf/fuse-branch-conditions`, single commit `f5225324`
 ("Fuse comparisons into the branches and selects that consume them").
 
+> **Status (2026-10-17):** extended by `5a02a7dd` (comparisons against constants, unsigned
+> `i64`, Go-style `i64` booleans, reference null tests, `br_on_cast_fail`). See
+> [branch-condition-fusion-extensions.md](branch-condition-fusion-extensions.md). This
+> document describes the original pass. Its §9 limits are annotated with what has changed
+> since.
+
 A peephole pass in the compiler that rewrites a Wasm comparison plus the `if` / `br_if` / `select`
 consuming it into one native JVM conditional jump, instead of a helper call that materializes a
 0/1 `i32` which is then immediately tested against zero.
@@ -588,6 +594,13 @@ assertTrue(!opcodes.contains(CompilerOpCode.I32_EQZ), name + " kept eqz: " + opc
 one jump.
 
 ## 9. Limits and follow-ups
+
+> **Status (2026-10-17), see [the extensions](branch-condition-fusion-extensions.md):**
+> unsigned comparisons are now fused where no `MIN_VALUE` bias is needed (unsigned `i64`
+> through `Long.compareUnsigned`; `i32` against 0, 1 or a power-of-two bound). The bias
+> idea in the first bullet below is unsafe on JDK ≤ 17 (see the
+> [JIT audit](branch-condition-fusion-jit-audit.md)). The null-check part of the last
+> bullet is implemented, and `ref.eq` is deferred.
 
 - **Unsigned comparisons are not fused.** They could be, by biasing both operands
   (`x ^ Integer.MIN_VALUE` / `x ^ Long.MIN_VALUE`) and then using the signed jump — two `ixor`s

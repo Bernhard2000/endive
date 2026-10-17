@@ -1,5 +1,16 @@
 # Implementation plan: fusing reference conditions into branches
 
+> **Status (2026-10-17):** Phase 1 is implemented in `5a02a7dd`, differently from §2. There is
+> no `REF_NULL_JUMP` opcode. `ref.is_null` became two ordinary `BranchCondition`s
+> (`REF_IS_NULL` → `IFNULL`, `INT_REF_IS_NULL` → `ICONST_M1; IF_ICMPEQ`), and `br_on_null` /
+> `br_on_non_null` are lowered to a new generic `DUP` + `REF_IS_NULL` + `IFEQ`/`IFNE`, which
+> the normal pass fuses. `select` on a null test is covered as well, and
+> `BR_ON_NULL_CHECK` / `BR_ON_NON_NULL_CHECK` are removed. `br_on_cast_fail` also lost its
+> 0/1 inversion. Phase 2 (`ref.eq`) is **not** implemented: besides the i31 constraint in
+> §3.1, the analyzer types `select`/`select_t` results by their second operand rather than
+> the annotated type, so static types cannot yet prove an operand non-i31. Details in
+> [branch-condition-fusion-extensions.md §6 and §10](branch-condition-fusion-extensions.md).
+
 Follow-up to [branch-condition-fusion.md](branch-condition-fusion.md), which fused numeric
 comparisons into the `if` / `br_if` / `select` consuming them. Two further condition families
 still materialize a 0/1 `i32` that is then immediately tested:

@@ -1,6 +1,7 @@
 # Endive fork changes and benefits
 
-Snapshot: 2026-10-02, branch `fuse-branch-conditions`. This document covers the fork-specific
+Snapshot: 2026-10-02, updated 2026-10-17 for the fusion extensions (`5a02a7dd`), branch
+`fuse-branch-conditions`. This document covers the fork-specific
 work visible in this repository: the current compiler changes, earlier contributions accepted
 upstream, and work retained on separate branches or in plans.
 
@@ -15,6 +16,7 @@ this branch's implementation. The history inventory uses local Git refs.
 | Change | What it does | Main benefit | Status |
 |---|---|---|---|
 | Numeric comparison/branch fusion | Emits native JVM comparisons directly at the consuming branch or select | Less bytecode and fewer helper calls | Current branch, `f5225324` |
+| Fusion extensions | Constant-operand, unsigned `i64`, Go `i64`-boolean, and reference null-test conditions | Together with the original fusion: 2.0–4.0 % less function bytecode and 70–88 % fewer comparison helper calls than upstream. The extensions alone add 0.1–0.5 % bytecode and remove 15–57 % of the remaining helper calls | Current branch, `5a02a7dd`; upstream PR branch `pr/fuse-branch-conditions` |
 | Large-parameter ABI repair | Preserves locals, numeric arguments, references, and indirect-call targets across boxed calls | Fixes verification failures, invalid descriptors, and silent wrong results | Current branch, `b4d973e1` |
 | Strict-build repair | Justifies the compilation-local use of enum ordinals | Restores the normal Error Prone build | Current branch, `854e77ca` |
 | Compact branch-table dispatch | Chooses a smaller JVM switch encoding and handles default-only tables | Reduces large method sizes and dispatch overhead in the measured synthetic case | Current optimization changes |
@@ -35,8 +37,16 @@ example, an `i32` comparison followed by a branch emitted an `invokestatic` and 
 `COND_JUMP` or `SELECT_COND`. It handles signed `i32`/`i64` comparisons, `i64.eqz`, floating-point
 comparisons, and chains of `i32.eqz` by reversing the branch sense. Floating-point emission
 preserves the outcomes for NaN, including `ne`, and loop back edges retain interruption checks.
-Explicit labels prevent fusion across a control-flow entry point. Unsigned comparisons retain
-their existing lowering and workaround paths.
+Explicit labels prevent fusion across a control-flow entry point.
+
+Commit `5a02a7dd` extends the pass ([branch-condition-fusion-extensions.md](compiler/docs/branch-condition-fusion-extensions.md)):
+`i32` comparisons against 0, 1 or -1 become one-operand zero tests; unsigned `i32` comparisons
+against a power-of-two bound become a shift and a zero test; unsigned `i64` comparisons jump on
+`Long.compareUnsigned`; `i64.eqz (i64.extend_i32_u b)` (Go's boolean negation) is absorbed like
+`i32.eqz`; `ref.is_null`, `br_on_null`, and `br_on_non_null` become `ifnull`/`ifnonnull`; and
+`br_on_cast_fail` no longer inverts its cast result through extra branches. Unsigned `i32`
+comparisons with variable or other constant operands keep their helper and workaround paths,
+because fusing them needs the `MIN_VALUE` bias that triggers the JDK ≤ 17 C2 bug.
 
 **Benefits.** The generated method no longer contains the comparison helper call or the
 intermediate boolean at a fused site. A simple `i32` comparison/branch pair commonly saves
@@ -56,6 +66,14 @@ loop back edges, signed limits, zero, infinities, and NaN. See
 and [branch-condition-fusion-jit-audit.md](compiler/docs/branch-condition-fusion-jit-audit.md)
 for the historical JIT/workaround audit. A workload-wide speedup from fusion has not been
 established by the current validation campaign.
+
+**Measured size effect (static).** Against upstream main `1580f534`, the original fusion plus the
+extensions reduce total `func_*` bytecode by 3.66 % (.NET), 3.97 % (QuickJS), 3.94 % (Javy
+demo), 2.04 % (Go), 2.87 % (Rust), and 2.80 % (`code.wasm`). Methods above HotSpot's
+8000-byte `HugeMethodLimit` drop from 15 to 14 (.NET), 13 to 10 (QuickJS), 12 to 11 (Javy),
+and 13 to 12 (Go). Endive comparison and null-test helper calls drop by 70–88 % (the
+JDK `Long.compareUnsigned` calls that replace unsigned `i64` helpers are counted separately). Raw data:
+[data/branch-condition-fusion-2026-10-17/](compiler/docs/data/branch-condition-fusion-2026-10-17/).
 
 ## 2. Large-parameter ABI repair
 
@@ -227,14 +245,14 @@ The final compiler excludes this prototype. Its prospective benefit is smaller b
 but a runtime or allocation benefit needs evidence from actual split helper bodies and JVM
 inlining behavior before implementation is justified.
 
-### Reference-condition fusion — planned
+### Reference-condition fusion — null tests implemented, `ref.eq` deferred
 
-[ref-condition-fusion-plan.md](compiler/docs/ref-condition-fusion-plan.md) proposes direct null
+[ref-condition-fusion-plan.md](compiler/docs/ref-condition-fusion-plan.md) proposed direct null
 branches for `ref.is_null`, `br_on_null`, and `br_on_non_null`, followed by carefully gated
-`ref.eq` fusion. The expected benefit is removal of intermediate booleans and redundant
-branches. `ref.eq` requires special care because `i31ref` equality is value-based, so plain
-object identity is not a general replacement. These changes remain a plan; the current analyzer
-still emits the existing reference-condition instructions.
+`ref.eq` fusion. The null tests are implemented in `5a02a7dd` (with a simpler design than the
+plan: a generic `DUP` opcode plus ordinary `BranchCondition`s). `ref.eq` remains deferred:
+`i31ref` equality is value-based, and the analyzer currently types `select`/`select_t` results
+by their second operand, so static types cannot yet prove an operand non-i31.
 
 ## 9. Validation and practical limits
 
@@ -245,8 +263,12 @@ passed earlier with its existing disabled case; it was excluded from the final r
 Formatting, Checkstyle, Error Prone, dependency analysis, JMH compilation, shell syntax, and
 diff whitespace checks passed.
 
-The full dependency rebuild still stops in bundled `wasm-tools`: function 4725 exceeds the
-JVM method-size limit. Module validation used available dependency artifacts. The pure CPython
+The full dependency rebuild stopping in bundled `wasm-tools` (function 4725 exceeding the JVM
+method-size limit) was caused by a stale `wasm-tools/target/wasm-tools.wasm` from Oct 2025 that
+the build never re-downloads; upstream main fails identically with that file. With a fresh
+download of the pinned wasm-tools 1.256.0, the fork branch, the upstream PR branch, and upstream
+main all build `wasm-tools` (verified 2026-10-17). Module validation used available dependency
+artifacts. The pure CPython
 numeric comparison does not validate the complete CPython WASI program. These measurements
 remain local diagnostics; no fixed-runner thesis performance acceptance is claimed.
 
