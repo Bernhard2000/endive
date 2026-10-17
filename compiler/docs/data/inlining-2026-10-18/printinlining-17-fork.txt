@@ -1,0 +1,468 @@
+                            @ 49   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 145   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 174   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 178   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 190   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 225   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 330   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 359   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 363   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 375   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 410   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 514   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 543   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 547   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 558   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 591   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 690   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 719   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 723   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 735   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 770   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 874   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 903   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 907   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 919   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 954   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1059   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1088   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 1092   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 1103   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 1136   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1236   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1265   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 1269   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 1281   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 1316   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1421   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1450   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 1454   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 1466   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 1501   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1605   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1632   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 1636   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 1647   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 1680   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1783   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1812   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 1816   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 1828   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 1863   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1967   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1996   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2000   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2012   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2047   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2150   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2177   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2181   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2192   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2225   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2329   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2358   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2362   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2374   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2409   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2514   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2543   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2547   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2559   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2594   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2694   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2721   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2725   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2736   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2771   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2876   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2905   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2909   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2921   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2956   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3060   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3089   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3093   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3105   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3140   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3239   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3266   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3270   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3282   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3317   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3421   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3450   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3454   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3466   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3501   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3606   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3635   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3639   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3651   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3686   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3782   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3809   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3813   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3825   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3860   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3965   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3994   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3998   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4010   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4045   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4149   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4178   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4182   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4194   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4227   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4324   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4353   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4357   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4369   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4404   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4508   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4537   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4541   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4553   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4588   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4693   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4722   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4726   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4737   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4770   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4868   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4897   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4901   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4913   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4948   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5053   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5082   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5086   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5098   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5133   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5237   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5266   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5270   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5281   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5314   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5415   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5444   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5448   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5460   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5495   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5599   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5628   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5632   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5644   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5679   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5784   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5811   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5815   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5826   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5859   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5961   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5990   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5994   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6006   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6041   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6146   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6175   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6179   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6191   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6226   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6328   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6355   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6359   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6370   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6403   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6508   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6537   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6541   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6553   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6588   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6692   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6721   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6725   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6737   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6772   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6873   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6900   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6904   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6915   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6950   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7054   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7083   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 7087   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 7099   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 7134   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7239   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7268   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 7272   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 7284   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 7303   run.endive.$gen.CompiledMachineShaded::checkInterruption (21 bytes)   size > DesiredMethodLimit
+                            @ 13   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 49   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 145   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 174   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 178   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 190   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 225   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 330   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 359   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 363   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 375   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 410   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 514   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 543   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 547   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 558   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 591   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 690   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 719   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 723   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 735   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 770   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 874   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 903   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 907   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 919   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 954   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1059   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1088   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 1092   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 1103   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 1136   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1236   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1265   java.lang.Integer::toUnsignedLong (7 bytes)   inline (hot)
+                            @ 1269   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   inline (hot)
+                            @ 1281   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   inline (hot)
+                            @ 1316   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_lt_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1421   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   inline (hot)
+                              @ 8   run.endive.runtime.MemCopyWorkaround::i32_ge_u (11 bytes)   inline (hot)
+                                @ 5   run.endive.runtime.MemCopyWorkaround$I32GEUFunc::apply (0 bytes)   virtual call
+                            @ 1450   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 1454   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 1466   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 1501   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1605   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1632   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 1636   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 1647   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 1680   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1783   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1812   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 1816   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 1828   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 1863   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1967   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 1996   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2000   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2012   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2047   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2150   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2177   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2181   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2192   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2225   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2329   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2358   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2362   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2374   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2409   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2514   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2543   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2547   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2559   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2594   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2694   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2721   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2725   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2736   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2771   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2876   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 2905   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 2909   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 2921   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 2956   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3060   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3089   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3093   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3105   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3140   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3239   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3266   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3270   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3282   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3317   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3421   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3450   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3454   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3466   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3501   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3606   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3635   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3639   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3651   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3686   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3782   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3809   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3813   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 3825   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 3860   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3965   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 3994   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 3998   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4010   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4045   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4149   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4178   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4182   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4194   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4227   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4324   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4353   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4357   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4369   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4404   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4508   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4537   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4541   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4553   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4588   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4693   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4722   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4726   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4737   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4770   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4868   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 4897   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 4901   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 4913   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 4948   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5053   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5082   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5086   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5098   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5133   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5237   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5266   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5270   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5281   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5314   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5415   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5444   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5448   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5460   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5495   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5599   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5628   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5632   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5644   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5679   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5784   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5811   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5815   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 5826   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 5859   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5961   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 5990   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 5994   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6006   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6041   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6146   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6175   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6179   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6191   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6226   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6328   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6355   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6359   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6370   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6403   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6508   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6537   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6541   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6553   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6588   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6692   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6721   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6725   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6737   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6772   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6873   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 6900   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 6904   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 6915   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 6950   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7054   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7083   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 7087   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 7099   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 7134   run.endive.$gen.CompiledMachineShaded::i32_lt_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7239   run.endive.$gen.CompiledMachineShaded::i32_ge_u (18 bytes)   size > DesiredMethodLimit
+                            @ 7268   java.lang.Integer::toUnsignedLong (7 bytes)   size > DesiredMethodLimit
+                            @ 7272   run.endive.runtime.OpcodeImpl::I64_EQZ (12 bytes)   size > DesiredMethodLimit
+                            @ 7284   run.endive.runtime.OpcodeImpl::I32_NE (11 bytes)   size > DesiredMethodLimit
+                            @ 7303   run.endive.$gen.CompiledMachineShaded::checkInterruption (21 bytes)   size > DesiredMethodLimit
+result=21400000 ms=1931
