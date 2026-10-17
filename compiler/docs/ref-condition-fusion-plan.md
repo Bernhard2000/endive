@@ -6,10 +6,13 @@
 > `br_on_non_null` are lowered to a new generic `DUP` + `REF_IS_NULL` + `IFEQ`/`IFNE`, which
 > the normal pass fuses. `select` on a null test is covered as well, and
 > `BR_ON_NULL_CHECK` / `BR_ON_NON_NULL_CHECK` are removed. `br_on_cast_fail` also lost its
-> 0/1 inversion. Phase 2 (`ref.eq`) is **not** implemented: besides the i31 constraint in
-> §3.1, the analyzer types `select`/`select_t` results by their second operand rather than
-> the annotated type, so static types cannot yet prove an operand non-i31. Details in
+> 0/1 inversion. Details in
 > [branch-condition-fusion-extensions.md §6 and §10](branch-condition-fusion-extensions.md).
+>
+> **Update (2026-10-18):** Phase 2 (`ref.eq`) is implemented in `50a7c320` as §3 describes
+> (option (a), `REF_EQ_FUSABLE`), after two soundness fixes to the analyzer's types: `select_t`
+> now pushes its annotated type, and scope exits push the declared result types. See
+> [ref-eq-fusion.md](ref-eq-fusion.md).
 
 Follow-up to [branch-condition-fusion.md](branch-condition-fusion.md), which fused numeric
 comparisons into the `if` / `br_if` / `select` consuming them. Two further condition families

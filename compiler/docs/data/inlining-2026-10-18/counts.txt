@@ -1,0 +1,43 @@
+== compiler/docs/data/inlining-2026-10-18/printinlining-17-fork.txt: 403 helper call sites
+     327  size > DesiredMethodLimit
+      76  inline (hot)
+      refused    66  OpcodeImpl::I64_EQZ
+      refused    66  OpcodeImpl::I32_NE
+      refused    65  Integer::toUnsignedLong
+      refused    64  CompiledMachineShaded::i32_lt_u
+      refused    64  CompiledMachineShaded::i32_ge_u
+      refused     2  CompiledMachineShaded::checkInterruption
+== compiler/docs/data/inlining-2026-10-18/printinlining-17-up.txt: 806 helper call sites
+     775  size > DesiredMethodLimit
+      31  inline (hot)
+      refused    78  OpcodeImpl::I32_EQZ
+      refused    78  OpcodeImpl::F64_LT
+      refused    78  CompiledMachineShaded::i32_ge_u
+      refused    78  OpcodeImpl::I64_EQZ
+      refused    78  OpcodeImpl::I32_NE
+      refused    78  OpcodeImpl::I32_LT_S
+      refused    77  OpcodeImpl::I64_LT_S
+      refused    77  OpcodeImpl::I64_EXTEND_I32_U
+      refused    76  CompiledMachineShaded::i32_lt_u
+      refused    75  OpcodeImpl::F64_CONVERT_I32_S
+== compiler/docs/data/inlining-2026-10-18/printinlining-21-fork.txt: 403 helper call sites
+     160  (intrinsic)
+     138  inline (hot)
+     105  size > DesiredMethodLimit
+      refused    36  OpcodeImpl::I32_NE
+      refused    34  OpcodeImpl::I64_EQZ
+      refused    33  Integer::toUnsignedLong
+      refused     2  CompiledMachineShaded::checkInterruption
+== compiler/docs/data/inlining-2026-10-18/printinlining-21-up.txt: 806 helper call sites
+     779  size > DesiredMethodLimit
+      27  inline (hot)
+      refused    78  OpcodeImpl::I32_EQZ
+      refused    78  OpcodeImpl::F64_CONVERT_I32_S
+      refused    78  OpcodeImpl::F64_LT
+      refused    78  CompiledMachineShaded::i32_ge_u
+      refused    78  OpcodeImpl::I64_EXTEND_I32_U
+      refused    78  OpcodeImpl::I64_EQZ
+      refused    78  OpcodeImpl::I32_NE
+      refused    78  OpcodeImpl::I32_LT_S
+      refused    77  OpcodeImpl::I64_LT_S
+      refused    76  CompiledMachineShaded::i32_lt_u
