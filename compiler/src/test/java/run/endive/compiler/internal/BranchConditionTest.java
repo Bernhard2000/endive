@@ -303,6 +303,7 @@ public class BranchConditionTest {
             {Opcodes.IF_ICMPEQ, Opcodes.IF_ICMPNE},
             {Opcodes.IF_ICMPLT, Opcodes.IF_ICMPGE},
             {Opcodes.IF_ICMPGT, Opcodes.IF_ICMPLE},
+            {Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE},
             {Opcodes.IFNULL, Opcodes.IFNONNULL},
         };
         for (var pair : complements) {

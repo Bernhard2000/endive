@@ -5,6 +5,7 @@ import static run.endive.wasm.types.Instruction.EMPTY_OPERANDS;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import run.endive.wasm.InvalidException;
 import run.endive.wasm.types.FunctionType;
@@ -21,6 +22,7 @@ final class TypeStack {
     private final Deque<Deque<ValType>> types = new ArrayDeque<>();
     private final Deque<Deque<ValType>> restore = new ArrayDeque<>();
     private final Map<Instruction, Integer> scopes = new HashMap<>();
+    private final Map<Instruction, List<ValType>> scopeReturns = new HashMap<>();
     private final TypeSection typeSection;
 
     public TypeStack(TypeSection typeSection) {
@@ -60,6 +62,7 @@ final class TypeStack {
 
     public void enterScope(Instruction scope, FunctionType scopeType) {
         scopes.put(scope, types().size());
+        scopeReturns.put(scope, scopeType.returns());
 
         // restored stack when exiting "polymorphic" blocks after unconditional control transfer
         Deque<ValType> stack = new ArrayDeque<>(types());
@@ -72,9 +75,23 @@ final class TypeStack {
         restore.push(stack);
     }
 
+    /**
+     * Leaves a scope. Its results get the scope's declared result types: values can also arrive
+     * by branches to the scope's label, so the types the fallthrough path left on the stack can
+     * be narrower than what the scope may produce.
+     */
     public void exitScope(Instruction scope) {
         scopes.remove(scope);
         restore.pop();
+        var returns = scopeReturns.remove(scope);
+        if (returns != null && types().size() >= returns.size()) {
+            for (int i = 0; i < returns.size(); i++) {
+                types().pop();
+            }
+            for (ValType type : returns) {
+                types().push(type);
+            }
+        }
     }
 
     public void scopeRestore() {

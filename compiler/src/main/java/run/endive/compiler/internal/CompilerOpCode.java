@@ -19,6 +19,8 @@ enum CompilerOpCode {
     SELECT_COND,
     // duplicates the value on top of the stack: [ValType id]
     DUP,
+    // ref.eq where one operand cannot be an i31ref, so identity is equality
+    REF_EQ_FUSABLE,
     RETURN(OpCode.RETURN),
     CALL(OpCode.CALL),
     CALL_INDIRECT(OpCode.CALL_INDIRECT),
