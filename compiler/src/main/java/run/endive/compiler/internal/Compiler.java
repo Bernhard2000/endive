@@ -670,6 +670,7 @@ public final class Compiler {
                 functionTypes.stream()
                         .map(FunctionType::returns)
                         .filter(types -> types.size() > 1)
+                        .filter(types -> !CompilerUtil.needsInlineResultBoxing(types))
                         .collect(toSet());
         for (var types : returnTypes) {
             var methodName = valueMethodName(types);

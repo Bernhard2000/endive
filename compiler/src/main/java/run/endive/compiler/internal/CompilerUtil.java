@@ -161,6 +161,11 @@ final class CompilerUtil {
         return methodType(returnType, jvmTypes(types));
     }
 
+    public static boolean needsInlineResultBoxing(List<ValType> types) {
+        // value_xxx receives all results as parameters, without Memory/Instance arguments.
+        return types.stream().mapToInt(CompilerUtil::slotCount).sum() > 255;
+    }
+
     public static MethodType callIndirectMethodType(FunctionType functionType) {
         return rawMethodTypeFor(functionType)
                 .appendParameterTypes(int.class, int.class, Memory.class, Instance.class);

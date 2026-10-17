@@ -11,6 +11,12 @@ final class TempSlotCalculators {
 
     private TempSlotCalculators() {}
 
+    static int returnResult(
+            CompilerInstruction ins, WasmModule module, List<FunctionType> functionTypes) {
+        int slots = ins.operands().mapToInt(CompilerUtil::slotCount).sum();
+        return slots > 255 ? slots : 0;
+    }
+
     static int dropKeep(
             CompilerInstruction ins, WasmModule module, List<FunctionType> functionTypes) {
         int keepStart = (int) ins.operand(0) + 1;
