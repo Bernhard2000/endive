@@ -1,0 +1,92 @@
+{
+ "schema": "bench_lib-v1",
+ "phase": "first-call",
+ "env": {
+  "date": "2026-10-17T19:09:31",
+  "host": "tuxedoPulse14Gen3",
+  "kernel": "7.2.8-1-default",
+  "governor": "ondemand",
+  "turbo": "on",
+  "taskset_cores": "4-7",
+  "aslr": "2",
+  "engines": {
+   "/usr/bin/java": "openjdk 21.0.12.1 2026-08-18"
+  },
+  "module_sha256": {
+   "<bench>/splits/quickjs/split-8kB.wasm": "4b931eced0e6bd43f74b23f86ec57e1432ca73f6b959e24fb482af80202af6d6"
+  },
+  "pass_config": "engine-ab upstream=1580f534 pr=3ba75b28 workload=quickjs-split args=1 warmup=1 reps=2 cores=4-7"
+ },
+ "runs_ns": {
+  "upstream": [
+   8280472000,
+   8402641000,
+   8271715000,
+   8367484000,
+   8404370000,
+   8500317999,
+   8597460000,
+   8303077999,
+   8475799999,
+   8375803000
+  ],
+  "pr": [
+   7805637000,
+   7805705000,
+   7731737000,
+   7793240000,
+   7752807000,
+   7914206000,
+   7860633000,
+   8030333000,
+   7991494000,
+   7671319000
+  ]
+ },
+ "interleaved": true,
+ "warmup_rounds_discarded": 0,
+ "order_mode": "permuted",
+ "order_seed": "20261017",
+ "round_orders": [
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ]
+ ]
+}

@@ -75,6 +75,16 @@ and 13 to 12 (Go). Endive comparison and null-test helper calls drop by 70–88 
 JDK `Long.compareUnsigned` calls that replace unsigned `i64` helpers are counted separately). Raw data:
 [data/branch-condition-fusion-2026-10-17/](compiler/docs/data/branch-condition-fusion-2026-10-17/).
 
+**Measured runtime effect (local, exploratory).** Upstream main and the PR branch were timed on
+identical modules with the thesis harness: fresh JVM per sample, interleaved rounds, paired
+bootstrap CI ([branch-condition-fusion-benchmarks.md](compiler/docs/branch-condition-fusion-benchmarks.md)).
+Steady state was 4–10 % faster wherever the hot code is compiled: Lua −5.5 %, Lua split −4.1 %,
+SQLite 8 kB split −9.5 %, QuickJS 8 kB split −6.4 %. Unsplit SQLite and QuickJS, whose hot
+function above 64 KB falls back to the interpreter, were neutral, and runtime compilation was up
+to 2.5 % slower. Endive's JMH suite showed no effect. So fusion complements splitting: it
+speeds up the compiled methods that splitting creates. These are single-session laptop
+results, not fixed-runner evidence.
+
 ## 2. Large-parameter ABI repair
 
 JVM descriptors have a parameter-slot limit; `i64` and `f64` use two slots. Endive passes

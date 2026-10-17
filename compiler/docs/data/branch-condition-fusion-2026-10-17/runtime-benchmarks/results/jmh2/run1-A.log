@@ -1,0 +1,203 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkCompiled
+# Parameters: (input = 5)
+
+# Run progress: 0,00% complete, ETA 00:01:24
+# Fork: 1 of 1
+# Warmup Iteration   1: 166422829,178 ops/s
+# Warmup Iteration   2: 169212808,606 ops/s
+# Warmup Iteration   3: 189598145,755 ops/s
+Iteration   1: 190614457,584 ops/s
+Iteration   2: 188065036,592 ops/s
+Iteration   3: 189838551,249 ops/s
+Iteration   4: 181400521,295 ops/s
+
+
+Result "run.endive.bench.BenchmarkFactorialExecution.benchmarkCompiled":
+  187479641,680 ±(99.9%) 27081291,101 ops/s [Average]
+  (min, avg, max) = (181400521,295, 187479641,680, 190614457,584), stdev = 4190859,775
+  CI (99.9%): [160398350,580, 214560932,781] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkCompiled
+# Parameters: (input = 1000)
+
+# Run progress: 16,67% complete, ETA 00:01:12
+# Fork: 1 of 1
+# Warmup Iteration   1: 1059937,536 ops/s
+# Warmup Iteration   2: 1069957,936 ops/s
+# Warmup Iteration   3: 1077426,124 ops/s
+Iteration   1: 1111454,971 ops/s
+Iteration   2: 1126475,304 ops/s
+Iteration   3: 1118085,428 ops/s
+Iteration   4: 1120050,887 ops/s
+
+
+Result "run.endive.bench.BenchmarkFactorialExecution.benchmarkCompiled":
+  1119016,648 ±(99.9%) 39964,732 ops/s [Average]
+  (min, avg, max) = (1111454,971, 1119016,648, 1126475,304), stdev = 6184,586
+  CI (99.9%): [1079051,916, 1158981,379] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkInt
+# Parameters: (input = 5)
+
+# Run progress: 33,33% complete, ETA 00:00:57
+# Fork: 1 of 1
+# Warmup Iteration   1: 1297928,104 ops/s
+# Warmup Iteration   2: 1366460,447 ops/s
+# Warmup Iteration   3: 1455134,384 ops/s
+Iteration   1: 1470229,611 ops/s
+Iteration   2: 1478126,873 ops/s
+Iteration   3: 1485245,849 ops/s
+Iteration   4: 1481508,240 ops/s
+
+
+Result "run.endive.bench.BenchmarkFactorialExecution.benchmarkInt":
+  1478777,643 ±(99.9%) 41340,943 ops/s [Average]
+  (min, avg, max) = (1470229,611, 1478777,643, 1485245,849), stdev = 6397,557
+  CI (99.9%): [1437436,700, 1520118,586] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkInt
+# Parameters: (input = 1000)
+
+# Run progress: 50,00% complete, ETA 00:00:43
+# Fork: 1 of 1
+# Warmup Iteration   1: 10485,053 ops/s
+# Warmup Iteration   2: 11509,521 ops/s
+# Warmup Iteration   3: 11527,730 ops/s
+Iteration   1: 11420,616 ops/s
+Iteration   2: 11259,427 ops/s
+Iteration   3: 11383,433 ops/s
+Iteration   4: 11414,871 ops/s
+
+
+Result "run.endive.bench.BenchmarkFactorialExecution.benchmarkInt":
+  11369,587 ±(99.9%) 486,178 ops/s [Average]
+  (min, avg, max) = (11259,427, 11369,587, 11420,616), stdev = 75,237
+  CI (99.9%): [10883,408, 11855,765] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkSievePrimes.benchmark
+# Parameters: (limit = 1000000, machineType = compiled, memoryType = ByteArrayMemory, numWorkers = 4)
+
+# Run progress: 66,67% complete, ETA 00:00:28
+# Fork: 1 of 1
+# Warmup Iteration   1: 48,686 ops/s
+# Warmup Iteration   2: 60,394 ops/s
+# Warmup Iteration   3: 60,707 ops/s
+Iteration   1: 61,620 ops/s
+Iteration   2: 61,298 ops/s
+Iteration   3: 60,798 ops/s
+Iteration   4: 61,977 ops/s
+
+
+Result "run.endive.bench.BenchmarkSievePrimes.benchmark":
+  61,423 ±(99.9%) 3,236 ops/s [Average]
+  (min, avg, max) = (60,798, 61,423, 61,977), stdev = 0,501
+  CI (99.9%): [58,187, 64,659] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkSievePrimes.benchmark
+# Parameters: (limit = 1000000, machineType = compiled, memoryType = ByteBufferMemory, numWorkers = 4)
+
+# Run progress: 83,33% complete, ETA 00:00:14
+# Fork: 1 of 1
+# Warmup Iteration   1: 28,242 ops/s
+# Warmup Iteration   2: 33,087 ops/s
+# Warmup Iteration   3: 33,892 ops/s
+Iteration   1: 34,073 ops/s
+Iteration   2: 34,362 ops/s
+Iteration   3: 34,497 ops/s
+Iteration   4: 34,470 ops/s
+
+
+Result "run.endive.bench.BenchmarkSievePrimes.benchmark":
+  34,350 ±(99.9%) 1,252 ops/s [Average]
+  (min, avg, max) = (34,073, 34,350, 34,497), stdev = 0,194
+  CI (99.9%): [33,098, 35,603] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:01:26
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                      (input)  (limit)  (machineType)      (memoryType)  (numWorkers)   Mode  Cnt          Score          Error  Units
+BenchmarkFactorialExecution.benchmarkCompiled        5      N/A            N/A               N/A           N/A  thrpt    4  187479641,680 ± 27081291,101  ops/s
+BenchmarkFactorialExecution.benchmarkCompiled     1000      N/A            N/A               N/A           N/A  thrpt    4    1119016,648 ±    39964,732  ops/s
+BenchmarkFactorialExecution.benchmarkInt             5      N/A            N/A               N/A           N/A  thrpt    4    1478777,643 ±    41340,943  ops/s
+BenchmarkFactorialExecution.benchmarkInt          1000      N/A            N/A               N/A           N/A  thrpt    4      11369,587 ±      486,178  ops/s
+BenchmarkSievePrimes.benchmark                     N/A  1000000       compiled   ByteArrayMemory             4  thrpt    4         61,423 ±        3,236  ops/s
+BenchmarkSievePrimes.benchmark                     N/A  1000000       compiled  ByteBufferMemory             4  thrpt    4         34,350 ±        1,252  ops/s
+
+Benchmark result is saved to /tmp/claude-1000/-home-bernhard-Dokumente-MasterThesis-Endive-fork-endive/48f2fe1c-8467-524f-8bc4-774052b1761a/scratchpad/bench/results/jmh2/run1-A.json

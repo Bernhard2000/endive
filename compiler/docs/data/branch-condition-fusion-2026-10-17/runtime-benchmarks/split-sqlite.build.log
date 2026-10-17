@@ -1,0 +1,4 @@
+FS_WALLCOUNT,post-split,8000,7
+FS_WALLCOUNT,final,8000,5
+[function-splitting] size cache: 10593 hit(s), 6141 miss(es), 3738 invalidation(s), 1 flush(es), 2403 entr(ies) retained; regions 52719 hit(s), 26989 miss(es), 0 entr(ies); ~1672488 byte(s) held (entries and keys, not the allocator's own footprint)
+[function-splitting] split cost: 1294 profiled helper(s), ~5250852 added dynamic calls, ~10501704 executed boundary crossings per profiled run

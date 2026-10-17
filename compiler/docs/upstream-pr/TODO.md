@@ -72,10 +72,16 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
      (see #134: "20 parallel Windows+Java 11 CI runs"). Consider asking maintainers for
      repeated runs, or running the workflow on your fork several times.
    - **Android** (minSdk 28; `Long.compareUnsigned` exists since API 26).
-8. **Runtime evidence.** The Perf workflow (`.github/workflows/perf.yaml`) runs JMH on `main`
-   and on the PR automatically. Read its result before asking for review. Consider adding a
-   JMH case that exercises a large (> 8000 B) generated method with many comparisons, where
-   the effect should show. The audit's open recommendation 4 (`-XX:+PrintInlining` count of
+8. **Runtime evidence.** Local workload timing is done
+   ([branch-condition-fusion-benchmarks.md](../branch-condition-fusion-benchmarks.md)): 4–10 %
+   faster wherever the hot code is compiled, and Endive's JMH shows no change. Still to do:
+   - decide whether to cite the local numbers in the PR. They come from a laptop with the
+     `ondemand` governor; a repeat on a fixed runner would be stronger;
+   - the Perf workflow (`.github/workflows/perf.yaml`) runs the same JMH suite on the PR and
+     will likely show "no change", so explain that in the PR (done in the draft);
+   - consider adding to `jmh/` a benchmark that exercises a large (> 8000 B) generated method
+     with many comparisons, so upstream's own Perf CI can see the effect. A small WASI
+     workload such as Lua would also do. The audit's open recommendation 4 (`-XX:+PrintInlining` count of
    `size > DesiredMethodLimit` for `OpcodeImpl.I32_*` before and after) would be the direct
    evidence.
 9. **Fixture provenance.** `branch_conditions.wat` and `branch_conditions_const.wat` were

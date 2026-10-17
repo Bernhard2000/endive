@@ -58,8 +58,25 @@ Comparison and null-test helper calls in the generated code drop by 70–88 %. F
 `-XX:+DontCompileHugeMethods`, and methods near that size run out of C2 inlining budget
 (`DesiredMethodLimit`). So the main expected benefit is for large generated methods, where
 the helpers are not inlined. For small, hot methods C2 already folds the helper away, and
-little runtime change is expected. I have not run a JMH comparison; the Perf workflow on this
-PR will.
+little runtime change is expected.
+
+Local timing (one laptop session, JDK 21, runtime compiler, fresh JVM per sample,
+interleaved rounds, paired bootstrap 95 % CI). Both arms run identical WASI modules; the
+"split" modules were produced by an out-of-tree Binaryen function-splitting pass that cuts
+large functions below 8 kB:
+
+| workload | upstream | this PR | Δ steady state (95 % CI) |
+| --- | ---: | ---: | --- |
+| Lua 5.4 (`2 a`) | 1,779 ms | 1,679 ms | −5.5 % [−6.9, −4.3] |
+| Lua 5.4, split | 263 ms | 253 ms | −4.1 % [−7.0, −0.9] |
+| SQLite, split | 1,887 ms | 1,709 ms | −9.5 % [−11.1, −7.7] |
+| QuickJS, split | 8,307 ms | 7,696 ms | −6.4 % [−8.6, −5.3] |
+| SQLite (hot `sqlite3_step` > 64 KB → interpreter fallback) | 15,324 ms | 15,345 ms | −0.2 % [−2.3, +2.3] |
+
+Runtime compilation is up to about 2.5 % slower (around 20 ms on these modules). Endive's own
+JMH suite (factorial, sieve, wat2wasm, dispatch) shows no difference beyond fork-to-fork noise.
+Its compiled benchmarks are small enough that C2 already inlines the helpers, so the Perf
+workflow on this PR will likely report "no change".
 
 ## Correctness notes for review
 

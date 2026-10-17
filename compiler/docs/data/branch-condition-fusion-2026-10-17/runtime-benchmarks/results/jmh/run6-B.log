@@ -1,0 +1,444 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkCompiled
+# Parameters: (input = 5)
+
+# Run progress: 0,00% complete, ETA 00:02:20
+# Fork: 1 of 1
+# Warmup Iteration   1: <failure>
+
+java.lang.IllegalArgumentException: Error opening file: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:267)
+	at run.endive.wasm.Parser.parse(Parser.java:280)
+	at run.endive.wasm.Parser.parse(Parser.java:262)
+	at run.endive.wasm.Parser.parse(Parser.java:254)
+	at run.endive.bench.BenchmarkFactorialExecution.setup(BenchmarkFactorialExecution.java:40)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkCompiled_jmhTest._jmh_tryInit_f_benchmarkfactorialexecution0_G(BenchmarkFactorialExecution_benchmarkCompiled_jmhTest.java:444)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkCompiled_jmhTest.benchmarkCompiled_Throughput(BenchmarkFactorialExecution_benchmarkCompiled_jmhTest.java:71)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:527)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:504)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.file.NoSuchFileException: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432)
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420)
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160)
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:265)
+	... 16 more
+
+
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkCompiled
+# Parameters: (input = 1000)
+
+# Run progress: 10,00% complete, ETA 00:00:02
+# Fork: 1 of 1
+# Warmup Iteration   1: <failure>
+
+java.lang.IllegalArgumentException: Error opening file: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:267)
+	at run.endive.wasm.Parser.parse(Parser.java:280)
+	at run.endive.wasm.Parser.parse(Parser.java:262)
+	at run.endive.wasm.Parser.parse(Parser.java:254)
+	at run.endive.bench.BenchmarkFactorialExecution.setup(BenchmarkFactorialExecution.java:40)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkCompiled_jmhTest._jmh_tryInit_f_benchmarkfactorialexecution0_G(BenchmarkFactorialExecution_benchmarkCompiled_jmhTest.java:444)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkCompiled_jmhTest.benchmarkCompiled_Throughput(BenchmarkFactorialExecution_benchmarkCompiled_jmhTest.java:71)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:527)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:504)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.file.NoSuchFileException: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432)
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420)
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160)
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:265)
+	... 16 more
+
+
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkInt
+# Parameters: (input = 5)
+
+# Run progress: 20,00% complete, ETA 00:00:01
+# Fork: 1 of 1
+# Warmup Iteration   1: <failure>
+
+java.lang.IllegalArgumentException: Error opening file: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:267)
+	at run.endive.wasm.Parser.parse(Parser.java:280)
+	at run.endive.wasm.Parser.parse(Parser.java:262)
+	at run.endive.wasm.Parser.parse(Parser.java:254)
+	at run.endive.bench.BenchmarkFactorialExecution.setup(BenchmarkFactorialExecution.java:40)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkInt_jmhTest._jmh_tryInit_f_benchmarkfactorialexecution0_G(BenchmarkFactorialExecution_benchmarkInt_jmhTest.java:444)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkInt_jmhTest.benchmarkInt_Throughput(BenchmarkFactorialExecution_benchmarkInt_jmhTest.java:71)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:527)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:504)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.file.NoSuchFileException: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432)
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420)
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160)
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:265)
+	... 16 more
+
+
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkFactorialExecution.benchmarkInt
+# Parameters: (input = 1000)
+
+# Run progress: 30,00% complete, ETA 00:00:01
+# Fork: 1 of 1
+# Warmup Iteration   1: <failure>
+
+java.lang.IllegalArgumentException: Error opening file: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:267)
+	at run.endive.wasm.Parser.parse(Parser.java:280)
+	at run.endive.wasm.Parser.parse(Parser.java:262)
+	at run.endive.wasm.Parser.parse(Parser.java:254)
+	at run.endive.bench.BenchmarkFactorialExecution.setup(BenchmarkFactorialExecution.java:40)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkInt_jmhTest._jmh_tryInit_f_benchmarkfactorialexecution0_G(BenchmarkFactorialExecution_benchmarkInt_jmhTest.java:444)
+	at run.endive.bench.jmh_generated.BenchmarkFactorialExecution_benchmarkInt_jmhTest.benchmarkInt_Throughput(BenchmarkFactorialExecution_benchmarkInt_jmhTest.java:71)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:527)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:504)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.file.NoSuchFileException: wasm-corpus/src/main/resources/compiled/iterfact.wat.wasm
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432)
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420)
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160)
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:265)
+	... 16 more
+
+
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkSievePrimes.benchmark
+# Parameters: (limit = 1000000, machineType = compiled, memoryType = ByteArrayMemory, numWorkers = 4)
+
+# Run progress: 40,00% complete, ETA 00:00:01
+# Fork: 1 of 1
+# Warmup Iteration   1: <failure>
+
+java.lang.ExceptionInInitializerError
+	at run.endive.bench.jmh_generated.BenchmarkSievePrimes_benchmark_jmhTest._jmh_tryInit_f_benchmarksieveprimes0_G(BenchmarkSievePrimes_benchmark_jmhTest.java:443)
+	at run.endive.bench.jmh_generated.BenchmarkSievePrimes_benchmark_jmhTest.benchmark_Throughput(BenchmarkSievePrimes_benchmark_jmhTest.java:71)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:527)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:504)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalArgumentException: Error opening file: wasm-corpus/src/main/resources/compiled/sieve-primes.rs.wasm
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:267)
+	at run.endive.wasm.Parser.parse(Parser.java:280)
+	at run.endive.wasm.Parser.parse(Parser.java:262)
+	at run.endive.wasm.Parser.parse(Parser.java:254)
+	at run.endive.bench.BenchmarkSievePrimes.<clinit>(BenchmarkSievePrimes.java:43)
+	... 12 more
+Caused by: java.nio.file.NoSuchFileException: wasm-corpus/src/main/resources/compiled/sieve-primes.rs.wasm
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432)
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420)
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160)
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:265)
+	... 16 more
+
+
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkSievePrimes.benchmark
+# Parameters: (limit = 1000000, machineType = compiled, memoryType = ByteBufferMemory, numWorkers = 4)
+
+# Run progress: 50,00% complete, ETA 00:00:01
+# Fork: 1 of 1
+# Warmup Iteration   1: <failure>
+
+java.lang.ExceptionInInitializerError
+	at run.endive.bench.jmh_generated.BenchmarkSievePrimes_benchmark_jmhTest._jmh_tryInit_f_benchmarksieveprimes0_G(BenchmarkSievePrimes_benchmark_jmhTest.java:443)
+	at run.endive.bench.jmh_generated.BenchmarkSievePrimes_benchmark_jmhTest.benchmark_Throughput(BenchmarkSievePrimes_benchmark_jmhTest.java:71)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:527)
+	at org.openjdk.jmh.runner.BenchmarkHandler$BenchmarkTask.call(BenchmarkHandler.java:504)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalArgumentException: Error opening file: wasm-corpus/src/main/resources/compiled/sieve-primes.rs.wasm
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:267)
+	at run.endive.wasm.Parser.parse(Parser.java:280)
+	at run.endive.wasm.Parser.parse(Parser.java:262)
+	at run.endive.wasm.Parser.parse(Parser.java:254)
+	at run.endive.bench.BenchmarkSievePrimes.<clinit>(BenchmarkSievePrimes.java:43)
+	... 12 more
+Caused by: java.nio.file.NoSuchFileException: wasm-corpus/src/main/resources/compiled/sieve-primes.rs.wasm
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432)
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420)
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160)
+	at run.endive.wasm.Parser.lambda$parse$2(Parser.java:265)
+	... 16 more
+
+
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 8 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: run.endive.bench.BenchmarkWat2Wasm.benchmarkAot
+
+# Run progress: 60,00% complete, ETA 00:00:00
+# Fork: 1 of 1
+# Warmup Iteration   1: 9,343 ops/s
+# Warmup Iteration   2: 15,126 ops/s
+# Warmup Iteration   3: 16,492 ops/s
+Iteration   1: 20,192 ops/s
+Iteration   2: 20,335 ops/s
+Iteration   3: 18,886 ops/s
+Iteration   4: 18,772 ops/s
+
+
+Result "run.endive.bench.BenchmarkWat2Wasm.benchmarkAot":
+  19,546 ±(99.9%) 5,373 ops/s [Average]
+  (min, avg, max) = (18,772, 19,546, 20,335), stdev = 0,831
+  CI (99.9%): [14,173, 24,919] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkDispatchChunkSize.dispatch
+# Parameters: (targetFunc = 0)
+
+# Run progress: 70,00% complete, ETA 00:00:08
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,007 us/op
+# Warmup Iteration   2: 0,007 us/op
+# Warmup Iteration   3: 0,007 us/op
+Iteration   1: 0,007 us/op
+Iteration   2: 0,007 us/op
+Iteration   3: 0,008 us/op
+Iteration   4: 0,008 us/op
+
+
+Result "run.endive.bench.BenchmarkDispatchChunkSize.dispatch":
+  0,007 ±(99.9%) 0,003 us/op [Average]
+  (min, avg, max) = (0,007, 0,007, 0,008), stdev = 0,001
+  CI (99.9%): [0,005, 0,010] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkDispatchChunkSize.dispatch
+# Parameters: (targetFunc = 999)
+
+# Run progress: 80,00% complete, ETA 00:00:09
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,008 us/op
+# Warmup Iteration   2: 0,007 us/op
+# Warmup Iteration   3: 0,008 us/op
+Iteration   1: 0,007 us/op
+Iteration   2: 0,007 us/op
+Iteration   3: 0,007 us/op
+Iteration   4: 0,007 us/op
+
+
+Result "run.endive.bench.BenchmarkDispatchChunkSize.dispatch":
+  0,007 ±(99.9%) 0,001 us/op [Average]
+  (min, avg, max) = (0,007, 0,007, 0,007), stdev = 0,001
+  CI (99.9%): [0,007, 0,008] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 3 iterations, 2 s each
+# Measurement: 4 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkDispatchChunkSize.dispatch
+# Parameters: (targetFunc = 1999)
+
+# Run progress: 90,00% complete, ETA 00:00:05
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,008 us/op
+# Warmup Iteration   2: 0,007 us/op
+# Warmup Iteration   3: 0,007 us/op
+Iteration   1: 0,007 us/op
+Iteration   2: 0,007 us/op
+Iteration   3: 0,007 us/op
+Iteration   4: 0,007 us/op
+
+
+Result "run.endive.bench.BenchmarkDispatchChunkSize.dispatch":
+  0,007 ±(99.9%) 0,001 us/op [Average]
+  (min, avg, max) = (0,007, 0,007, 0,007), stdev = 0,001
+  CI (99.9%): [0,006, 0,008] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:01:06
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                            (targetFunc)   Mode  Cnt   Score    Error  Units
+BenchmarkWat2Wasm.benchmarkAot                N/A  thrpt    4  19,546 ±  5,373  ops/s
+BenchmarkDispatchChunkSize.dispatch             0   avgt    4   0,007 ±  0,003  us/op
+BenchmarkDispatchChunkSize.dispatch           999   avgt    4   0,007 ±  0,001  us/op
+BenchmarkDispatchChunkSize.dispatch          1999   avgt    4   0,007 ±  0,001  us/op
+
+Benchmark result is saved to /tmp/claude-1000/-home-bernhard-Dokumente-MasterThesis-Endive-fork-endive/48f2fe1c-8467-524f-8bc4-774052b1761a/scratchpad/bench/results/jmh/run6-B.json
