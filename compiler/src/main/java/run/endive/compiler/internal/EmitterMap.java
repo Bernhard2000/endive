@@ -23,6 +23,7 @@ final class EmitterMap {
                 .intrinsic(CompilerOpCode.TRAP, Emitters::TRAP)
                 .intrinsic(CompilerOpCode.RETURN, Emitters::RETURN)
                 .intrinsic(CompilerOpCode.DROP, Emitters::DROP)
+                .intrinsic(CompilerOpCode.DUP, Emitters::DUP)
                 .intrinsic(CompilerOpCode.ELEM_DROP, Emitters::ELEM_DROP)
                 .intrinsic(CompilerOpCode.SELECT, Emitters::SELECT)
                 .intrinsic(CompilerOpCode.SELECT_COND, Emitters::SELECT_COND)
@@ -406,10 +407,7 @@ final class EmitterMap {
                 .intrinsic(CompilerOpCode.I31_GET_U, Emitters::I31_GET_U)
                 .intrinsic(CompilerOpCode.ANY_CONVERT_EXTERN, Emitters::ANY_CONVERT_EXTERN)
                 .intrinsic(CompilerOpCode.EXTERN_CONVERT_ANY, Emitters::EXTERN_CONVERT_ANY)
-                .intrinsic(CompilerOpCode.BR_ON_NULL_CHECK, Emitters::BR_ON_NULL_CHECK)
-                .intrinsic(CompilerOpCode.BR_ON_NON_NULL_CHECK, Emitters::BR_ON_NON_NULL_CHECK)
-                .intrinsic(CompilerOpCode.BR_ON_CAST_CHECK, Emitters::BR_ON_CAST_CHECK)
-                .intrinsic(CompilerOpCode.BR_ON_CAST_FAIL_CHECK, Emitters::BR_ON_CAST_FAIL_CHECK);
+                .intrinsic(CompilerOpCode.BR_ON_CAST_CHECK, Emitters::BR_ON_CAST_CHECK);
     }
 
     private EmitterMap() {}

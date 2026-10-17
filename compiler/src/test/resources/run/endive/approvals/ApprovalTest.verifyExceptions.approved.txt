@@ -105,8 +105,7 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
 
   public static func_1(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
     ILOAD 0
-    ICONST_0
-    IF_ICMPEQ L0
+    IFEQ L0
     ICONST_0
     NEWARRAY T_LONG
     ICONST_0

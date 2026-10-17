@@ -1,0 +1,2687 @@
+final class run/endive/$gen/CompiledMachineFuncGroup_0 {
+
+  public static func_0(Lrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    BIPUSH 42
+    IRETURN
+
+  public static call_0(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_0 (Lrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_1(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ILOAD 0
+    IFEQ L0
+    ILOAD 0
+    ISTORE 3
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    ILOAD 3
+    I2L
+    LASTORE
+    ACONST_NULL
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structNew ([J[Ljava/lang/Object;ILrun/endive/runtime/Instance;)Ljava/lang/Object;
+    GOTO L1
+   L0
+    ACONST_NULL
+   L1
+    ARETURN
+
+  public static call_1(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    POP
+    ICONST_1
+    NEWARRAY T_LONG
+    ARETURN
+
+  public static callWithRefs_1(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)Lrun/endive/runtime/CallResult;
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ASTORE 4
+    ACONST_NULL
+    ICONST_1
+    ANEWARRAY java/lang/Object
+    DUP
+    ICONST_0
+    ALOAD 4
+    AASTORE
+    INVOKESTATIC run/endive/runtime/CallResult.of ([J[Ljava/lang/Object;)Lrun/endive/runtime/CallResult;
+    ARETURN
+
+  public static func_2(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    IFEQ L0
+    ICONST_0
+    GOTO L1
+   L0
+    ICONST_M1
+   L1
+    IRETURN
+
+  public static call_2(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_3(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ILOAD 0
+    IFEQ L0
+    ILOAD 0
+    ISTORE 3
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    ILOAD 3
+    I2L
+    LASTORE
+    ACONST_NULL
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structNew ([J[Ljava/lang/Object;ILrun/endive/runtime/Instance;)Ljava/lang/Object;
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.externConvertAny (Ljava/lang/Object;)Ljava/lang/Object;
+    GOTO L1
+   L0
+    ACONST_NULL
+   L1
+    ARETURN
+
+  public static call_3(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    POP
+    ICONST_1
+    NEWARRAY T_LONG
+    ARETURN
+
+  public static callWithRefs_3(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)Lrun/endive/runtime/CallResult;
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ASTORE 4
+    ACONST_NULL
+    ICONST_1
+    ANEWARRAY java/lang/Object
+    DUP
+    ICONST_0
+    ALOAD 4
+    AASTORE
+    INVOKESTATIC run/endive/runtime/CallResult.of ([J[Ljava/lang/Object;)Lrun/endive/runtime/CallResult;
+    ARETURN
+
+  public static func_4(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ILOAD 0
+    IFNE L0
+    ACONST_NULL
+    GOTO L1
+   L0
+    ILOAD 0
+    ICONST_1
+    IF_ICMPNE L2
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.refI31 (I)Ljava/lang/Object;
+    GOTO L1
+   L2
+    ILOAD 0
+    ISTORE 3
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    ILOAD 3
+    I2L
+    LASTORE
+    ACONST_NULL
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structNew ([J[Ljava/lang/Object;ILrun/endive/runtime/Instance;)Ljava/lang/Object;
+   L1
+    ARETURN
+
+  public static call_4(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    POP
+    ICONST_1
+    NEWARRAY T_LONG
+    ARETURN
+
+  public static callWithRefs_4(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)Lrun/endive/runtime/CallResult;
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ASTORE 4
+    ACONST_NULL
+    ICONST_1
+    ANEWARRAY java/lang/Object
+    DUP
+    ICONST_0
+    ALOAD 4
+    AASTORE
+    INVOKESTATIC run/endive/runtime/CallResult.of ([J[Ljava/lang/Object;)Lrun/endive/runtime/CallResult;
+    ARETURN
+
+  public static func_5(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_5(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_5 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_6(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_6(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_6 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_7(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_7(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_7 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_8(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_8(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_8 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_9(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ICONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    SWAP
+   L0
+    POP
+    IRETURN
+
+  public static call_9(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_9 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_10(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    LCONST_1
+    LCONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    DUP2_X2
+    POP2
+   L0
+    POP2
+    L2I
+    IRETURN
+
+  public static call_10(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_10 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_11(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+
+  public static call_11(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_11 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_12(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L1
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_12(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_12 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_13(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_13(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_13 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_14(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    POP
+    ICONST_1
+    IRETURN
+   L1
+    ICONST_0
+    IRETURN
+
+  public static call_14(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_14 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_15(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+   L1
+    ICONST_M1
+    IRETURN
+
+  public static call_15(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_15 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_16(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_16(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_16 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_17(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L2
+    POP
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L2
+    POP
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_17(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_17 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_18(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    GOTO L1
+   L0
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_18(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_18 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_19(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    ASTORE 3
+    POP
+    ALOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_19(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_19 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_20(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPEQ L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_20(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_20 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_21(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPNE L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_21(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_21 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_22(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPNE L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_22(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_22 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_23(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPEQ L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_23(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_23 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_24(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ICONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPEQ L0
+    SWAP
+   L0
+    POP
+    IRETURN
+
+  public static call_24(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_24 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_25(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    LCONST_1
+    LCONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPEQ L0
+    DUP2_X2
+    POP2
+   L0
+    POP2
+    L2I
+    IRETURN
+
+  public static call_25(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_25 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_26(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isRefNull (I)Z
+    IRETURN
+
+  public static call_26(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_26 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_27(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPNE L1
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_27(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_27 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_28(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPNE L0
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_28(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_28 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_29(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    DUP
+    ICONST_M1
+    IF_ICMPNE L0
+    POP
+    GOTO L1
+   L0
+    POP
+    ICONST_1
+    IRETURN
+   L1
+    ICONST_0
+    IRETURN
+
+  public static call_29(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_29 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_30(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    DUP
+    ICONST_M1
+    IF_ICMPNE L0
+    POP
+    GOTO L1
+   L0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isRefNull (I)Z
+    IRETURN
+   L1
+    ICONST_M1
+    IRETURN
+
+  public static call_30(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_30 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_31(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    DUP
+    ICONST_M1
+    IF_ICMPNE L0
+    POP
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_31(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_31 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_32(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    DUP
+    ICONST_M1
+    IF_ICMPNE L2
+    POP
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L2
+    POP
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_32(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_32 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_33(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    DUP
+    ICONST_M1
+    IF_ICMPEQ L0
+    GOTO L1
+   L0
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_33(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_33 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_34(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    DUP
+    ICONST_M1
+    IF_ICMPEQ L0
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_34(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_34 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_35(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_35(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_35 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_36(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_36(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_36 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_37(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_37(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_37 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_38(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_38(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_38 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_39(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ICONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    SWAP
+   L0
+    POP
+    IRETURN
+
+  public static call_39(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_39 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_40(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    LCONST_1
+    LCONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    DUP2_X2
+    POP2
+   L0
+    POP2
+    L2I
+    IRETURN
+
+  public static call_40(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_40 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_41(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+
+  public static call_41(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_41 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_42(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L1
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_42(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_42 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_43(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_43(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_43 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_44(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    POP
+    ICONST_1
+    IRETURN
+   L1
+    ICONST_0
+    IRETURN
+
+  public static call_44(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_44 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_45(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+   L1
+    ICONST_M1
+    IRETURN
+
+  public static call_45(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_45 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_46(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_46(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_46 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_47(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L2
+    POP
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L2
+    POP
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_47(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_47 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_48(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    GOTO L1
+   L0
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_48(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_48 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_49(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_3 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    ASTORE 3
+    POP
+    ALOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_49(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_49 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_50(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_50(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_50 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_51(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    IRETURN
+   L0
+    ICONST_0
+    IRETURN
+
+  public static call_51(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_51 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_52(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_52(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_52 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_53(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_53(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_53 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_54(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ICONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    SWAP
+   L0
+    POP
+    IRETURN
+
+  public static call_54(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_54 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_55(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    LCONST_1
+    LCONST_0
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    DUP2_X2
+    POP2
+   L0
+    POP2
+    L2I
+    IRETURN
+
+  public static call_55(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_55 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_56(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+
+  public static call_56(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_56 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_57(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L1
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_57(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_57 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_58(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_58(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_58 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_59(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    POP
+    ICONST_1
+    IRETURN
+   L1
+    ICONST_0
+    IRETURN
+
+  public static call_59(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_59 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_60(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+   L1
+    ICONST_M1
+    IRETURN
+
+  public static call_60(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_60 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_61(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    BIPUSH 7
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    ISTORE 3
+    POP
+    ILOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    POP
+    ICONST_0
+   L1
+    IRETURN
+
+  public static call_61(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_61 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_62(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    ICONST_2
+    ILOAD 3
+    ISUB
+    IFEQ L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L2
+    POP
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L2
+    POP
+   L1
+    ILOAD 3
+    IRETURN
+
+  public static call_62(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_62 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_63(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    GOTO L1
+   L0
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_63(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_63 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_64(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    ASTORE 3
+    POP
+    ALOAD 3
+    GOTO L1
+   L0
+    POP
+    POP
+    ICONST_0
+    IRETURN
+   L1
+    POP
+    ICONST_1
+    IRETURN
+
+  public static call_64(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_64 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_65(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+    ICONST_0
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structGet (Ljava/lang/Object;IILrun/endive/runtime/Instance;)J
+    L2I
+    IRETURN
+   L1
+    ICONST_M1
+    IRETURN
+
+  public static call_65(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_65 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_66(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ACONST_NULL
+    ICONST_3
+    ISTORE 3
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    ILOAD 3
+    I2L
+    LASTORE
+    ACONST_NULL
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structNew ([J[Ljava/lang/Object;ILrun/endive/runtime/Instance;)Ljava/lang/Object;
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNULL L0
+    SWAP
+   L0
+    POP
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+
+  public static call_66(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_66 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_67(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    ICONST_0
+    ICONST_0
+    BIPUSH -18
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.heapTypeMatch (Ljava/lang/Object;ZIILrun/endive/runtime/Instance;)Z
+    IFEQ L0
+    GOTO L1
+   L0
+    POP
+    ICONST_M1
+    IRETURN
+   L1
+    ICONST_0
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structGet (Ljava/lang/Object;IILrun/endive/runtime/Instance;)J
+    L2I
+    IRETURN
+
+  public static call_67(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_67 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_68(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    ICONST_0
+    ICONST_0
+    BIPUSH -18
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.heapTypeMatch (Ljava/lang/Object;ZIILrun/endive/runtime/Instance;)Z
+    IFNE L0
+    GOTO L1
+   L0
+    ICONST_0
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structGet (Ljava/lang/Object;IILrun/endive/runtime/Instance;)J
+    L2I
+    IRETURN
+   L1
+    POP
+    ICONST_M1
+    IRETURN
+
+  public static call_68(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_68 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_69(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    ICONST_1
+    ICONST_0
+    BIPUSH -18
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.heapTypeMatch (Ljava/lang/Object;ZIILrun/endive/runtime/Instance;)Z
+    IFNE L0
+    GOTO L1
+   L0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    IRETURN
+   L1
+    POP
+    ICONST_M1
+    IRETURN
+
+  public static call_69(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_69 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_70(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    ICONST_0
+    BIPUSH -20
+    BIPUSH -18
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.heapTypeMatch (Ljava/lang/Object;ZIILrun/endive/runtime/Instance;)Z
+    IFNE L0
+    GOTO L1
+   L0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.i31GetS (Ljava/lang/Object;)I
+    IRETURN
+   L1
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.isGcRefNull (Ljava/lang/Object;)Z
+    BIPUSH -2
+    ISUB
+    IRETURN
+
+  public static call_70(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_70 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+
+  public static func_71(ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_0
+    ISTORE 3
+    ACONST_NULL
+   L0
+    ILOAD 3
+    ICONST_1
+    IADD
+    ISTORE 3
+    POP
+    ILOAD 3
+    ICONST_3
+    IF_ICMPGE L1
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    GOTO L2
+   L1
+    ILOAD 0
+    ISTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    ILOAD 4
+    I2L
+    LASTORE
+    ACONST_NULL
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structNew ([J[Ljava/lang/Object;ILrun/endive/runtime/Instance;)Ljava/lang/Object;
+   L2
+    DUP
+    ICONST_0
+    ICONST_0
+    BIPUSH -18
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.heapTypeMatch (Ljava/lang/Object;ZIILrun/endive/runtime/Instance;)Z
+    IFNE L3
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    GOTO L0
+   L3
+    POP
+    ILOAD 3
+    IRETURN
+
+  public static call_71(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
+    ALOAD 2
+    ICONST_0
+    LALOAD
+    L2I
+    ALOAD 1
+    ALOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_71 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    I2L
+    LSTORE 4
+    ICONST_1
+    NEWARRAY T_LONG
+    DUP
+    ICONST_0
+    LLOAD 4
+    LASTORE
+    ARETURN
+}
