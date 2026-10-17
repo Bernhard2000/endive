@@ -33,6 +33,11 @@ enum BranchCondition {
     I32_GT_S(Prefix.NONE, Opcodes.IF_ICMPGT),
     I32_LE_S(Prefix.NONE, Opcodes.IF_ICMPLE),
     I32_GE_S(Prefix.NONE, Opcodes.IF_ICMPGE),
+    // unsigned i32 comparisons, only fused when the compiler is told the code runs on Java 18+
+    I32_LT_U(Prefix.ICMP_UNSIGNED, Opcodes.IFLT),
+    I32_GT_U(Prefix.ICMP_UNSIGNED, Opcodes.IFGT),
+    I32_LE_U(Prefix.ICMP_UNSIGNED, Opcodes.IFLE),
+    I32_GE_U(Prefix.ICMP_UNSIGNED, Opcodes.IFGE),
     I64_EQZ(Prefix.LCMP_ZERO, Opcodes.IFEQ),
     I64_EQ(Prefix.LCMP, Opcodes.IFEQ),
     I64_NE(Prefix.LCMP, Opcodes.IFNE),
@@ -71,6 +76,8 @@ enum BranchCondition {
         LCMP,
         /** {@code Long.compareUnsigned(a, b)}, whose sign the jump then tests. */
         LCMP_UNSIGNED,
+        /** {@code Integer.compareUnsigned(a, b)}, whose sign the jump then tests. */
+        ICMP_UNSIGNED,
         FCMPL,
         FCMPG,
         DCMPL,
@@ -182,6 +189,26 @@ enum BranchCondition {
     }
 
     /**
+     * Returns the condition of an unsigned {@code i32} comparison. Fusing these is only safe when
+     * the generated code runs on Java 18 or later (see {@link #ofComparison}), so the caller
+     * decides whether to ask.
+     */
+    static Optional<BranchCondition> ofUnsignedI32Comparison(CompilerOpCode opcode) {
+        switch (opcode) {
+            case I32_LT_U:
+                return Optional.of(I32_LT_U);
+            case I32_GT_U:
+                return Optional.of(I32_GT_U);
+            case I32_LE_U:
+                return Optional.of(I32_LE_U);
+            case I32_GE_U:
+                return Optional.of(I32_GE_U);
+            default:
+                return Optional.empty();
+        }
+    }
+
+    /**
      * Emits a jump to {@code target} taken when this condition evaluates to {@code whenTrue}. The
      * operands of the condition are consumed from the stack on both paths.
      */
@@ -198,6 +225,9 @@ enum BranchCondition {
                 break;
             case LCMP_UNSIGNED:
                 asm.invokestatic("java/lang/Long", "compareUnsigned", "(JJ)I", false);
+                break;
+            case ICMP_UNSIGNED:
+                asm.invokestatic("java/lang/Integer", "compareUnsigned", "(II)I", false);
                 break;
             case FCMPL:
                 asm.cmpl(Type.FLOAT_TYPE);

@@ -10,7 +10,8 @@ import run.endive.wasm.Parser;
  * -Dcensus.out=<dir>/<module>/}. Copy into compiler/src/test/java/run/endive/compiler/internal/
  * and run with {@code -Dtest=CensusDumpTest -Dcensus.out=<dir>}; {@code -Dcensus.modules} takes a
  * comma-separated list of paths (relative to the repository root or absolute) instead of the
- * default corpus.
+ * default corpus. {@code -Dcensus.unsigned=true} and {@code -Dcensus.branchless=true} enable the
+ * opt-in lowerings.
  */
 public class CensusDumpTest {
     static final String[] MODULES = {
@@ -37,7 +38,12 @@ public class CensusDumpTest {
             var module = Parser.parse(Files.readAllBytes(file));
             var dir = out.resolve(file.getFileName().toString());
             Files.createDirectories(dir);
-            var result = Compiler.builder(module).build().compile();
+            var result =
+                    Compiler.builder(module)
+                            .withUnsignedCompareFusion(Boolean.getBoolean("census.unsigned"))
+                            .withBranchlessBooleans(Boolean.getBoolean("census.branchless"))
+                            .build()
+                            .compile();
             for (var e : result.classBytes().entrySet()) {
                 Files.write(dir.resolve(e.getKey().replace('/', '_') + ".class"), e.getValue());
             }

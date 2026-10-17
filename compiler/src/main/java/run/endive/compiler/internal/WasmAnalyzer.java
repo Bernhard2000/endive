@@ -58,6 +58,8 @@ final class WasmAnalyzer {
     }
 
     private final WasmModule module;
+    private final boolean unsignedCompareFusion;
+    private final boolean branchlessBooleans;
     private final List<ValType> globalTypes;
     private final List<FunctionType> functionTypes;
     private final List<ValType> tableTypes;
@@ -66,6 +68,13 @@ final class WasmAnalyzer {
     private final boolean hasTailCalls;
 
     public WasmAnalyzer(WasmModule module) {
+        this(module, false, false);
+    }
+
+    public WasmAnalyzer(
+            WasmModule module, boolean unsignedCompareFusion, boolean branchlessBooleans) {
+        this.unsignedCompareFusion = unsignedCompareFusion;
+        this.branchlessBooleans = branchlessBooleans;
         this.module = module;
         this.globalTypes = getGlobalTypes(module);
         this.functionTypes = getFunctionTypes(module);
@@ -804,7 +813,10 @@ final class WasmAnalyzer {
         result.addAll(0, tryCatchBlockInstructions);
 
         result = NarrowingPeephole.apply(result);
-        result = fuseBranchConditions(result, module.typeSection());
+        result = fuseBranchConditions(result, module.typeSection(), unsignedCompareFusion);
+        if (branchlessBooleans) {
+            result = branchlessBooleans(result);
+        }
 
         return new AnalysisResult(
                 result, computeMaxTempSlots(result, EmitterMap.TEMP_SLOT_CALCULATORS));
@@ -828,6 +840,16 @@ final class WasmAnalyzer {
      */
     static List<CompilerInstruction> fuseBranchConditions(
             List<CompilerInstruction> in, TypeSection typeSection) {
+        return fuseBranchConditions(in, typeSection, false);
+    }
+
+    /**
+     * As {@link #fuseBranchConditions(List, TypeSection)}; with {@code unsignedCompareFusion},
+     * unsigned {@code i32} comparisons are fused as well (see {@link
+     * BranchCondition#ofComparison} for why that is only safe on Java 18 and later).
+     */
+    static List<CompilerInstruction> fuseBranchConditions(
+            List<CompilerInstruction> in, TypeSection typeSection, boolean unsignedCompareFusion) {
         List<CompilerInstruction> out = new ArrayList<>(in.size());
         for (var ins : in) {
             var opcode = ins.opcode();
@@ -855,7 +877,8 @@ final class WasmAnalyzer {
                 whenTrue = !whenTrue;
                 fused = true;
             }
-            var condition = out.isEmpty() ? null : takeCondition(out, typeSection);
+            var condition =
+                    out.isEmpty() ? null : takeCondition(out, typeSection, unsignedCompareFusion);
             if (condition != null) {
                 fused = true;
             } else {
@@ -901,7 +924,7 @@ final class WasmAnalyzer {
      * </ul>
      */
     private static BranchCondition takeCondition(
-            List<CompilerInstruction> out, TypeSection typeSection) {
+            List<CompilerInstruction> out, TypeSection typeSection, boolean unsignedCompareFusion) {
         var producer = last(out);
         if (producer.opcode() == CompilerOpCode.REF_IS_NULL) {
             out.remove(out.size() - 1);
@@ -926,11 +949,27 @@ final class WasmAnalyzer {
         }
 
         var comparison = BranchCondition.ofComparison(producer.opcode());
+        if (comparison.isEmpty() && unsignedCompareFusion) {
+            comparison = BranchCondition.ofUnsignedI32Comparison(producer.opcode());
+        }
         if (comparison.isPresent()) {
             out.remove(out.size() - 1);
             return comparison.get();
         }
         return null;
+    }
+
+    /**
+     * Replaces {@code eqz}, {@code eq} and {@code ne} whose result was not fused into a branch by
+     * a branchless, call-free computation ({@link CompilerOpCode#BRANCHLESS_BOOL}).
+     */
+    static List<CompilerInstruction> branchlessBooleans(List<CompilerInstruction> in) {
+        List<CompilerInstruction> out = new ArrayList<>(in.size());
+        for (var ins : in) {
+            int kind = Emitters.branchlessBoolKind(ins.opcode());
+            out.add(kind < 0 ? ins : new CompilerInstruction(CompilerOpCode.BRANCHLESS_BOOL, kind));
+        }
+        return out;
     }
 
     /**

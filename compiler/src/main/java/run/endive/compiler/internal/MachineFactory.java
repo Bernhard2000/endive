@@ -21,6 +21,8 @@ public final class MachineFactory implements Function<Instance, Machine>, Compil
         var compiler =
                 Compiler.builder(module)
                         .withClassCollectorFactory(ClassLoadingCollector::new)
+                        .withUnsignedCompareFusion(Compiler.runtimeUnsignedCompareFusion())
+                        .withBranchlessBooleans(Compiler.runtimeBranchlessBooleans())
                         .build();
         var result = compiler.compile();
         var collector = (ClassLoadingCollector) result.collector();

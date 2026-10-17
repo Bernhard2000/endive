@@ -95,6 +95,10 @@ public final class MachineFactoryCompiler {
         private final WasmModule module;
         private final run.endive.compiler.internal.Compiler.Builder compilerBuilder;
         private Cache cache;
+        private boolean unsignedCompareFusion =
+                run.endive.compiler.internal.Compiler.runtimeUnsignedCompareFusion();
+        private boolean branchlessBooleans =
+                run.endive.compiler.internal.Compiler.runtimeBranchlessBooleans();
 
         private Builder(WasmModule module) {
             this.module = module;
@@ -130,6 +134,22 @@ public final class MachineFactoryCompiler {
             return this;
         }
 
+        /**
+         * Fuses unsigned {@code i32} comparisons into the branches consuming them. By default on
+         * when the running JVM is not affected by JDK-8376400 (Java 18 and later); override with {@code
+         * -Dendive.compiler.unsignedCompareFusion}.
+         */
+        public Builder withUnsignedCompareFusion(boolean unsignedCompareFusion) {
+            this.unsignedCompareFusion = unsignedCompareFusion;
+            return this;
+        }
+
+        /** Computes unfused eqz/eq/ne results without a helper call. Off by default. */
+        public Builder withBranchlessBooleans(boolean branchlessBooleans) {
+            this.branchlessBooleans = branchlessBooleans;
+            return this;
+        }
+
         public Builder withCache(Cache cache) {
             this.cache = cache;
             return this;
@@ -154,8 +174,13 @@ public final class MachineFactoryCompiler {
 
                 // Can we load the byte codes from the cache?
                 var useCache = cache != null && module.digest() != null;
+                // the options change the generated code, so they are part of the key
+                var cacheKey =
+                        module.digest()
+                                + (unsignedCompareFusion ? "+ucf" : "")
+                                + (branchlessBooleans ? "+bb" : "");
                 if (useCache) {
-                    byte[] cachedData = cache.get(module.digest());
+                    byte[] cachedData = cache.get(cacheKey);
                     if (cachedData != null) {
                         return machineFactory(loadCompilerResult(cachedData), strip);
                     }
@@ -165,12 +190,14 @@ public final class MachineFactoryCompiler {
                 var result =
                         compilerBuilder
                                 .withClassCollectorFactory(ClassLoadingCollector::new)
+                                .withUnsignedCompareFusion(unsignedCompareFusion)
+                                .withBranchlessBooleans(branchlessBooleans)
                                 .build()
                                 .compile();
 
                 if (useCache) {
                     // store results in the cache to speed the next time.
-                    cache.putIfAbsent(module.digest(), storeCompilerResult(result));
+                    cache.putIfAbsent(cacheKey, storeCompilerResult(result));
                 }
 
                 return machineFactory(result, strip);

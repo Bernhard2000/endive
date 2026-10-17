@@ -21,6 +21,8 @@ enum CompilerOpCode {
     DUP,
     // ref.eq where one operand cannot be an i31ref, so identity is equality
     REF_EQ_FUSABLE,
+    // eqz/eq/ne computed without a call or branch: [kind, see Emitters.branchlessBoolKind]
+    BRANCHLESS_BOOL,
     RETURN(OpCode.RETURN),
     CALL(OpCode.CALL),
     CALL_INDIRECT(OpCode.CALL_INDIRECT),

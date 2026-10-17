@@ -57,6 +57,11 @@ public final class Config {
      */
     private final List<String> redlineTargets;
 
+    /**
+     * fuse unsigned i32 comparisons into branches; the generated classes then need Java 18+
+     */
+    private final boolean unsignedCompareFusion;
+
     private Config(
             Path wasmFile,
             String name,
@@ -67,7 +72,8 @@ public final class Config {
             Set<Integer> interpretedFunctions,
             String methodPrefixer,
             String moduleInterface,
-            List<String> redlineTargets) {
+            List<String> redlineTargets,
+            boolean unsignedCompareFusion) {
         this.wasmFile = wasmFile;
         this.name = name;
         this.targetClassFolder = targetClassFolder;
@@ -78,6 +84,11 @@ public final class Config {
         this.methodPrefixer = methodPrefixer;
         this.moduleInterface = moduleInterface;
         this.redlineTargets = redlineTargets;
+        this.unsignedCompareFusion = unsignedCompareFusion;
+    }
+
+    public boolean unsignedCompareFusion() {
+        return unsignedCompareFusion;
     }
 
     public Path wasmFile() {
@@ -155,6 +166,7 @@ public final class Config {
         private String methodPrefixer;
         private String moduleInterface;
         private List<String> redlineTargets = List.of();
+        private boolean unsignedCompareFusion;
 
         private Builder() {}
 
@@ -208,6 +220,16 @@ public final class Config {
             return this;
         }
 
+        /**
+         * Fuses unsigned {@code i32} comparisons into the branches consuming them. The generated
+         * classes must then only run on Java 18 or later: C2 on Java 11 to 17 can miscompile the
+         * {@code Integer.compareUnsigned} pattern (JDK-8376400). Off by default.
+         */
+        public Builder withUnsignedCompareFusion(boolean unsignedCompareFusion) {
+            this.unsignedCompareFusion = unsignedCompareFusion;
+            return this;
+        }
+
         public Config build() {
             return new Config(
                     wasmFile,
@@ -219,7 +241,8 @@ public final class Config {
                     interpretedFunctions,
                     methodPrefixer,
                     moduleInterface,
-                    redlineTargets);
+                    redlineTargets,
+                    unsignedCompareFusion);
         }
     }
 }

@@ -102,6 +102,14 @@ public class EndiveCompilerGenMojo extends AbstractMojo {
     List<String> redlineTargetsExperimental;
 
     /**
+     * Fuse unsigned i32 comparisons into the branches consuming them. Only enable this when the
+     * generated classes will run on Java 18 or later: on Java 11 to 17, C2 can miscompile the
+     * {@code Integer.compareUnsigned} pattern this emits (JDK-8376400).
+     */
+    @Parameter(required = false, defaultValue = "false")
+    boolean unsignedCompareFusion;
+
+    /**
      * The current Maven project.
      */
     @Parameter(property = "project", required = true, readonly = true)
@@ -121,7 +129,8 @@ public class EndiveCompilerGenMojo extends AbstractMojo {
                         .withInterpreterFallback(interpreterFallback)
                         .withInterpretedFunctions(interpretedFunctions)
                         .withMethodPrefixer(methodPrefixer)
-                        .withModuleInterface(moduleInterface);
+                        .withModuleInterface(moduleInterface)
+                        .withUnsignedCompareFusion(unsignedCompareFusion);
         if (redlineTargetsExperimental != null && !redlineTargetsExperimental.isEmpty()) {
             configBuilder.withRedlineTargets(redlineTargetsExperimental);
         } else if (redlineExperimental) {

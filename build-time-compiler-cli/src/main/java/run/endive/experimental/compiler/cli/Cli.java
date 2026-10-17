@@ -88,6 +88,15 @@ public class Cli implements Runnable {
                             + " _ModuleImports wrappers")
     String moduleInterface;
 
+    @CommandLine.Option(
+            order = 9,
+            names = "--unsigned-compare-fusion",
+            description =
+                    "Fuse unsigned i32 comparisons into branches. The generated classes then need"
+                            + " Java 18 or later (JDK-8376400 on Java 11 to 17)",
+            defaultValue = "false")
+    boolean unsignedCompareFusion;
+
     @Override
     public void run() {
         var config =
@@ -101,6 +110,7 @@ public class Cli implements Runnable {
                         .withInterpretedFunctions(interpretedFunctions)
                         .withMethodPrefixer(methodPrefixer)
                         .withModuleInterface(moduleInterface)
+                        .withUnsignedCompareFusion(unsignedCompareFusion)
                         .build();
 
         var generator = new Generator(config);
