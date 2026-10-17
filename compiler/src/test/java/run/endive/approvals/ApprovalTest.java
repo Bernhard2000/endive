@@ -121,6 +121,11 @@ public class ApprovalTest {
     }
 
     @Test
+    public void verifyRefConditions() {
+        verifyGeneratedBytecode("ref_conditions.wat.wasm", (name) -> !name.contains("FuncGroup"));
+    }
+
+    @Test
     public void functions10() {
         var module = parse(CorpusResources.getResource("compiled/functions_10.wat.wasm"));
         var result = Compiler.builder(module).withMaxFunctionsPerClass(5).build().compile();

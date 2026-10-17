@@ -34,6 +34,7 @@ import run.endive.wasm.types.Instruction;
 import run.endive.wasm.types.OpCode;
 import run.endive.wasm.types.Table;
 import run.endive.wasm.types.TableImport;
+import run.endive.wasm.types.TypeSection;
 import run.endive.wasm.types.ValType;
 
 final class WasmAnalyzer {
@@ -542,14 +543,12 @@ final class WasmAnalyzer {
                         var ref = stack.peek();
                         stack.pop(ref);
 
-                        // BR_ON_NULL_CHECK: DUPs ref, pushes 1 if null, 0 if not null
-                        // JVM stack after check: [ref, 0_or_1]
-                        result.add(
-                                new CompilerInstruction(CompilerOpCode.BR_ON_NULL_CHECK, ref.id()));
-
-                        // IFEQ: pops boolean; if 0 (not null) -> jump to notNullLabel
-                        // JVM stack after IFEQ: [ref]
+                        // DUP the ref and test the copy: if not null -> jump to notNullLabel.
+                        // fuseBranchConditions turns REF_IS_NULL + IFEQ into one IFNONNULL.
+                        // JVM stack after the jump: [ref]
                         var notNullLabel = nextLabel++;
+                        result.add(new CompilerInstruction(CompilerOpCode.DUP, ref.id()));
+                        result.add(new CompilerInstruction(CompilerOpCode.REF_IS_NULL, ref.id()));
                         result.add(new CompilerInstruction(CompilerOpCode.IFEQ, notNullLabel));
 
                         // null path: drop the DUP'd ref, then branch
@@ -572,15 +571,12 @@ final class WasmAnalyzer {
                         var ref = stack.peek();
                         stack.pop(ref);
 
-                        // BR_ON_NON_NULL_CHECK: DUPs ref, pushes 1 if non-null, 0 if null
-                        // JVM stack after check: [ref, 0_or_1]
-                        result.add(
-                                new CompilerInstruction(
-                                        CompilerOpCode.BR_ON_NON_NULL_CHECK, ref.id()));
-
-                        // IFEQ: if 0 (null) -> jump to nullLabel
+                        // DUP the ref and test the copy: if null -> jump to nullLabel.
+                        // fuseBranchConditions turns REF_IS_NULL + IFNE into one IFNULL.
                         var nullLabel = nextLabel++;
-                        result.add(new CompilerInstruction(CompilerOpCode.IFEQ, nullLabel));
+                        result.add(new CompilerInstruction(CompilerOpCode.DUP, ref.id()));
+                        result.add(new CompilerInstruction(CompilerOpCode.REF_IS_NULL, ref.id()));
+                        result.add(new CompilerInstruction(CompilerOpCode.IFNE, nullLabel));
 
                         // non-null path: ref is on JVM stack from DUP, branch with it
                         stack.push(ref);
@@ -670,19 +666,19 @@ final class WasmAnalyzer {
                                                 : (null1 ? ValType.ID.RefNull : ValType.ID.Ref),
                                         ht1);
 
-                        // BR_ON_CAST_FAIL_CHECK: DUPs ref, tests, pushes 1 if NOT matching
+                        // BR_ON_CAST_CHECK: DUPs ref, tests cast, pushes 1 if matches
                         // JVM stack after check: [ref, 0_or_1]
                         var sourceHeapType = ins.operandCount() > 4 ? (int) ins.operand(4) : ht1;
                         result.add(
                                 new CompilerInstruction(
-                                        CompilerOpCode.BR_ON_CAST_FAIL_CHECK,
+                                        CompilerOpCode.BR_ON_CAST_CHECK,
                                         null2 ? 1L : 0L,
                                         ht2,
                                         sourceHeapType));
 
-                        // IFEQ: if 0 (matches) -> jump to matchLabel (fall-through)
+                        // IFNE: if 1 (matches) -> jump to matchLabel (fall-through)
                         var matchLabel = nextLabel++;
-                        result.add(new CompilerInstruction(CompilerOpCode.IFEQ, matchLabel));
+                        result.add(new CompilerInstruction(CompilerOpCode.IFNE, matchLabel));
 
                         // no match path: ref is on JVM stack from DUP, branch with diffType
                         stack.push(diffType);
@@ -797,7 +793,7 @@ final class WasmAnalyzer {
         reverse(tryCatchBlockInstructions);
         result.addAll(0, tryCatchBlockInstructions);
 
-        result = fuseBranchConditions(result);
+        result = fuseBranchConditions(result, module.typeSection());
 
         return new AnalysisResult(
                 result, computeMaxTempSlots(result, EmitterMap.TEMP_SLOT_CALCULATORS));
@@ -811,14 +807,16 @@ final class WasmAnalyzer {
      * against zero again. When the comparison directly precedes its consumer, this rewrites the
      * pair into a single {@link CompilerOpCode#COND_JUMP} or {@link CompilerOpCode#SELECT_COND},
      * which the JVM tests natively ({@code if_icmp<cond>}, {@code lcmp}/{@code fcmp<op>} +
-     * {@code if<cond>}). Any number of {@code i32.eqz} between the two is absorbed by negating the
-     * jump.
+     * {@code if<cond>}, {@code ifnull}). Any number of {@code i32.eqz} between the two, or of
+     * {@code i64.eqz} applied to an extended {@code i32}, is absorbed by negating the jump. See
+     * {@link #takeCondition} for the producers recognized.
      *
      * <p>Only adjacent instructions are fused. Jump targets are explicit {@link
      * CompilerOpCode#LABEL} instructions, so adjacency guarantees that no control flow enters
      * between the comparison and its consumer.
      */
-    static List<CompilerInstruction> fuseBranchConditions(List<CompilerInstruction> in) {
+    static List<CompilerInstruction> fuseBranchConditions(
+            List<CompilerInstruction> in, TypeSection typeSection) {
         List<CompilerInstruction> out = new ArrayList<>(in.size());
         for (var ins : in) {
             var opcode = ins.opcode();
@@ -830,24 +828,27 @@ final class WasmAnalyzer {
             }
 
             // IFEQ jumps when its operand is zero; IFNE and SELECT's "keep first" when non-zero
-            var condition = BranchCondition.I32_NEZ;
             boolean whenTrue = opcode != CompilerOpCode.IFEQ;
             boolean fused = false;
             while (!out.isEmpty()) {
-                var prev = out.get(out.size() - 1).opcode();
-                if (prev == CompilerOpCode.I32_EQZ) {
+                if (last(out).opcode() == CompilerOpCode.I32_EQZ) {
                     out.remove(out.size() - 1);
-                    whenTrue = !whenTrue;
-                    fused = true;
-                    continue;
-                }
-                var comparison = BranchCondition.ofComparison(prev);
-                if (comparison.isPresent()) {
+                } else if (isExtendedEqz(out)) {
+                    // i64.eqz of an extended i32 is i32.eqz of the i32 itself. Go stores
+                    // booleans as i64 and negates them this way: (i64.eqz (i64.extend_i32_u b))
                     out.remove(out.size() - 1);
-                    condition = comparison.get();
-                    fused = true;
+                    out.remove(out.size() - 1);
+                } else {
+                    break;
                 }
-                break;
+                whenTrue = !whenTrue;
+                fused = true;
+            }
+            var condition = out.isEmpty() ? null : takeCondition(out, typeSection);
+            if (condition != null) {
+                fused = true;
+            } else {
+                condition = BranchCondition.I32_NEZ;
             }
 
             if (!fused) {
@@ -869,6 +870,169 @@ final class WasmAnalyzer {
             }
         }
         return out;
+    }
+
+    /**
+     * If the end of {@code out} computes a condition that a jump can test directly, removes it
+     * and returns that condition, possibly leaving cheaper instructions computing its operand in
+     * its place. Returns null, leaving {@code out} unchanged, otherwise. Recognized:
+     *
+     * <ul>
+     *   <li>signed {@code i32}, {@code i64} and floating point comparisons, and unsigned {@code
+     *       i64} comparisons ({@link BranchCondition#ofComparison});
+     *   <li>{@code i32} comparisons against a constant that make them a test against zero: signed
+     *       comparisons with 0, 1 or -1 ({@code x < 1} is {@code x <= 0}), and unsigned ones whose
+     *       bound is a power of two, which become a shift ({@code x <u 256} is {@code (x >>> 8)
+     *       == 0}). No bias by {@code MIN_VALUE} is involved, so this is safe on all JDKs (see
+     *       {@link BranchCondition#ofComparison});
+     *   <li>{@code ref.is_null}, as {@code ifnull}, or a compare with the null {@code int} for
+     *       references represented as {@code int}.
+     * </ul>
+     */
+    private static BranchCondition takeCondition(
+            List<CompilerInstruction> out, TypeSection typeSection) {
+        var producer = last(out);
+        if (producer.opcode() == CompilerOpCode.REF_IS_NULL) {
+            out.remove(out.size() - 1);
+            return ValType.isObjectRef(producer.operand(0), typeSection)
+                    ? BranchCondition.REF_IS_NULL
+                    : BranchCondition.INT_REF_IS_NULL;
+        }
+
+        // the right operand, when it is a constant pushed just before the comparison
+        var rhs = out.size() >= 2 ? out.get(out.size() - 2) : null;
+        if (rhs != null && rhs.opcode() == CompilerOpCode.I32_CONST) {
+            var zeroTest = i32ZeroTest(producer.opcode(), (int) rhs.operand(0));
+            if (zeroTest != null) {
+                out.remove(out.size() - 1);
+                out.remove(out.size() - 1);
+                return zeroTest;
+            }
+            var shiftTest = i32UnsignedShiftTest(producer.opcode(), (int) rhs.operand(0), out);
+            if (shiftTest != null) {
+                return shiftTest;
+            }
+        }
+
+        var comparison = BranchCondition.ofComparison(producer.opcode());
+        if (comparison.isPresent()) {
+            out.remove(out.size() - 1);
+            return comparison.get();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the test against zero equivalent to the {@code i32} comparison {@code x <op> rhs},
+     * or null if there is none.
+     */
+    private static BranchCondition i32ZeroTest(CompilerOpCode op, int rhs) {
+        switch (rhs) {
+            case 0:
+                switch (op) {
+                    case I32_EQ:
+                    case I32_LE_U:
+                        return BranchCondition.I32_EQZ;
+                    case I32_NE:
+                    case I32_GT_U:
+                        return BranchCondition.I32_NEZ;
+                    case I32_LT_S:
+                        return BranchCondition.I32_LTZ;
+                    case I32_GT_S:
+                        return BranchCondition.I32_GTZ;
+                    case I32_LE_S:
+                        return BranchCondition.I32_LEZ;
+                    case I32_GE_S:
+                        return BranchCondition.I32_GEZ;
+                    default:
+                        return null;
+                }
+            case 1:
+                switch (op) {
+                    case I32_LT_S:
+                        return BranchCondition.I32_LEZ;
+                    case I32_GE_S:
+                        return BranchCondition.I32_GTZ;
+                    case I32_LT_U:
+                        return BranchCondition.I32_EQZ;
+                    case I32_GE_U:
+                        return BranchCondition.I32_NEZ;
+                    default:
+                        return null;
+                }
+            case -1:
+                switch (op) {
+                    case I32_GT_S:
+                        return BranchCondition.I32_GEZ;
+                    case I32_LE_S:
+                        return BranchCondition.I32_LTZ;
+                    default:
+                        return null;
+                }
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Rewrites an unsigned {@code i32} comparison against a constant power-of-two bound {@code
+     * 2^k} into a test of {@code x >>> k} against zero: {@code x <u 2^k} and {@code x <=u 2^k - 1}
+     * hold exactly when no bit at or above {@code k} is set. The comparison and its constant are
+     * replaced by the shift in {@code out}; for {@code k == 31} the shift is dropped in favor of a
+     * sign test. Returns null, leaving {@code out} unchanged, if the comparison has no such form.
+     */
+    private static BranchCondition i32UnsignedShiftTest(
+            CompilerOpCode op, int rhs, List<CompilerInstruction> out) {
+        int bound;
+        boolean below;
+        switch (op) {
+            case I32_LT_U:
+                bound = rhs;
+                below = true;
+                break;
+            case I32_GE_U:
+                bound = rhs;
+                below = false;
+                break;
+            case I32_LE_U:
+                bound = rhs + 1;
+                below = true;
+                break;
+            case I32_GT_U:
+                bound = rhs + 1;
+                below = false;
+                break;
+            default:
+                return null;
+        }
+        // bound 0 (x <u 0, x >u -1, ...) is a constant condition: rare, left alone
+        if (Integer.bitCount(bound) != 1) {
+            return null;
+        }
+        int shift = Integer.numberOfTrailingZeros(bound);
+        out.remove(out.size() - 1);
+        out.remove(out.size() - 1);
+        if (shift == 31) {
+            return below ? BranchCondition.I32_GEZ : BranchCondition.I32_LTZ;
+        }
+        if (shift > 0) {
+            out.add(new CompilerInstruction(CompilerOpCode.I32_CONST, shift));
+            out.add(new CompilerInstruction(CompilerOpCode.I32_SHR_U));
+        }
+        return below ? BranchCondition.I32_EQZ : BranchCondition.I32_NEZ;
+    }
+
+    private static boolean isExtendedEqz(List<CompilerInstruction> out) {
+        if (out.size() < 2 || last(out).opcode() != CompilerOpCode.I64_EQZ) {
+            return false;
+        }
+        var extend = out.get(out.size() - 2).opcode();
+        return extend == CompilerOpCode.I64_EXTEND_I32_U
+                || extend == CompilerOpCode.I64_EXTEND_I32_S;
+    }
+
+    private static CompilerInstruction last(List<CompilerInstruction> list) {
+        return list.get(list.size() - 1);
     }
 
     private int computeMaxTempSlots(

@@ -205,6 +205,14 @@ final class Emitters {
         emitPop(asm, valType(ins.operand(0), ctx));
     }
 
+    public static void DUP(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        if (slotCount(valType(ins.operand(0), ctx)) == 1) {
+            asm.dup();
+        } else {
+            asm.dup2();
+        }
+    }
+
     public static void ELEM_DROP(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
         int index = (int) ins.operand(0);
         asm.load(ctx.instanceSlot(), OBJECT_TYPE);
@@ -2225,46 +2233,6 @@ final class Emitters {
         emitInvokeStatic(asm, ShadedRefs.EXTERN_CONVERT_ANY);
     }
 
-    public static void BR_ON_NULL_CHECK(
-            Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
-        var type = valType(ins.operand(0), ctx);
-        boolean isGcRef = type.isObjectRef();
-        asm.dup();
-        var isNull = new Label();
-        var end = new Label();
-        if (isGcRef) {
-            asm.ifnull(isNull);
-        } else {
-            asm.iconst(REF_NULL_VALUE);
-            asm.ificmpeq(isNull);
-        }
-        asm.iconst(0); // not null
-        asm.goTo(end);
-        asm.mark(isNull);
-        asm.iconst(1); // is null
-        asm.mark(end);
-    }
-
-    public static void BR_ON_NON_NULL_CHECK(
-            Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
-        var type = valType(ins.operand(0), ctx);
-        boolean isGcRef = type.isObjectRef();
-        asm.dup();
-        var isNull = new Label();
-        var end = new Label();
-        if (isGcRef) {
-            asm.ifnull(isNull);
-        } else {
-            asm.iconst(REF_NULL_VALUE);
-            asm.ificmpeq(isNull);
-        }
-        asm.iconst(1); // non-null
-        asm.goTo(end);
-        asm.mark(isNull);
-        asm.iconst(0); // is null
-        asm.mark(end);
-    }
-
     public static void BR_ON_CAST_CHECK(
             Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
         // operands: [nullable(bool), heapType, srcHeapType]
@@ -2281,31 +2249,5 @@ final class Emitters {
         emitInvokeStatic(
                 asm, isGcRef ? ShadedRefs.HEAP_TYPE_MATCH : ShadedRefs.HEAP_TYPE_MATCH_INT);
         // result: boolean on stack (1 if matches, 0 if not)
-    }
-
-    public static void BR_ON_CAST_FAIL_CHECK(
-            Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
-        // Same as BR_ON_CAST_CHECK but inverted: branch if NOT matching
-        boolean nullable = ins.operand(0) != 0;
-        int heapType = (int) ins.operand(1);
-        int srcHeapType = (int) ins.operand(2);
-        boolean isGcRef = isSourceGcRef(srcHeapType, ctx);
-        // stack: [ref]
-        asm.dup();
-        asm.iconst(nullable ? 1 : 0);
-        asm.iconst(heapType);
-        asm.iconst(srcHeapType);
-        asm.load(ctx.instanceSlot(), OBJECT_TYPE);
-        emitInvokeStatic(
-                asm, isGcRef ? ShadedRefs.HEAP_TYPE_MATCH : ShadedRefs.HEAP_TYPE_MATCH_INT);
-        // invert: 1 if NOT matching (branch), 0 if matching (don't branch)
-        var wasTrue = new Label();
-        var end = new Label();
-        asm.ifne(wasTrue);
-        asm.iconst(1); // didn't match -> branch
-        asm.goTo(end);
-        asm.mark(wasTrue);
-        asm.iconst(0); // matched -> don't branch
-        asm.mark(end);
     }
 }

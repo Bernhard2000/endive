@@ -5,53 +5,84 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+import run.endive.wasm.types.Value;
 
 /**
  * A condition that a conditional jump can test directly, without first materializing a 0/1
  * {@code i32} through a helper call.
  *
- * <p>Each condition is lowered to an optional compare prefix ({@code lcmp}, {@code fcmpl}, ...)
+ * <p>Each condition is lowered to an optional {@link Prefix} ({@code lcmp}, {@code fcmpl}, ...)
  * followed by one JVM conditional jump. The jump opcodes come in complementary pairs (EQ/NE,
- * LT/GE, GT/LE), so a condition can be tested for both outcomes. For floating point, the prefix
- * is chosen so that a NaN operand makes the condition false (the {@code g} variant for LT/LE, the
- * {@code l} variant for GT/GE), which is what Wasm requires. Jumping on the negated outcome then
- * also takes the NaN case correctly.
+ * LT/GE, GT/LE, NULL/NONNULL), so a condition can be tested for both outcomes. For floating
+ * point, the prefix is chosen so that a NaN operand makes the condition false (the {@code g}
+ * variant for LT/LE, the {@code l} variant for GT/GE), which is what Wasm requires. Jumping on the
+ * negated outcome then also takes the NaN case correctly.
  */
 enum BranchCondition {
     /** {@code x != 0}: the implicit condition of {@code if}, {@code br_if} and {@code select}. */
-    I32_NEZ(Opcodes.NOP, Opcodes.IFNE),
-    I32_EQ(Opcodes.NOP, Opcodes.IF_ICMPEQ),
-    I32_NE(Opcodes.NOP, Opcodes.IF_ICMPNE),
-    I32_LT_S(Opcodes.NOP, Opcodes.IF_ICMPLT),
-    I32_GT_S(Opcodes.NOP, Opcodes.IF_ICMPGT),
-    I32_LE_S(Opcodes.NOP, Opcodes.IF_ICMPLE),
-    I32_GE_S(Opcodes.NOP, Opcodes.IF_ICMPGE),
-    I64_EQZ(Opcodes.LCONST_0, Opcodes.IFEQ),
-    I64_EQ(Opcodes.LCMP, Opcodes.IFEQ),
-    I64_NE(Opcodes.LCMP, Opcodes.IFNE),
-    I64_LT_S(Opcodes.LCMP, Opcodes.IFLT),
-    I64_GT_S(Opcodes.LCMP, Opcodes.IFGT),
-    I64_LE_S(Opcodes.LCMP, Opcodes.IFLE),
-    I64_GE_S(Opcodes.LCMP, Opcodes.IFGE),
-    F32_EQ(Opcodes.FCMPL, Opcodes.IFEQ),
-    F32_NE(Opcodes.FCMPL, Opcodes.IFNE),
-    F32_LT(Opcodes.FCMPG, Opcodes.IFLT),
-    F32_GT(Opcodes.FCMPL, Opcodes.IFGT),
-    F32_LE(Opcodes.FCMPG, Opcodes.IFLE),
-    F32_GE(Opcodes.FCMPL, Opcodes.IFGE),
-    F64_EQ(Opcodes.DCMPL, Opcodes.IFEQ),
-    F64_NE(Opcodes.DCMPL, Opcodes.IFNE),
-    F64_LT(Opcodes.DCMPG, Opcodes.IFLT),
-    F64_GT(Opcodes.DCMPL, Opcodes.IFGT),
-    F64_LE(Opcodes.DCMPG, Opcodes.IFLE),
-    F64_GE(Opcodes.DCMPL, Opcodes.IFGE);
+    I32_NEZ(Prefix.NONE, Opcodes.IFNE),
+    // comparisons of an i32 against zero, produced from comparisons with a constant operand
+    I32_EQZ(Prefix.NONE, Opcodes.IFEQ),
+    I32_LTZ(Prefix.NONE, Opcodes.IFLT),
+    I32_GTZ(Prefix.NONE, Opcodes.IFGT),
+    I32_LEZ(Prefix.NONE, Opcodes.IFLE),
+    I32_GEZ(Prefix.NONE, Opcodes.IFGE),
+    I32_EQ(Prefix.NONE, Opcodes.IF_ICMPEQ),
+    I32_NE(Prefix.NONE, Opcodes.IF_ICMPNE),
+    I32_LT_S(Prefix.NONE, Opcodes.IF_ICMPLT),
+    I32_GT_S(Prefix.NONE, Opcodes.IF_ICMPGT),
+    I32_LE_S(Prefix.NONE, Opcodes.IF_ICMPLE),
+    I32_GE_S(Prefix.NONE, Opcodes.IF_ICMPGE),
+    I64_EQZ(Prefix.LCMP_ZERO, Opcodes.IFEQ),
+    I64_EQ(Prefix.LCMP, Opcodes.IFEQ),
+    I64_NE(Prefix.LCMP, Opcodes.IFNE),
+    I64_LT_S(Prefix.LCMP, Opcodes.IFLT),
+    I64_GT_S(Prefix.LCMP, Opcodes.IFGT),
+    I64_LE_S(Prefix.LCMP, Opcodes.IFLE),
+    I64_GE_S(Prefix.LCMP, Opcodes.IFGE),
+    I64_LT_U(Prefix.LCMP_UNSIGNED, Opcodes.IFLT),
+    I64_GT_U(Prefix.LCMP_UNSIGNED, Opcodes.IFGT),
+    I64_LE_U(Prefix.LCMP_UNSIGNED, Opcodes.IFLE),
+    I64_GE_U(Prefix.LCMP_UNSIGNED, Opcodes.IFGE),
+    F32_EQ(Prefix.FCMPL, Opcodes.IFEQ),
+    F32_NE(Prefix.FCMPL, Opcodes.IFNE),
+    F32_LT(Prefix.FCMPG, Opcodes.IFLT),
+    F32_GT(Prefix.FCMPL, Opcodes.IFGT),
+    F32_LE(Prefix.FCMPG, Opcodes.IFLE),
+    F32_GE(Prefix.FCMPL, Opcodes.IFGE),
+    F64_EQ(Prefix.DCMPL, Opcodes.IFEQ),
+    F64_NE(Prefix.DCMPL, Opcodes.IFNE),
+    F64_LT(Prefix.DCMPG, Opcodes.IFLT),
+    F64_GT(Prefix.DCMPL, Opcodes.IFGT),
+    F64_LE(Prefix.DCMPG, Opcodes.IFLE),
+    F64_GE(Prefix.DCMPL, Opcodes.IFGE),
+    /** {@code ref.is_null} on a reference represented as a JVM object. */
+    REF_IS_NULL(Prefix.NONE, Opcodes.IFNULL),
+    /** {@code ref.is_null} on a reference represented as an {@code int} ({@code funcref}). */
+    INT_REF_IS_NULL(Prefix.REF_NULL_VALUE, Opcodes.IF_ICMPEQ);
+
+    /** What is emitted before the jump to turn the operands into the value it tests. */
+    private enum Prefix {
+        NONE,
+        /** {@code lconst_0; lcmp}: compares an i64 against zero. */
+        LCMP_ZERO,
+        LCMP,
+        /** {@code Long.compareUnsigned(a, b)}, whose sign the jump then tests. */
+        LCMP_UNSIGNED,
+        FCMPL,
+        FCMPG,
+        DCMPL,
+        DCMPG,
+        /** pushes the {@code int} encoding of a null reference. */
+        REF_NULL_VALUE
+    }
 
     private static final BranchCondition[] VALUES = values();
 
-    private final int prefix;
+    private final Prefix prefix;
     private final int jumpIfTrue;
 
-    BranchCondition(int prefix, int jumpIfTrue) {
+    BranchCondition(Prefix prefix, int jumpIfTrue) {
         this.prefix = prefix;
         this.jumpIfTrue = jumpIfTrue;
     }
@@ -68,9 +99,18 @@ enum BranchCondition {
 
     /**
      * Returns the condition computed by a comparison instruction whose 0/1 result can be fused
-     * into the jump consuming it. Unsigned comparisons are not fused: without a JVM unsigned
-     * compare they would still need a helper call, so fusing saves nothing. {@code i32.eqz} is
-     * not listed: it is absorbed by negating the jump instead.
+     * into the jump consuming it. {@code i32.eqz} is not listed: it is absorbed by negating the
+     * jump instead.
+     *
+     * <p>Unsigned {@code i32} comparisons are deliberately absent. The JVM has no unsigned
+     * {@code int} compare, and the usual replacements ({@code Integer.compareUnsigned}, or biasing
+     * both operands by {@code MIN_VALUE} before a signed compare) produce the signed compares on
+     * biased operands that trigger a C2 miscompilation on JDK 11 to 17 (the {@code
+     * fold_compares} bug {@code MemCopyWorkaround} guards {@code I32_GE_U} and {@code I32_LT_U}
+     * against). Those comparisons keep their helper call, unless a constant operand allows a
+     * rewrite that needs no bias (see {@code WasmAnalyzer.fuseBranchConditions}). The {@code i64}
+     * forms are fused through {@code Long.compareUnsigned}: {@code fold_compares} only merges
+     * {@code int} compares ({@code IfNode::cmpi_folds}), so they are not exposed.
      */
     static Optional<BranchCondition> ofComparison(CompilerOpCode opcode) {
         switch (opcode) {
@@ -100,6 +140,14 @@ enum BranchCondition {
                 return Optional.of(I64_LE_S);
             case I64_GE_S:
                 return Optional.of(I64_GE_S);
+            case I64_LT_U:
+                return Optional.of(I64_LT_U);
+            case I64_GT_U:
+                return Optional.of(I64_GT_U);
+            case I64_LE_U:
+                return Optional.of(I64_LE_U);
+            case I64_GE_U:
+                return Optional.of(I64_GE_U);
             case F32_EQ:
                 return Optional.of(F32_EQ);
             case F32_NE:
@@ -135,37 +183,53 @@ enum BranchCondition {
      */
     void emitJump(InstructionAdapter asm, Label target, boolean whenTrue) {
         switch (prefix) {
-            case Opcodes.NOP:
+            case NONE:
                 break;
-            case Opcodes.LCONST_0:
+            case LCMP_ZERO:
                 asm.lconst(0);
                 asm.lcmp();
                 break;
-            case Opcodes.LCMP:
+            case LCMP:
                 asm.lcmp();
                 break;
-            case Opcodes.FCMPL:
+            case LCMP_UNSIGNED:
+                asm.invokestatic("java/lang/Long", "compareUnsigned", "(JJ)I", false);
+                break;
+            case FCMPL:
                 asm.cmpl(Type.FLOAT_TYPE);
                 break;
-            case Opcodes.FCMPG:
+            case FCMPG:
                 asm.cmpg(Type.FLOAT_TYPE);
                 break;
-            case Opcodes.DCMPL:
+            case DCMPL:
                 asm.cmpl(Type.DOUBLE_TYPE);
                 break;
-            case Opcodes.DCMPG:
+            case DCMPG:
                 asm.cmpg(Type.DOUBLE_TYPE);
                 break;
-            default:
-                throw new IllegalStateException("Unexpected prefix: " + prefix);
+            case REF_NULL_VALUE:
+                asm.iconst(Value.REF_NULL_VALUE);
+                break;
         }
         asm.visitJumpInsn(whenTrue ? jumpIfTrue : negate(jumpIfTrue), target);
     }
 
-    // IFEQ..IFLE and IF_ICMPEQ..IF_ICMPLE are laid out as EQ, NE, LT, GE, GT, LE,
-    // so each opcode's complement differs from it only in the lowest bit of the offset.
-    private static int negate(int jump) {
-        int base = jump >= Opcodes.IF_ICMPEQ ? Opcodes.IF_ICMPEQ : Opcodes.IFEQ;
+    // IFEQ..IFLE and IF_ICMPEQ..IF_ICMPLE are laid out as EQ, NE, LT, GE, GT, LE, and
+    // IFNULL is followed by IFNONNULL, so each opcode's complement differs from it only in the
+    // lowest bit of the offset.
+    static int negate(int jump) {
+        int base;
+        if (jump >= Opcodes.IFNULL) {
+            base = Opcodes.IFNULL;
+        } else if (jump >= Opcodes.IF_ICMPEQ) {
+            base = Opcodes.IF_ICMPEQ;
+        } else {
+            base = Opcodes.IFEQ;
+        }
         return base + ((jump - base) ^ 1);
+    }
+
+    int jumpIfTrue() {
+        return jumpIfTrue;
     }
 }
