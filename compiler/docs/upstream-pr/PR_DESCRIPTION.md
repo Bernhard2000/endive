@@ -118,12 +118,15 @@ workflow on this PR will likely report "no change".
   jump), `verifyRefConditions` added.
 - Locally on JDK 21: `compiler`, `compiler-tests` (34,120 spec tests through the compiler,
   including all `SpecV1Gc*`), `machine-tests` and `wabt` pass. On Temurin 17.0.20.1,
-  `compiler`, `wabt` (wat2wasm compiled by Endive) and `machine-tests` pass.
+  `compiler`, `wabt` (wat2wasm compiled by Endive) and `machine-tests` pass. On Temurin
+  11.0.32.1, `compiler` (48), `wabt` (6), `compiler-tests` (34,110) and `machine-tests` (228)
+  pass.
 
 ## AI assistance
 
-<!-- Bytecode Alliance AI Tool Use Policy: keep, adjust or remove as appropriate — see TODO.md -->
+<!-- Bytecode Alliance AI Tool Use Policy: disclosure is optional, tools must not be listed as
+co-authors. Rewrite this section yourself; see OPEN_PRS.md "Before opening" for the trailers. -->
 This change was developed with the help of Claude Code (Anthropic). I reviewed the code,
-tests and measurements, and the commits carry `Co-Authored-By` trailers.
+tests and measurements; the commits carry `Assisted-by: Claude Code` trailers.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
