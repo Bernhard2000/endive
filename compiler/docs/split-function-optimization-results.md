@@ -80,7 +80,10 @@ original table encoding. [Baseline raw results](data/split-function-optimization
   byte for byte.
 
 The full upstream dependency reactor stopped while rebuilding bundled `wasm-tools`, whose
-function 4725 exceeds the JVM method-size limit. Compiler/JMH module checks use the already
+function 4725 exceeds the JVM method-size limit (2026-10-17: caused by a stale
+`wasm-tools.wasm` download, not by the compiler; see
+[branch-condition-fusion-extensions.md §11](branch-condition-fusion-extensions.md#11-incidental-findings)).
+Compiler/JMH module checks use the already
 available dependencies. Specification checks use the existing generated inputs, compiled
 afresh against this compiler; they do not claim fresh generation of the entire specification
 suite.

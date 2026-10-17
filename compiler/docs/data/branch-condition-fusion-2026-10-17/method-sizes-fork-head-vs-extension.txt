@@ -1,0 +1,16 @@
+basic.dotnet.wasm                        | out-head: func=  1513254 huge= 14 | out-new: func=  1511113 huge= 14 (-0.14%)
+   largest shrink: [(-83, 'func_5043', 10273, 10190), (-52, 'func_4541', 20263, 20211)]  grew: []
+code.wasm                                | out-head: func=    22653 huge=  0 | out-new: func=    22548 huge=  0 (-0.46%)
+   largest shrink: [(-17, 'func_29', 4928, 4911), (-9, 'func_30', 693, 684)]  grew: [(1, 'func_87', 3, 4)]
+gc.wat.wasm                              | out-head: func=       55 huge=  0 | out-new: func=       55 huge=  0 (+0.00%)
+   largest shrink: [(0, 'func_0', 28, 28), (0, 'func_1', 9, 9)]  grew: []
+greet-wasi.rs.wasm                       | out-head: func=    76681 huge=  0 | out-new: func=    76418 huge=  0 (-0.34%)
+   largest shrink: [(-21, 'func_177', 5545, 5524), (-19, 'func_198', 1112, 1093)]  grew: []
+javy-demo.js.javy.wasm                   | out-head: func=   964244 huge= 11 | out-new: func=   961586 huge= 11 (-0.28%)
+   largest shrink: [(-190, 'func_11', 31512, 31322), (-142, 'func_14', 13146, 13004)]  grew: []
+main.go.wasm                             | out-head: func=  1679624 huge= 12 | out-new: func=  1679620 huge= 12 (-0.00%)
+   largest shrink: [(-4, 'func_78', 245, 241), (0, 'func_0', 12, 12)]  grew: []
+quickjs-provider.javy-dynamic.wasm       | out-head: func=  1029515 huge= 10 | out-new: func=  1026534 huge= 10 (-0.29%)
+   largest shrink: [(-132, 'func_889', 11737, 11605), (-124, 'func_875', 7806, 7682)]  grew: []
+ref_conditions.wat.wasm                  | out-head: func=     2027 huge=  0 | out-new: func=     1704 huge=  0 (-15.93%)
+   largest shrink: [(-8, 'func_14', 30, 22), (-8, 'func_15', 31, 23)]  grew: []

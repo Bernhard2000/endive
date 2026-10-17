@@ -1,0 +1,16 @@
+basic.dotnet.wasm                        | out-up: func=  1569334 huge= 15 | out-pr1: func=  1514110 huge= 14 (-3.52%) | out-pr: func=  1511973 huge= 14 (-3.66%)
+   largest shrink: [(-1253, 'func_1400', 34532, 33279), (-1033, 'func_4488', 50446, 49413)]  grew: []
+code.wasm                                | out-up: func=    23338 huge=  0 | out-pr1: func=    22789 huge=  0 (-2.35%) | out-pr: func=    22684 huge=  0 (-2.80%)
+   largest shrink: [(-96, 'func_29', 5007, 4911), (-67, 'func_105', 1125, 1058)]  grew: [(1, 'func_87', 3, 4)]
+gc.wat.wasm                              | out-up: func=       55 huge=  0 | out-pr1: func=       55 huge=  0 (+0.00%) | out-pr: func=       55 huge=  0 (+0.00%)
+   largest shrink: [(0, 'func_0', 28, 28), (0, 'func_1', 9, 9)]  grew: []
+greet-wasi.rs.wasm                       | out-up: func=    78820 huge=  0 | out-pr1: func=    76817 huge=  0 (-2.54%) | out-pr: func=    76554 huge=  0 (-2.87%)
+   largest shrink: [(-195, 'func_177', 5719, 5524), (-105, 'func_180', 1821, 1716)]  grew: []
+javy-demo.js.javy.wasm                   | out-up: func=  1008574 huge= 12 | out-pr1: func=   971448 huge= 11 (-3.68%) | out-pr: func=   968790 huge= 11 (-3.94%)
+   largest shrink: [(-1943, 'func_10', 55767, 53824), (-1632, 'func_11', 34474, 32842)]  grew: []
+main.go.wasm                             | out-up: func=  1706688 huge= 13 | out-pr1: func=  1679624 huge= 12 (-1.59%) | out-pr: func=  1671946 huge= 12 (-2.04%)
+   largest shrink: [(-724, 'func_1387', 32814, 32090), (-437, 'func_1290', 14567, 14130)]  grew: []
+quickjs-provider.javy-dynamic.wasm       | out-up: func=  1076795 huge= 13 | out-pr1: func=  1036979 huge= 10 (-3.70%) | out-pr: func=  1033998 huge= 10 (-3.97%)
+   largest shrink: [(-1673, 'func_626', 48464, 46791), (-853, 'func_1125', 17062, 16209)]  grew: []
+ref_conditions.wat.wasm                  | out-up: func=     2060 huge=  0 | out-pr1: func=     2027 huge=  0 (-1.60%) | out-pr: func=     1704 huge=  0 (-17.28%)
+   largest shrink: [(-11, 'func_71', 75, 64), (-8, 'func_14', 30, 22)]  grew: []

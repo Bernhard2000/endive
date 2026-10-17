@@ -1,0 +1,230 @@
+### i32_lt_s_c0_br_if
+    ILOAD 0
+    IFLT L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 1
+    MAXLOCALS = 3
+
+### i32_lt_s_c1_br_if
+    ILOAD 0
+    IFLE L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 1
+    MAXLOCALS = 3
+
+### i32_lt_u_c256_br_if
+    ILOAD 0
+    BIPUSH 8
+    IUSHR
+    IFEQ L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 2
+    MAXLOCALS = 3
+
+### i32_gt_u_c255_if_eqz
+    ILOAD 0
+    BIPUSH 8
+    IUSHR
+    IFNE L0
+    ICONST_1
+    GOTO L1
+   L0
+   FRAME SAME
+    ICONST_0
+   L1
+   FRAME SAME1 I
+    IRETURN
+    MAXSTACK = 2
+    MAXLOCALS = 3
+
+### i32_lt_u_cmin_br_if
+    ILOAD 0
+    IFGE L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 1
+    MAXLOCALS = 3
+
+### i32_gt_u_c0_select
+    ICONST_1
+    ICONST_0
+    ILOAD 0
+    IFNE L0
+    SWAP
+   L0
+   FRAME FULL [I run/endive/runtime/Memory run/endive/runtime/Instance] [I I]
+    POP
+    IRETURN
+    MAXSTACK = 3
+    MAXLOCALS = 3
+
+### i32_lt_u_c7_br_if
+    ILOAD 0
+    BIPUSH 7
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.i32_lt_u (II)I
+    IFNE L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 2
+    MAXLOCALS = 3
+
+### i64_lt_u_br_if
+    LLOAD 0
+    LLOAD 2
+    INVOKESTATIC java/lang/Long.compareUnsigned (JJ)I
+    IFLT L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 4
+    MAXLOCALS = 6
+
+### i64_extend_u_eqz_br_if
+    LLOAD 0
+    LCONST_0
+    LCMP
+    IFNE L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 4
+    MAXLOCALS = 6
+
+### struct_is_null_if
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    IFNONNULL L0
+    ICONST_1
+    GOTO L1
+   L0
+   FRAME SAME
+    ICONST_0
+   L1
+   FRAME SAME1 I
+    IRETURN
+    MAXSTACK = 3
+    MAXLOCALS = 3
+
+### func_is_null_br_if
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_2 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)I
+    ICONST_M1
+    IF_ICMPEQ L0
+    ICONST_1
+    IRETURN
+   L0
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 3
+    MAXLOCALS = 3
+
+### struct_br_on_null
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNONNULL L0
+    POP
+    GOTO L1
+   L0
+   FRAME SAME1 java/lang/Object
+    POP
+    ICONST_1
+    IRETURN
+   L1
+   FRAME SAME
+    ICONST_0
+    IRETURN
+    MAXSTACK = 3
+    MAXLOCALS = 3
+
+### struct_br_on_non_null
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_1 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    IFNULL L0
+    GOTO L1
+   L0
+   FRAME SAME1 java/lang/Object
+    POP
+    ICONST_0
+    IRETURN
+   L1
+   FRAME SAME1 java/lang/Object
+    POP
+    ICONST_1
+    IRETURN
+    MAXSTACK = 3
+    MAXLOCALS = 3
+
+### any_br_on_cast_fail
+    ILOAD 0
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.checkInterruption ()V
+    ALOAD 1
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineFuncGroup_0.func_4 (ILrun/endive/runtime/Memory;Lrun/endive/runtime/Instance;)Ljava/lang/Object;
+    DUP
+    ICONST_0
+    ICONST_0
+    BIPUSH -18
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.heapTypeMatch (Ljava/lang/Object;ZIILrun/endive/runtime/Instance;)Z
+    IFNE L0
+    GOTO L1
+   L0
+   FRAME SAME1 java/lang/Object
+    ICONST_0
+    ICONST_0
+    ALOAD 2
+    INVOKESTATIC run/endive/$gen/CompiledMachineShaded.structGet (Ljava/lang/Object;IILrun/endive/runtime/Instance;)J
+    L2I
+    IRETURN
+   L1
+   FRAME SAME1 java/lang/Object
+    POP
+    ICONST_M1
+    IRETURN
+    MAXSTACK = 6
+    MAXLOCALS = 3
+
