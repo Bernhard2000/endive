@@ -1,0 +1,313 @@
+# Endive fork: implementation plan for the remaining improvements
+
+Status: 2026-10-17, branch `fuse-branch-conditions` at `e533eb13`. This plan covers what is
+left after the branch-condition fusion work. That work is summarized in
+[FORK_CHANGES.md](FORK_CHANGES.md), with details in
+[compiler/docs/branch-condition-fusion-extensions.md](compiler/docs/branch-condition-fusion-extensions.md)
+and [compiler/docs/branch-condition-fusion-benchmarks.md](compiler/docs/branch-condition-fusion-benchmarks.md).
+
+The phases are ordered by risk to the thesis, then by value. Phase 0 must happen first,
+because it protects measurements already in progress.
+
+| Phase | Goal | Effort | Blocks |
+| --- | --- | --- | --- |
+| 0 | Keep fork builds out of thesis measurements; secure local work | 0.5 day | everything else |
+| 1 | Make the splitter's size model and the thesis numbers consistent with the Endive actually measured | 3–5 days | thesis claims about the jvm metric |
+| 2 | Upstream PRs, in order of value and ease | 1–2 days of prep, then review latency | — |
+| 3 | Further compiler performance | 1–2 weeks total, each item independent | 3.4 needs maintainer agreement |
+| 4 | Upstream build sharp edges | 0.5 day | — |
+
+---
+
+## Phase 0: hygiene (do now)
+
+### 0.1 `~/.m2` holds fork snapshots; the thesis harness would use them silently
+
+**Problem.** The fork and the thesis' vendored Endive
+(`gitlab/experimental/endive/`) both install as `run.endive:*:999-SNAPSHOT`. Since
+2026-10-17 11:19, `~/.m2` holds fork builds (runtime 11:19, compiler 14:22).
+`endive-benchmark/bench_lib.sh` `ensure_endive` only checks that
+`runtime-999-SNAPSHOT.jar` and `wasi-999-SNAPSHOT.jar` exist in `~/.m2`, plus the vendored
+compiler jar in `endive/compiler/target/`. `ensure_classpath` then resolves `run.endive`
+from `~/.m2`. **The next thesis benchmark would run on the fork's runtime, and possibly a
+mixed fork/vendored classpath, without any warning.** `size_calculator` (`wasm-jvm-size`)
+has the same exposure: its shaded jar was last built 2026-10-16 20:03, so it is still
+clean, but its next rebuild would embed the fork.
+
+**Steps.**
+1. Before the next thesis run, restore the vendored snapshot:
+   `FORCE_ENDIVE_INSTALL=1 source endive-benchmark/bench_lib.sh && ensure_endive`. Record in
+   the run log which Endive tree is installed.
+2. Separate the two permanently. Pick one:
+   - **(preferred)** build the fork with its own local repository:
+     `./mvnw -Dmaven.repo.local=$HOME/.m2/repository-endive-fork ...`. Put it in a small
+     wrapper script (`scripts/mvn-fork.sh`) so it cannot be forgotten;
+   - or give the fork a distinct version (`versions:set -DnewVersion=999-fork-SNAPSHOT`,
+     never committed upstream). This is more invasive.
+3. Harden `ensure_endive` in the thesis repo. Stamp the installed tree: write the source
+   tree's path and commit into a marker file next to the jars at install time, and refuse
+   (or reinstall) when the marker does not match `ENDIVE_DIR`. Add the stamped commit to the
+   L1 `BENCH_CONFIG`/env JSON so every results file names its engine.
+4. Check whether any thesis artifact was produced between 2026-10-17 11:19 and the restore.
+   The split preparation for the runtime benchmarks used only the 2026-10-16 oracle jar and
+   `wasm-opt`, so it is unaffected. Nothing else ran in that window, as far as this session
+   knows.
+
+**Done when** `ensure_endive` cannot silently run against a foreign Endive, and every
+results JSON names the Endive commit it ran on.
+
+### 0.2 Secure the work
+
+1. Push the fork branch and the PR branch to the fork (`origin`). Unpushed: `5a02a7dd`,
+   `bc021732`, `e533eb13`, and `pr/fuse-branch-conditions` (`e4105edf`, `3ba75b28`).
+2. Split `fuse-branch-conditions` into topic branches that match the planned upstream PRs
+   (§2): `fix/many-params-abi` (exists, `9e257558`), `fix/wide-multivalue-return`,
+   `perf/switch-encoding`, `pr/fuse-branch-conditions` (exists). Keep
+   `fuse-branch-conditions` as the integration branch that the thesis builds from.
+3. Copy the benchmark scratch inputs that are worth keeping (the `splits/` modules) into the
+   thesis repo's results area, or regenerate them from the recorded recipe. They currently
+   live only in a session scratch directory.
+
+---
+
+## Phase 1: thesis consistency
+
+### 1.1 Decide which Endive the thesis measures
+
+The split-vs-base results so far were measured on the vendored, essentially unmodified
+Endive. The fork changes what an Endive method costs:
+
+- fusion makes methods 2–4 % smaller and removes most comparison helper calls;
+- the switch encoding made one CPython function 27 % smaller;
+- the runtime measured a 4–10 % effect on compiled hot code.
+
+**Decision to make:**
+
+- **A. Thesis on upstream/vendored Endive** (recommended for the main results). The
+  engine under test stays a released, unmodified one, and the fork is an "engine-side
+  complement" chapter with its own A/B evidence. Then only 1.4 and a short section are
+  needed.
+- **B. Thesis on the fork.** All headline results have to be re-measured, and the size
+  model re-derived (1.2–1.3) before any split artifact is rebuilt.
+
+Record the decision in the thesis repo's `docs/CLAIMS.md`, and pin the engine commit in
+every claim row.
+
+### 1.2 Rebuild the exact size oracle against the fork (needed for B, useful for A)
+
+1. Build `size_calculator` against the fork in an isolated repository (0.1). Name the output
+   `wasm-jvm-size-fork` so it cannot be confused with the vendored oracle.
+2. Run both oracles over the 57-module size corpus. Record per-function deltas and the change
+   in functions over 8 kB and over 64 kB. Expectation: most comparison-heavy functions shrink
+   by about 3 bytes per fused site.
+3. Store the result as a report (`docs/reports/…_FORK_ORACLE_DELTA.md`) with sha256s of both
+   jars.
+
+### 1.3 Derive a fork size model (needed for B)
+
+The seed model is derived, not fitted (`tools/derive_endive_seed_model.py`). It prices every
+comparison in `CMP` and `eqz` as a helper `invokestatic` (3 bytes), and prices branches
+separately through context rules. On the fork:
+
+1. Add a context rule `condition_fusion` with three cases:
+   - a comparison directly consumed by `if`/`br_if`/`select` costs its compare prefix only
+     (`lcmp`/`fcmp*`: 1 byte; `i32`: 0 bytes) instead of 3;
+   - `i32.eqz` chains in that position cost 0;
+   - the constant-operand rewrites apply: zero tests drop the constant, a power-of-two
+     unsigned bound becomes `bipush k; iushr`, unsigned `i64` becomes
+     `invokestatic Long.compareUnsigned`, `ref.is_null` costs 0 or 1, and `br_on_null` saves
+     its 0/1 diamond.
+
+   This needs the operand vocabulary to know the *consumer* of a comparison. Check whether
+   `--size-features` already emits parent/consumer context. If it does not, add a
+   `consumed_by_branch` feature to the vocabulary writer.
+2. Replace the `--switch-padding 2` tableswitch pricing with the fork's
+   `SwitchEmitter` choice: the smaller of `tableswitch` and `lookupswitch`, with default-only
+   tables collapsing to a jump.
+3. Generate `endive-fork-seed-v1.json` (new file, never edit v14 in place). Check it with
+   `tools/size_model_check.py` and `tools/size_model_fidelity.py` against the fork oracle
+   from 1.2. The target is the same envelope as v14 (largest under-prediction ≤ 0.5 %).
+4. Do not change the `wasm-opt` default. Select the model per run with
+   `function-splitting-jvm-size-model@…`.
+
+**Done when** the fork model's corpus fidelity matches v14's against the fork oracle, and
+the report states it.
+
+### 1.4 Re-measure the fusion A/B on a fixed runner
+
+1. Port `engine_ab.sh`/`campaign.sh` from
+   `compiler/docs/data/branch-condition-fusion-2026-10-17/runtime-benchmarks/` into the thesis
+   repo as a CI job (manual trigger) on kent-yuria1–3.
+2. Arms: upstream main against the fork integration branch, each built in isolation
+   (worktree + `target/` jars, as in the local run). Add a third arm, *fusion-only*
+   (`e4105edf`), to separate the original pass from the extensions.
+3. Workloads: Lua, SQLite and QuickJS, each base and 8 kB split, plus Python (8 kB split) and
+   binjgb. Use 15 rounds for all except the expensive unsplit QuickJS (8–10).
+4. Add a JDK 17 matrix leg (Temurin 17), since that is the range where C2 behaves
+   differently around compares.
+5. Write the results into `docs/CLAIMS.md` with the runner, governor and engine commits.
+
+**Done when** each claim cites a fixed-runner result and states whether it holds on JDK 17.
+
+---
+
+## Phase 2: upstream PRs
+
+General preparation for every PR: rebase on the current `upstream/main`, build with
+`-Dquickly -am`, then run `compiler`, `compiler-tests`, `machine-tests` and `wabt`
+(see `compiler/docs/upstream-pr/TODO.md` for the local traps). Disclose AI assistance per
+the Bytecode Alliance AI Tool Use Policy, and keep thesis docs out of PR diffs.
+
+| # | PR | Source | Value | Effort | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 2.1 | Large-parameter ABI repair | `fix/many-params-abi` `9e257558` / `b4d973e1` | correctness: silent wrong results, verifier failures | low | Easiest to justify. State the threshold move 253 → 251 explicitly. Tests: `ManyParamsAbiTest`. |
+| 2.2 | `MemCopyWorkaround` property NPE | new | bug: `-Dendive.memCopyWorkaround=true` throws an NPE on JDK 18+ | trivial | The static initializer must honour the same property as `Shaded` (`MemCopyWorkaround.java:44`). Add a test that forces the property on JDK 21. |
+| 2.3 | Extend the workaround to `I32_GT_U`/`I32_LE_U` | new | robustness: same vulnerable `Integer.compareUnsigned` pattern as the protected opcodes | trivial | `EmitterMap.java:233/235` → `.intrinsic` through `Shaded`. Optional: needs a JDK 11/17 reproduction to be convincing. Mention it in the PR, or fold it into 2.2. |
+| 2.4 | Branch-condition fusion | `pr/fuse-branch-conditions` | performance (§8 of the extensions doc, benchmarks doc) | low | Follow `compiler/docs/upstream-pr/TODO.md`. Consider splitting it into two PRs. |
+| 2.5 | Wide multivalue return packing | from `82f39301` | correctness: valid modules fail with `bad parameter count` | low | Extract into its own branch with its test from `SplitFunctionOptimizationTest`. |
+| 2.6 | Compact `br_table` encoding (`SwitchEmitter`) | from `82f39301` | size and dispatch speed (27 % smaller method, 136 → 31 ns/op in the synthetic case) | medium | Needs a clean benchmark story, and the out-of-range semantics argued carefully. Last, after trust is built. |
+| 2.7 | Shared LEB128 reader | `fix/leb128-spec-reader` `59392150` | maintainability | low | Only if maintainers want it; there is no performance claim. |
+
+---
+
+## Phase 3: further compiler performance
+
+Each item: a design note in `compiler/docs/`, tests in the style of `BranchConditionTest`
+(differential interpreter-vs-compiler plus structural), a static census before and after
+(`FusionDumpTest` + `method_sizes.py` + `helper_calls.sh`), and an engine A/B with the
+runtime harness.
+
+### 3.1 Intrinsify trivial `.shared` helpers
+
+**Why.** Many `EmitterMap` entries are `.shared(..., OpcodeImpl.class)` calls to one-line
+methods. They cost 3 bytes and one call each, are paid in full in the interpreter and in
+large methods, and consume C2 inlining budget. `I64_EXTEND_I32_U` alone has 16,615 call
+sites in `main.go.wasm`.
+
+**Steps.**
+1. Census: count call sites per `OpcodeImpl` helper in the five corpus modules (extend
+   `helper_calls.sh` to all `OpcodeImpl.*`).
+2. For each helper whose inline form is no larger than 4 bytes, or which sits on hot paths,
+   write an intrinsic emitter. First candidates:
+   - `I64_EXTEND_I32_U` → `I2L; LDC 0xFFFFFFFFL; LAND` (5 bytes), or
+     `INVOKESTATIC Integer.toUnsignedLong` (still 3 bytes, but a trivial JDK method that is
+     always inlined; check whether that beats the `OpcodeImpl` helper at all);
+   - the `i64.load8_u` + `i32.wrap_i64` pair → `i32.load8_u` (Go booleans; a peephole in
+     the analyzer).
+3. Do **not** intrinsify helpers whose inline form is a branch diamond. That would undo
+   the size benefit.
+
+**Risk.** Size versus speed. Verify per helper that method sizes do not grow on the corpus.
+
+### 3.2 Branchless value-context booleans
+
+**Why.** Comparisons whose result is stored or used arithmetically still call their helper.
+Go stores `i64.eqz` results in locals (953 `I64_EQZ` calls remain after fusion).
+
+**Design.** Emit branchless, call-free sequences where they are short:
+- `i64.eqz x` → `x | -x`, `>>> 63`, `l2i`, `iconst_1`, `ixor`, about 8 bytes
+  (`LLOAD; DUP2; LNEG; LOR; BIPUSH 63; LUSHR; L2I; ICONST_1; IXOR`);
+- `i32.eqz x` → `(x | -x) >>> 31`, then `^ 1`.
+
+Measure size: these are larger than a 3-byte call, so enable them only if the census and
+the A/B show a net gain. An alternative is to enable them only in methods above a size
+threshold, where helpers are not inlined anyway.
+
+### 3.3 `select_t` result typing, then `ref.eq` fusion
+
+**Bug-shaped issue.** In `WasmAnalyzer`, `SELECT`/`SELECT_T` push the *second operand's*
+type (`stack.peek()` after popping the condition) instead of the annotated result type. For
+`select_t` the annotation is authoritative.
+
+1. Use the `select_t` annotation (instruction operand) as the pushed type. For untyped
+   `select` (numeric only) nothing changes.
+2. Audit the other consumers of stack types that depend on precision: `isObjectRef`
+   decisions, `REF_IS_NULL`, `TABLE_FILL`, and the casts.
+3. Add a fixture: `select_t (result eqref)` over an `i31ref` and a `(ref $s)`, followed by
+   `ref.eq` and `ref.is_null`.
+4. Then implement `ref.eq` fusion (Phase 2 of `compiler/docs/ref-condition-fusion-plan.md`).
+   Fuse to `IF_ACMPEQ` only when one operand's static type excludes `i31`. The `negate`
+   trick already covers `IF_ACMPEQ`/`IF_ACMPNE`.
+
+### 3.4 Opt-in unsigned `i32` fusion
+
+**Why.** This is the largest remaining gap: .NET 2,481 sites, QuickJS 4,003, Go 1,078.
+QuickJS's most common one is `x <u -11` (1,339 sites).
+
+**Constraint.** It needs a `MIN_VALUE` bias, which triggers JDK-8376400 on JDK 11–17.
+
+**Design.**
+1. `Compiler.Builder.withUnsignedCompareFusion(boolean)`, off by default.
+   `MachineFactoryCompiler` may turn it on automatically when the *running* JVM is ≥ 18,
+   using the same version check as `MemCopyWorkaround.shouldUseMemWorkaround`. The
+   build-time compiler and the Maven plugin expose it only as an explicit option, documented
+   with the JDK requirement, because their output runs on unknown JVMs.
+2. Emission: bias the right operand at compile time when it is a constant
+   (`(C ^ MIN_VALUE)`), and `x ^ MIN_VALUE` on the left. For two variable operands use
+   `Integer.compareUnsigned` + `IFxx`, or the swap-and-bias sequence. Pick by size.
+3. Discuss it with maintainers *before* implementing, since it touches the JIT-bug history.
+
+### 3.5 JMH benchmark for large generated methods
+
+Upstream's Perf CI only runs tiny benchmarks, where C2 inlines the helpers anyway. Add
+`BenchmarkLargeMethod`, which compiles a generated Wasm function of more than 8 kB with
+hundreds of branch sites (generator in the style of `tools/gen_eqz_branch_workload.py`) and
+runs it. It should show fusion-style effects, and it guards future regressions. Optionally
+add a small real workload (Lua `2 a`).
+
+### 3.6 Investigate the runtime-compile regression
+
+The runtime compile was +2.2–2.5 % (about 20 ms) on unsplit Lua and SQLite. Profile
+`MachineFactoryCompiler.compile` with JFR on both arms. Suspects: `takeCondition`'s list
+operations on very long instruction lists, the new constant-pool entries, ASM frame
+computation. **Done when** the cause is identified, and either fixed or explained in the
+benchmarks doc.
+
+### 3.7 Measure the 8000-byte inlining effect directly
+
+JIT audit recommendation 4: run a generated function just under 8000 bytes with
+`-XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining` on a pinned JDK. Count
+`size > DesiredMethodLimit` failures for `OpcodeImpl.*`, upstream against fork. This is the
+mechanism evidence behind the measured speed-up.
+
+---
+
+## Phase 4: upstream build sharp edges
+
+1. **Stale downloaded binaries.** `inlay-maven-plugin` skips fetching
+   `wasm-tools/target/wasm-tools.wasm` (and `redline/cranelift_bridge.wasm`) whenever the
+   file exists, even after the pinned version changes. That is how a stale 2025 download
+   produced a false "function 4725 exceeds method size" failure. Fix options: key the output
+   filename on `${wasm-tools.version}`; verify the digest in `wkg.lock` on every build; or
+   ask inlay upstream for a digest check. Small PR to Endive (and possibly inlay).
+2. **`ApprovalTest.verifyLotsOfArgs.approved.txt`** is gitignored and generated on first
+   run, so it goes stale across branches with different ABIs. Generate it into `target/`, or
+   commit it like the other snapshots.
+3. **Spotless reformats `android-tests/device-tests/build.gradle.kts`** on a normal build
+   of upstream main (adds a trailing comma). Report it, or include the one-line fix in an
+   unrelated PR.
+
+---
+
+## Sequencing
+
+```
+week 1:  0.1, 0.2  →  1.1 decision  →  2.1, 2.2(+2.3), 2.4 opened  →  4.1
+week 2:  1.2  →  (B: 1.3)  →  1.4 on kent-yuria  ·  3.6, 3.7
+week 3+: 3.1  →  3.5  →  3.3  →  2.5, 2.6  ·  3.2 and 3.4 only if 3.1/3.5 show headroom
+```
+
+Dependencies:
+- 1.3 needs 1.2.
+- 1.4's third arm needs the topic-branch split from 0.2.
+- 3.4 needs maintainer agreement.
+- 2.6 should follow 2.1/2.4, so reviewers already know the contributor.
+
+## Evidence rules (from the thesis improvement plan)
+
+- Pin engine commits, JDK, runner and governor in every result. Thesis claims come from
+  fixed runners only; laptop runs are exploratory.
+- Static claims (bytecode size, helper counts) cite the harness and the sha256 of every
+  module.
+- Speed claims use interleaved fresh-JVM sampling with paired bootstrap CIs (L1 protocol),
+  and say when a workload's hot code is interpreted.
