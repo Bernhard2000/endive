@@ -127,5 +127,8 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
   `verifyLotsOfArgs` fail on upstream-based branches. Move it aside there.
 - Building on upstream main reformats `android-tests/device-tests/build.gradle.kts` (Spotless
   adds a trailing comma). Do not commit that change.
-- Installing either branch overwrites the `999-SNAPSHOT` artifacts in `~/.m2`. Reinstall the
-  branch you work on (`./mvnw install -Dquickly -pl compiler-tests,machine-tests,wabt -am`).
+- Installing either branch overwrites the `999-SNAPSHOT` artifacts in `~/.m2`, which is also
+  where the thesis harness resolves the vendored Endive. Build fork branches with
+  `scripts/mvn-fork.sh` (same arguments as `./mvnw`), which uses its own local repository
+  `~/.m2/repository-endive-fork`:
+  `scripts/mvn-fork.sh install -Dquickly -pl compiler-tests,machine-tests,wabt -am`.
