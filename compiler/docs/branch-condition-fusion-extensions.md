@@ -310,8 +310,13 @@ Reading the numbers:
   why they are left alone. QuickJS's most frequent one is `x <u -11` (1,339 sites, a NaN-boxing
   tag check).
 
-**Not measured:** run time. There is no JMH comparison. The thesis evidence policy applies:
-cite the size and call counts above, not a speedup.
+**Run time** was measured afterwards, locally, in
+[branch-condition-fusion-benchmarks.md](branch-condition-fusion-benchmarks.md). Comparing
+upstream main with the whole PR on identical modules, steady state is 4–10 % faster wherever
+the hot code is compiled: Lua −5.5 %, Lua split −4.1 %, SQLite split −9.5 %, QuickJS split
+−6.4 %. Runs whose hot function falls back to the interpreter are neutral, and Endive's JMH
+suite shows no effect. The numbers come from one laptop session, so they are exploratory: the
+thesis evidence policy requires a fixed-runner repeat before citing a speedup.
 
 ## 9. Tests and validation
 

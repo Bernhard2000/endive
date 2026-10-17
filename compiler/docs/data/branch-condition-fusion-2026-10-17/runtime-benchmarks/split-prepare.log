@@ -1,0 +1,91 @@
+== corpus split matrix | corpus: sqlite quickjs lua
+== out: <bench>/splits
+
+===== [sqlite] sqlite_wasi.wasm (1244773 B) =====
+== [sqlite] collect profile (3 runs)
+(node:791553) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 570690404 edge hits, 789 transitions, 7116 label pairs
+  run 2: 570690404 edge hits, 789 transitions, 7116 label pairs
+  run 3: 570690404 edge hits, 789 transitions, 7116 label pairs
+edges=47967 countTable=true -> <bench>/splits/sqlite/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: <bench>/splits/sqlite/mapping.json
+  Trace source:   <bench>/splits/sqlite/trace.json
+  Target profile: <bench>/splits/sqlite/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   1106
+  Functions executed:       321
+  Cold functions (<= 5):   795
+  Functions with expr data: 321
+  Total entry count:        23281185
+  Call-transition sources:  320
+  Call-transition pairs:    789
+  Label-transition funcs:   307
+  Label-transition pairs:   7116
+  First-touch functions:    321
+   base         wasm   1244773 B | jvm total  1253701 | jvm max  80189 | over8k 19 | over64k 1 | funcs 1106
+   split-8kB    wasm   1316182 B | jvm total  1348644 | jvm max  15392 | over8k  5 | over64k 0 | funcs 2403
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 19 -> 5, over-64k 1 -> 0)
+
+===== [quickjs] qjs_wasi.wasm (1098959 B) =====
+== [quickjs] collect profile (3 runs)
+(node:793350) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 4725431246 edge hits, 482 transitions, 4132 label pairs
+  run 2: 4725431246 edge hits, 482 transitions, 4132 label pairs
+  run 3: 4725431246 edge hits, 482 transitions, 4132 label pairs
+edges=32327 countTable=true -> <bench>/splits/quickjs/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: <bench>/splits/quickjs/mapping.json
+  Trace source:   <bench>/splits/quickjs/trace.json
+  Target profile: <bench>/splits/quickjs/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   940
+  Functions executed:       157
+  Cold functions (<= 5):   805
+  Functions with expr data: 157
+  Total entry count:        7688133
+  Call-transition sources:  157
+  Call-transition pairs:    482
+  Label-transition funcs:   150
+  Label-transition pairs:   4132
+  First-touch functions:    157
+   base         wasm   1098959 B | jvm total   964459 | jvm max 105631 | over8k 12 | over64k 1 | funcs 940
+   split-8kB    wasm   1096029 B | jvm total  1002629 | jvm max  25396 | over8k  5 | over64k 0 | funcs 1309
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 12 -> 5, over-64k 1 -> 0)
+
+===== [lua] lua_wasi.wasm (558933 B) =====
+== [lua] collect profile (3 runs)
+(node:794692) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 637897103 edge hits, 404 transitions, 2187 label pairs
+  run 2: 637896971 edge hits, 404 transitions, 2185 label pairs
+  run 3: 637896645 edge hits, 404 transitions, 2186 label pairs
+edges=10683 countTable=true -> <bench>/splits/lua/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: <bench>/splits/lua/mapping.json
+  Trace source:   <bench>/splits/lua/trace.json
+  Target profile: <bench>/splits/lua/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   486
+  Functions executed:       160
+  Cold functions (<= 5):   367
+  Functions with expr data: 160
+  Total entry count:        2374937
+  Call-transition sources:  160
+  Call-transition pairs:    404
+  Label-transition funcs:   157
+  Label-transition pairs:   2189
+  First-touch functions:    160
+   base         wasm    558933 B | jvm total   268090 | jvm max  25483 | over8k  5 | over64k 0 | funcs 486
+   split-8kB    wasm    529886 B | jvm total   276082 | jvm max   7876 | over8k  0 | over64k 0 | funcs 562
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 5 -> 0, over-64k 0 -> 0)
+
+== prepared: sqlite quickjs lua  -> <bench>/splits

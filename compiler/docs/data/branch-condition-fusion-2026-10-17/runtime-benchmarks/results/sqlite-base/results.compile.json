@@ -1,0 +1,92 @@
+{
+ "schema": "bench_lib-v1",
+ "phase": "instantiate",
+ "env": {
+  "date": "2026-10-17T19:01:03",
+  "host": "tuxedoPulse14Gen3",
+  "kernel": "7.2.8-1-default",
+  "governor": "ondemand",
+  "turbo": "on",
+  "taskset_cores": "4-7",
+  "aslr": "2",
+  "engines": {
+   "/usr/bin/java": "openjdk 21.0.12.1 2026-08-18"
+  },
+  "module_sha256": {
+   "<bench>/splits/sqlite/base.wasm": "c22c6e2d60ce5c0f2c3a18d5dfb5773ee31b7bc08a1771c6fd9259b04a3c9491"
+  },
+  "pass_config": "engine-ab upstream=1580f534 pr=3ba75b28 workload=sqlite-base args=none warmup=0 reps=1 cores=4-7"
+ },
+ "runs_ns": {
+  "upstream": [
+   1720765000,
+   1713665000,
+   1682107000,
+   1694943000,
+   1683395000,
+   1693001000,
+   1682593000,
+   1664877000,
+   1676074000,
+   1656313000
+  ],
+  "pr": [
+   1828737000,
+   1797766000,
+   1677786000,
+   1689645000,
+   1696440000,
+   1699879000,
+   1717988000,
+   1701624000,
+   1747656000,
+   1731643000
+  ]
+ },
+ "interleaved": true,
+ "warmup_rounds_discarded": 0,
+ "order_mode": "permuted",
+ "order_seed": "20261017",
+ "round_orders": [
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ]
+ ]
+}

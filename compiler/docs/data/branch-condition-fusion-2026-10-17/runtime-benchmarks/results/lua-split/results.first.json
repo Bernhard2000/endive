@@ -1,0 +1,122 @@
+{
+ "schema": "bench_lib-v1",
+ "phase": "first-call",
+ "env": {
+  "date": "2026-10-17T18:50:29",
+  "host": "tuxedoPulse14Gen3",
+  "kernel": "7.2.8-1-default",
+  "governor": "ondemand",
+  "turbo": "on",
+  "taskset_cores": "4-7",
+  "aslr": "2",
+  "engines": {
+   "/usr/bin/java": "openjdk 21.0.12.1 2026-08-18"
+  },
+  "module_sha256": {
+   "<bench>/splits/lua/split-8kB.wasm": "3377e89c0054d6d775417c44e01cc1aeb576db54307fe6576f7a8f91893b18e1"
+  },
+  "pass_config": "engine-ab upstream=1580f534 pr=3ba75b28 workload=lua-split args=2 a warmup=2 reps=5 cores=4-7"
+ },
+ "runs_ns": {
+  "upstream": [
+   641970000,
+   864253000,
+   601855000,
+   578900000,
+   538925000,
+   664201000,
+   636683000,
+   530868000,
+   675586000,
+   584613000,
+   561870000,
+   571612000,
+   553843000,
+   548482000,
+   524414000
+  ],
+  "pr": [
+   569035000,
+   731630000,
+   698511000,
+   670843000,
+   532029000,
+   566286000,
+   514558000,
+   526582999,
+   666102000,
+   526929000,
+   557063000,
+   546913000,
+   554025000,
+   626517000,
+   511572000
+  ]
+ },
+ "interleaved": true,
+ "warmup_rounds_discarded": 0,
+ "order_mode": "permuted",
+ "order_seed": "20261017",
+ "round_orders": [
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "upstream",
+   "pr"
+  ],
+  [
+   "pr",
+   "upstream"
+  ],
+  [
+   "pr",
+   "upstream"
+  ]
+ ]
+}
