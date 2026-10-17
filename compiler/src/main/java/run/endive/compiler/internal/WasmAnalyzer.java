@@ -793,6 +793,7 @@ final class WasmAnalyzer {
         reverse(tryCatchBlockInstructions);
         result.addAll(0, tryCatchBlockInstructions);
 
+        result = NarrowingPeephole.apply(result);
         result = fuseBranchConditions(result, module.typeSection());
 
         return new AnalysisResult(

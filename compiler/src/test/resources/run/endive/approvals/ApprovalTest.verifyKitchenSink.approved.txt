@@ -132,10 +132,10 @@ final class run/endive/$gen/CompiledMachineFuncGroup_0 {
     ICONST_3
     ISHR
     ICONST_4
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_ROTL (II)I
+    INVOKESTATIC java/lang/Integer.rotateLeft (II)I
     BIPUSH 6
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_ROTR (II)I
-    INVOKESTATIC run/endive/runtime/OpcodeImpl.I32_EXTEND_8_S (I)I
+    INVOKESTATIC java/lang/Integer.rotateRight (II)I
+    I2B
     IRETURN
 
   public static call_0(Lrun/endive/runtime/Instance;Lrun/endive/runtime/Memory;[J[Ljava/lang/Object;)[J
