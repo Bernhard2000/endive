@@ -59,6 +59,8 @@ public class MemCopyWorkaroundTest {
     public void helpersWorkOnAnyJavaVersion() {
         assertEquals(OpcodeImpl.I32_GE_U(-1, 1), MemCopyWorkaround.i32_ge_u(-1, 1));
         assertEquals(OpcodeImpl.I32_LT_U(-1, 1), MemCopyWorkaround.i32_lt_u(-1, 1));
+        assertEquals(OpcodeImpl.I32_GT_U(-1, 1), MemCopyWorkaround.i32_gt_u(-1, 1));
+        assertEquals(OpcodeImpl.I32_LE_U(-1, 1), MemCopyWorkaround.i32_le_u(-1, 1));
         var memory = new ByteArrayMemory(new MemoryLimits(1));
         memory.writeI32(0, 0x01020304);
         MemCopyWorkaround.memoryCopy(8, 0, 4, memory);

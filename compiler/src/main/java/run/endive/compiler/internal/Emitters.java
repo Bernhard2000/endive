@@ -638,6 +638,14 @@ final class Emitters {
         emitInvokeStatic(asm, ShadedRefs.I32_LT_U);
     }
 
+    public static void I32_GT_U(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        emitInvokeStatic(asm, ShadedRefs.I32_GT_U);
+    }
+
+    public static void I32_LE_U(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        emitInvokeStatic(asm, ShadedRefs.I32_LE_U);
+    }
+
     public static void I32_ADD(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
         asm.visitInsn(Opcodes.IADD);
     }
