@@ -86,6 +86,7 @@ import run.endive.compiler.MethodPrefixer;
 import run.endive.runtime.CallResult;
 import run.endive.runtime.Instance;
 import run.endive.runtime.Machine;
+import run.endive.runtime.MemCopyWorkaround;
 import run.endive.runtime.Memory;
 import run.endive.runtime.WasmException;
 import run.endive.runtime.internal.CompilerInterpreterMachine;
@@ -176,10 +177,12 @@ public final class Compiler {
             InterpreterFallback interpreterFallback,
             Set<Integer> interpretedFunctions,
             Supplier<ClassCollector> classCollectorFactory,
-            MethodPrefixer methodPrefixer) {
+            MethodPrefixer methodPrefixer,
+            boolean unsignedCompareFusion,
+            boolean branchlessBooleans) {
         this.className = requireNonNull(className, "className");
         this.module = requireNonNull(module, "module");
-        this.analyzer = new WasmAnalyzer(module);
+        this.analyzer = new WasmAnalyzer(module, unsignedCompareFusion, branchlessBooleans);
         this.functionImports = module.importSection().count(ExternalType.FUNCTION);
         this.classCollectorFactory = classCollectorFactory;
         this.collector = classCollectorFactory.get();
@@ -252,6 +255,29 @@ public final class Compiler {
         return new Builder(module);
     }
 
+    /**
+     * The unsigned compare fusion setting for code that is compiled and run in this JVM ({@link
+     * run.endive.compiler.MachineFactoryCompiler}): {@code -Dendive.compiler.unsignedCompareFusion}
+     * if set, otherwise on exactly when the JIT bug workaround is off (Java 18 and later, and
+     * {@code -Dendive.memCopyWorkaround} not set to true).
+     */
+    public static boolean runtimeUnsignedCompareFusion() {
+        var fusion = System.getProperty("endive.compiler.unsignedCompareFusion");
+        if (fusion != null) {
+            return Boolean.parseBoolean(fusion);
+        }
+        var workaround = System.getProperty("endive.memCopyWorkaround");
+        if (workaround != null) {
+            return !Boolean.parseBoolean(workaround);
+        }
+        return !MemCopyWorkaround.shouldUseMemWorkaround();
+    }
+
+    /** {@code -Dendive.compiler.branchlessBooleans}, off by default. */
+    public static boolean runtimeBranchlessBooleans() {
+        return Boolean.getBoolean("endive.compiler.branchlessBooleans");
+    }
+
     public static final class Builder {
         private final WasmModule module;
         private String className;
@@ -260,6 +286,8 @@ public final class Compiler {
         private Set<Integer> interpretedFunctions;
         private Supplier<ClassCollector> classCollectorFactory;
         private MethodPrefixer methodPrefixer;
+        private boolean unsignedCompareFusion;
+        private boolean branchlessBooleans;
 
         private Builder(WasmModule module) {
             this.module = module;
@@ -295,6 +323,28 @@ public final class Compiler {
             return this;
         }
 
+        /**
+         * Fuses unsigned {@code i32} comparisons into the branches and selects consuming them, as
+         * {@code Integer.compareUnsigned} followed by a conditional jump. Off by default: on Java
+         * 11 to 17, C2 can miscompile that pattern (JDK-8376400, the bug {@code
+         * MemCopyWorkaround} works around), so the generated code must only run on Java 18 or
+         * later.
+         */
+        public Builder withUnsignedCompareFusion(boolean unsignedCompareFusion) {
+            this.unsignedCompareFusion = unsignedCompareFusion;
+            return this;
+        }
+
+        /**
+         * Computes {@code eqz}, {@code eq} and {@code ne} results that are not consumed by a
+         * branch with a few arithmetic instructions instead of a helper call. Larger (6 to 10
+         * bytes instead of 3), so off by default.
+         */
+        public Builder withBranchlessBooleans(boolean branchlessBooleans) {
+            this.branchlessBooleans = branchlessBooleans;
+            return this;
+        }
+
         public Compiler build() {
             var className = this.className;
             if (className == null) {
@@ -317,7 +367,9 @@ public final class Compiler {
                     interpreterFallback,
                     interpretedFunctions,
                     classCollectorFactory,
-                    methodPrefixer);
+                    methodPrefixer,
+                    unsignedCompareFusion,
+                    branchlessBooleans);
         }
     }
 

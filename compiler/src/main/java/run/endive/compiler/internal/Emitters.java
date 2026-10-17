@@ -927,6 +927,60 @@ final class Emitters {
         asm.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math", "sqrt", "(D)D", false);
     }
 
+    // BRANCHLESS_BOOL kinds, in the order of branchlessBoolKind
+    private static final CompilerOpCode[] BRANCHLESS_BOOL_OPS = {
+        CompilerOpCode.I32_EQZ,
+        CompilerOpCode.I32_EQ,
+        CompilerOpCode.I32_NE,
+        CompilerOpCode.I64_EQZ,
+        CompilerOpCode.I64_EQ,
+        CompilerOpCode.I64_NE,
+    };
+
+    /** The BRANCHLESS_BOOL kind computing {@code opcode}, or -1 if it has none. */
+    static int branchlessBoolKind(CompilerOpCode opcode) {
+        for (int i = 0; i < BRANCHLESS_BOOL_OPS.length; i++) {
+            if (BRANCHLESS_BOOL_OPS[i] == opcode) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * {@code x != 0} is {@code (x | -x) >>> 31} (the sign bit of {@code x | -x} is set exactly
+     * when {@code x} is non-zero), {@code x == 0} that {@code ^ 1}; {@code eq} and {@code ne}
+     * test {@code a ^ b}. The {@code i64} forms shift by 63 and narrow with {@code l2i}.
+     */
+    public static void BRANCHLESS_BOOL(
+            Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        var op = BRANCHLESS_BOOL_OPS[(int) ins.operand(0)];
+        boolean wide = op.name().startsWith("I64");
+        if (op == CompilerOpCode.I32_EQ || op == CompilerOpCode.I32_NE) {
+            asm.xor(INT_TYPE);
+        } else if (op == CompilerOpCode.I64_EQ || op == CompilerOpCode.I64_NE) {
+            asm.xor(LONG_TYPE);
+        }
+        if (wide) {
+            asm.dup2();
+            asm.neg(LONG_TYPE);
+            asm.or(LONG_TYPE);
+            asm.iconst(63);
+            asm.ushr(LONG_TYPE);
+            asm.visitInsn(Opcodes.L2I);
+        } else {
+            asm.dup();
+            asm.neg(INT_TYPE);
+            asm.or(INT_TYPE);
+            asm.iconst(31);
+            asm.ushr(INT_TYPE);
+        }
+        if (op != CompilerOpCode.I32_NE && op != CompilerOpCode.I64_NE) {
+            asm.iconst(1);
+            asm.xor(INT_TYPE);
+        }
+    }
+
     public static void I64_EXTEND_I32_S(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
         asm.visitInsn(Opcodes.I2L);
     }
