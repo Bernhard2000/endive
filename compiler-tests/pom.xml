@@ -87,6 +87,22 @@
             <endive.compiler.printUseOfInterpretedFunctions>true</endive.compiler.printUseOfInterpretedFunctions>
           </systemPropertyVariables>
         </configuration>
+        <executions>
+          <!-- The workaround is chosen once per JVM, so forcing it needs its own fork -->
+          <execution>
+            <id>mem-copy-workaround-forced</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <test>MemCopyWorkaroundForcedTest</test>
+              <useModulePath>false</useModulePath>
+              <systemPropertyVariables>
+                <endive.memCopyWorkaround>true</endive.memCopyWorkaround>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>run.endive</groupId>

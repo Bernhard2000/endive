@@ -41,8 +41,19 @@ public final class MemCopyWorkaround {
         }
     }
 
+    // The compiler's Shaded decides whether generated code calls this class with the same rule:
+    // -Dendive.memCopyWorkaround overrides the Java version check.
+    static boolean isEnabled(String property, String version) {
+        if (property != null) {
+            return Boolean.parseBoolean(property);
+        }
+        return shouldUseMemWorkaround(version);
+    }
+
     static {
-        if (shouldUseMemWorkaround()) {
+        if (isEnabled(
+                System.getProperty("endive.memCopyWorkaround"),
+                System.getProperty("java.version"))) {
             MemoryCopyFunc noop1 = (destination, offset, size, memory) -> {};
             MemoryCopyFunc noop2 = (destination, offset, size, memory) -> {};
 
@@ -66,12 +77,14 @@ public final class MemCopyWorkaround {
                 i32ltuFunc = noop4;
                 MemCopyWorkaround.i32_lt_u(0, 0);
             }
-
-            memoryCopyFunc =
-                    (destination, offset, size, memory) -> memory.copy(destination, offset, size);
-            i32geuFunc = (a, b) -> OpcodeImpl.I32_GE_U(a, b);
-            i32ltuFunc = (a, b) -> OpcodeImpl.I32_LT_U(a, b);
         }
+
+        // Always set, so that a caller that enables the workaround on its own never finds them
+        // null.
+        memoryCopyFunc =
+                (destination, offset, size, memory) -> memory.copy(destination, offset, size);
+        i32geuFunc = (a, b) -> OpcodeImpl.I32_GE_U(a, b);
+        i32ltuFunc = (a, b) -> OpcodeImpl.I32_LT_U(a, b);
     }
 
     private static MemoryCopyFunc memoryCopyFunc;
