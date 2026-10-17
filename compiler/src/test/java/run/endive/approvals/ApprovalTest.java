@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -44,9 +43,9 @@ public class ApprovalTest {
                 Path.of(
                         "src/test/resources/run/endive/approvals/ApprovalTest.verifyLotsOfArgs.approved.txt");
 
-        if (!Files.exists(destPath)) {
-            Files.writeString(destPath, renderLotsOfArgs(), StandardOpenOption.CREATE_NEW);
-        }
+        // The approved file is rendered from a template, so it is not committed. Render it on
+        // every run: a copy left over from another branch would otherwise go stale.
+        Files.writeString(destPath, renderLotsOfArgs());
 
         verifyGeneratedBytecode("lots-of-args.wat.wasm");
     }
