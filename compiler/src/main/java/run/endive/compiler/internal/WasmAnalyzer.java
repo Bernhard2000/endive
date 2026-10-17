@@ -699,16 +699,26 @@ final class WasmAnalyzer {
                 case SELECT_T:
                     // [t t I32] -> [t]
                     stack.pop(ValType.I32);
-                    var selectType = stack.peek();
-                    stack.pop(selectType);
+                    var operandType = stack.peek();
+                    stack.pop(operandType);
                     // For GC reference types, the second operand may have a
                     // different concrete type index (both are valid subtypes
                     // of a common supertype). Just verify it's a reference.
-                    if (selectType.isReference()) {
+                    if (operandType.isReference()) {
                         stack.popRef();
                     } else {
-                        stack.pop(selectType);
+                        stack.pop(operandType);
                     }
+                    // select_t states the result type. The second operand's type can be
+                    // narrower than what the first operand may hold, so only untyped (numeric)
+                    // select takes its operand's type.
+                    var selectType =
+                            ins.opcode() == OpCode.SELECT_T
+                                    ? ValType.builder()
+                                            .fromId(ins.operand(0))
+                                            .build()
+                                            .resolve(module.typeSection())
+                                    : operandType;
                     stack.push(selectType);
                     result.add(new CompilerInstruction(CompilerOpCode.SELECT, selectType.id()));
                     break;
@@ -1629,11 +1639,21 @@ final class WasmAnalyzer {
                 break;
             // ====== GC ======
             case REF_EQ:
-                // [eqref eqref] -> [I32]
-                stack.pop(ValType.EqRef);
-                stack.pop(ValType.EqRef);
-                stack.push(ValType.I32);
-                break;
+                {
+                    // [eqref eqref] -> [I32]
+                    var b = stack.peek();
+                    stack.pop(ValType.EqRef);
+                    var a = stack.peek();
+                    stack.pop(ValType.EqRef);
+                    stack.push(ValType.I32);
+                    // Shaded.refEq compares two i31refs by value; any other pair by identity.
+                    // If one operand cannot be an i31ref, ref.eq is the JVM's if_acmpeq.
+                    if (!canBeI31(a) || !canBeI31(b)) {
+                        out.add(new CompilerInstruction(CompilerOpCode.REF_EQ_FUSABLE));
+                        return;
+                    }
+                    break;
+                }
             case REF_AS_NON_NULL:
                 {
                     // [ref] -> [ref]
@@ -2043,6 +2063,31 @@ final class WasmAnalyzer {
             return imports.get(funcIdx).typeIndex();
         }
         return module.functionSection().getFunctionType(funcIdx - functionImports);
+    }
+
+    /**
+     * Whether a value of this (sound, possibly wider than actual) static type can be an {@code
+     * i31ref}. Conservative: anything not known to exclude it can.
+     */
+    static boolean canBeI31(ValType type) {
+        int heapType;
+        switch (type.opcode()) {
+            case ValType.ID.Ref:
+            case ValType.ID.RefNull:
+                heapType = type.typeIdx();
+                break;
+            case ValType.ID.StructRef:
+            case ValType.ID.ArrayRef:
+            case ValType.ID.NoneRef:
+                return false;
+            default:
+                return true;
+        }
+        // a concrete type index is a struct, array or function type
+        return heapType < 0
+                && heapType != ValType.TypeIdxCode.STRUCT.code()
+                && heapType != ValType.TypeIdxCode.ARRAY.code()
+                && heapType != ValType.TypeIdxCode.NONE.code();
     }
 
     private ValType valType(int opcode, int typeIdx) {

@@ -59,7 +59,9 @@ enum BranchCondition {
     /** {@code ref.is_null} on a reference represented as a JVM object. */
     REF_IS_NULL(Prefix.NONE, Opcodes.IFNULL),
     /** {@code ref.is_null} on a reference represented as an {@code int} ({@code funcref}). */
-    INT_REF_IS_NULL(Prefix.REF_NULL_VALUE, Opcodes.IF_ICMPEQ);
+    INT_REF_IS_NULL(Prefix.REF_NULL_VALUE, Opcodes.IF_ICMPEQ),
+    /** {@code ref.eq} where one operand cannot be an {@code i31ref}: reference identity. */
+    REF_EQ(Prefix.NONE, Opcodes.IF_ACMPEQ);
 
     /** What is emitted before the jump to turn the operands into the value it tests. */
     private enum Prefix {
@@ -172,6 +174,8 @@ enum BranchCondition {
                 return Optional.of(F64_LE);
             case F64_GE:
                 return Optional.of(F64_GE);
+            case REF_EQ_FUSABLE:
+                return Optional.of(REF_EQ);
             default:
                 return Optional.empty();
         }
@@ -214,13 +218,15 @@ enum BranchCondition {
         asm.visitJumpInsn(whenTrue ? jumpIfTrue : negate(jumpIfTrue), target);
     }
 
-    // IFEQ..IFLE and IF_ICMPEQ..IF_ICMPLE are laid out as EQ, NE, LT, GE, GT, LE, and
-    // IFNULL is followed by IFNONNULL, so each opcode's complement differs from it only in the
-    // lowest bit of the offset.
+    // IFEQ..IFLE and IF_ICMPEQ..IF_ICMPLE are laid out as EQ, NE, LT, GE, GT, LE, IF_ACMPEQ is
+    // followed by IF_ACMPNE, and IFNULL by IFNONNULL, so each opcode's complement differs from it
+    // only in the lowest bit of the offset.
     static int negate(int jump) {
         int base;
         if (jump >= Opcodes.IFNULL) {
             base = Opcodes.IFNULL;
+        } else if (jump >= Opcodes.IF_ACMPEQ) {
+            base = Opcodes.IF_ACMPEQ;
         } else if (jump >= Opcodes.IF_ICMPEQ) {
             base = Opcodes.IF_ICMPEQ;
         } else {

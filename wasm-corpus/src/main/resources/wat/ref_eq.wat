@@ -1,0 +1,69 @@
+(module
+  ;; ref.eq consumed by branches and selects, for RefEqConditionTest. Selectors pick operands:
+  ;; $eq: 0 null, 1 and 2 two distinct i31refs of the same value, 3 an i31ref of another value,
+  ;;      4 struct A, 5 struct B, 6 a fresh struct.
+  ;; $s:  0 null, 1 struct A, 2 struct B, 3 a fresh struct.
+  ;; Only operand pairs where one side is typed (ref null $s) may be fused into if_acmpeq.
+  (type $s (struct (field i32)))
+  (global $A (ref $s) (struct.new $s (i32.const 1)))
+  (global $B (ref $s) (struct.new $s (i32.const 2)))
+
+  (func $eq (param $k i32) (result eqref)
+    (block $null (block $i31a (block $i31b (block $i31c (block $a (block $b (block $fresh
+      (br_table $null $i31a $i31b $i31c $a $b $fresh $fresh (local.get $k)))
+      (return (struct.new $s (i32.const 3))))
+      (return (global.get $B)))
+      (return (global.get $A)))
+      (return (ref.i31 (i32.add (local.get $k) (i32.const 123454)))))
+      (return (ref.i31 (i32.add (local.get $k) (i32.const 123454)))))
+      (return (ref.i31 (i32.add (local.get $k) (i32.const 123455)))))
+    (ref.null eq))
+  (func $s (param $k i32) (result (ref null $s))
+    (if (i32.eqz (local.get $k)) (then (return (ref.null $s))))
+    (if (i32.eq (local.get $k) (i32.const 1)) (then (return (global.get $A))))
+    (if (i32.eq (local.get $k) (i32.const 2)) (then (return (global.get $B))))
+    (struct.new $s (i32.const 3)))
+
+  ;; fusable: one operand is (ref null $s)
+  (func (export "s_eq_if") (param $a i32) (param $b i32) (result i32)
+    (if (result i32) (ref.eq (call $s (local.get $a)) (call $eq (local.get $b))) (then (i32.const 1)) (else (i32.const 0))))
+  (func (export "eq_s_if_eqz") (param $a i32) (param $b i32) (result i32)
+    (if (result i32) (i32.eqz (ref.eq (call $eq (local.get $a)) (call $s (local.get $b)))) (then (i32.const 1)) (else (i32.const 0))))
+  (func (export "s_s_br_if") (param $a i32) (param $b i32) (result i32)
+    (block $x (br_if $x (ref.eq (call $s (local.get $a)) (call $s (local.get $b)))) (return (i32.const 0))) (i32.const 1))
+  (func (export "s_eq_select") (param $a i32) (param $b i32) (result i32)
+    (select (i32.const 1) (i32.const 0) (ref.eq (call $s (local.get $a)) (call $eq (local.get $b)))))
+  (func (export "s_eq_value") (param $a i32) (param $b i32) (result i32)
+    (ref.eq (call $s (local.get $a)) (call $eq (local.get $b))))
+  ;; not fusable: both operands may be i31refs
+  (func (export "eq_eq_if") (param $a i32) (param $b i32) (result i32)
+    (if (result i32) (ref.eq (call $eq (local.get $a)) (call $eq (local.get $b))) (then (i32.const 1)) (else (i32.const 0))))
+  (func (export "eq_eq_select") (param $a i32) (param $b i32) (result i32)
+    (select (i32.const 1) (i32.const 0) (ref.eq (call $eq (local.get $a)) (call $eq (local.get $b)))))
+  ;; select_t: the result is eqref even though its second operand is (ref null $s)
+  (func (export "select_t_eq_if") (param $a i32) (param $b i32) (result i32)
+    (if (result i32)
+      (ref.eq
+        (select (result eqref) (call $eq (local.get $a)) (call $s (i32.const 1)) (local.get $b))
+        (call $eq (i32.const 2)))
+      (then (i32.const 1)) (else (i32.const 0))))
+  (func (export "select_t_is_null") (param $a i32) (param $b i32) (result i32)
+    (ref.is_null (select (result eqref) (call $eq (local.get $a)) (call $s (i32.const 1)) (local.get $b))))
+  (func (export "select_t_test") (param $a i32) (param $b i32) (result i32)
+    (ref.test (ref $s) (select (result eqref) (call $eq (local.get $a)) (call $s (i32.const 1)) (local.get $b))))
+  ;; a block's result can arrive by a branch, typed wider than the fallthrough value
+  (func (export "block_merge_eq_if") (param $a i32) (param $b i32) (result i32)
+    (if (result i32)
+      (ref.eq
+        (block $m (result eqref)
+          (drop (br_if $m (call $eq (local.get $a)) (local.get $b)))
+          (call $s (i32.const 1)))
+        (call $eq (i32.const 2)))
+      (then (i32.const 1)) (else (i32.const 0))))
+  (func (export "if_merge_eq_if") (param $a i32) (param $b i32) (result i32)
+    (if (result i32)
+      (ref.eq
+        (if (result eqref) (local.get $b) (then (call $eq (local.get $a))) (else (call $s (i32.const 1))))
+        (call $eq (i32.const 2)))
+      (then (i32.const 1)) (else (i32.const 0))))
+)
