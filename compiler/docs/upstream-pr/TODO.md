@@ -44,7 +44,8 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
    ./mvnw install -Dquickly -pl compiler-tests,machine-tests,wabt -am
    ./mvnw install -pl compiler,compiler-tests,machine-tests,wabt
    ```
-4. **AI tool policy.** CONTRIBUTING points to the
+4. **AI tool policy.** (Read 2026-10-18: tools must not be co-authors; agents must not open
+   PRs without human approval. See [OPEN_PRS.md](OPEN_PRS.md) "Before opening".) CONTRIBUTING points to the
    [Bytecode Alliance AI Tool Use Policy](https://github.com/bytecodealliance/governance/blob/main/AI_TOOL_POLICY.md).
    Read it and adjust the "AI assistance" section of the PR description and the commit
    trailers to match. The first commit keeps the original `Co-Authored-By: Claude Opus 5`
@@ -66,8 +67,8 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
 
 7. **Run CI that could not run locally.** Upstream CI covers Java 11/17/21/25 × Linux, macOS,
    Windows and ARM, plus Android API 28/35. Not run locally:
-   - **Java 11**: no JDK 11 was available. The code uses no post-11 APIs or syntax
-     (`Long.compareUnsigned` is Java 8), but the build needs to be confirmed.
+   - **Java 11**: done 2026-10-18 on Temurin 11.0.32.1: `compiler` (48), `wabt` (6),
+     `compiler-tests` (34,110) and `machine-tests` (228) pass.
    - **Windows + Java 11/17**: that is where the C2 bug used to show up as flaky failures
      (see #134: "20 parallel Windows+Java 11 CI runs"). Consider asking maintainers for
      repeated runs, or running the workflow on your fork several times.
