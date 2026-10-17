@@ -261,6 +261,23 @@ public final class Shaded {
         }
     }
 
+    // i32.gt_u and i32.le_u use the same Integer.compareUnsigned pattern as ge_u and lt_u.
+    public static int i32_gt_u(int a, int b) {
+        if (memCopyWorkaround) {
+            return MemCopyWorkaround.i32_gt_u(a, b);
+        } else {
+            return OpcodeImpl.I32_GT_U(a, b);
+        }
+    }
+
+    public static int i32_le_u(int a, int b) {
+        if (memCopyWorkaround) {
+            return MemCopyWorkaround.i32_le_u(a, b);
+        } else {
+            return OpcodeImpl.I32_LE_U(a, b);
+        }
+    }
+
     private static final boolean memCopyWorkaround;
 
     static {
