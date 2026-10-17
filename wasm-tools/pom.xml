@@ -60,7 +60,9 @@
               <modules>
                 <module>
                   <imageRef>ghcr.io/bytecodealliance/wasm-tools-wasm32-wasip1:${wasm-tools.version}</imageRef>
-                  <outputFile>${project.build.directory}/wasm-tools.wasm</outputFile>
+                  <!-- Versioned name: inlay skips the download whenever the output file exists, so a
+                       file left in target/ by an older wasm-tools.version would be used. -->
+                  <outputFile>${project.build.directory}/wasm-tools-${wasm-tools.version}.wasm</outputFile>
                 </module>
               </modules>
             </configuration>
@@ -78,7 +80,7 @@
             </goals>
             <configuration>
               <name>run.endive.tools.wasm.WasmToolsModule</name>
-              <wasmFile>${project.build.directory}/wasm-tools.wasm</wasmFile>
+              <wasmFile>${project.build.directory}/wasm-tools-${wasm-tools.version}.wasm</wasmFile>
               <!-- <interpreterFallback>WARN</interpreterFallback> -->
               <interpretedFunctions>
                 <function>5197</function>
