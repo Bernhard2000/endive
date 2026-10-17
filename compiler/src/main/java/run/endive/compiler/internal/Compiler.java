@@ -2230,6 +2230,21 @@ public final class Compiler {
                         asm.ifne(labels.get(ins.operand(0)));
                     }
                     break;
+                case COND_JUMP:
+                    {
+                        var condition = BranchCondition.fromId(ins.operand(1));
+                        boolean whenTrue = ins.operand(2) != 0;
+                        if (visitedTargets.contains(ins.operand(0))) {
+                            Label skip = new Label();
+                            condition.emitJump(asm, skip, !whenTrue);
+                            emitInvokeStatic(asm, CHECK_INTERRUPTION);
+                            asm.goTo(labels.get(ins.operand(0)));
+                            asm.mark(skip);
+                        } else {
+                            condition.emitJump(asm, labels.get(ins.operand(0)), whenTrue);
+                        }
+                        break;
+                    }
                 case SWITCH:
                     if (ins.operands().anyMatch(visitedTargets::contains)) {
                         emitInvokeStatic(asm, CHECK_INTERRUPTION);
