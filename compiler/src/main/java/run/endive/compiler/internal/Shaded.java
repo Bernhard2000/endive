@@ -150,8 +150,13 @@ public final class Shaded {
     public static long[] resolveTailCall(Instance instance) {
         int funcId = instance.tailCallFuncId();
         long[] args = instance.tailCallArgs();
+        Object[] refArgs = instance.tailCallRefArgs();
         instance.clearTailCall();
-        return instance.getMachine().call(funcId, args);
+        if (refArgs == null) {
+            return instance.getMachine().call(funcId, args);
+        }
+        // no ref results, but the callee can still take ref arguments
+        return instance.getMachine().callWithRefs(funcId, args, refArgs).longs();
     }
 
     public static CallResult resolveTailCallWithRefs(Instance instance) {
@@ -253,6 +258,23 @@ public final class Shaded {
             return MemCopyWorkaround.i32_lt_u(a, b);
         } else {
             return OpcodeImpl.I32_LT_U(a, b);
+        }
+    }
+
+    // i32.gt_u and i32.le_u use the same Integer.compareUnsigned pattern as ge_u and lt_u.
+    public static int i32_gt_u(int a, int b) {
+        if (memCopyWorkaround) {
+            return MemCopyWorkaround.i32_gt_u(a, b);
+        } else {
+            return OpcodeImpl.I32_GT_U(a, b);
+        }
+    }
+
+    public static int i32_le_u(int a, int b) {
+        if (memCopyWorkaround) {
+            return MemCopyWorkaround.i32_le_u(a, b);
+        } else {
+            return OpcodeImpl.I32_LE_U(a, b);
         }
     }
 
@@ -522,7 +544,6 @@ public final class Shaded {
         }
         WasmException e =
                 WasmException.builder().instance(instance).tagIdx(tagNumber).args(args).build();
-        instance.registerException(e);
         return e;
     }
 
@@ -538,20 +559,12 @@ public final class Shaded {
                         .args(args)
                         .refArgs(refArgs)
                         .build();
-        instance.registerException(e);
         return e;
     }
 
+    /** Tags match by identity: an imported tag is the very same instance as the exported one. */
     public static boolean exceptionMatches(WasmException exception, int tag, Instance instance) {
-        if (exception.instance() == instance && exception.tagIdx() == tag) {
-            return true;
-        }
-
-        var currentCatchTag = instance.tag(tag);
-        var exceptionTag = exception.instance().tag(exception.tagIdx());
-        return tag < instance.imports().tagCount()
-                && currentCatchTag.type().typesMatch(exceptionTag.type())
-                && currentCatchTag.type().returnsMatch(exceptionTag.type());
+        return instance.tag(tag) == exception.instance().tag(exception.tagIdx());
     }
 
     // I32 32-bit RMW ops

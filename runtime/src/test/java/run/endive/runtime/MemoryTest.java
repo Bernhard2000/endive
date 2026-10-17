@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -223,6 +224,169 @@ public class MemoryTest {
             final int result = memory.atomicWait(addr, sentinel, 0L);
 
             assertEquals(2, result, "round " + round + ": main thread should have timed out (2)");
+        }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("memoryImplementations")
+    public void atomicsOnNonSharedMemory(String name, Supplier<Memory> memorySupplier) {
+        var memory = memorySupplier.get();
+
+        memory.atomicWriteInt(0, 40);
+        assertEquals(40, memory.atomicAddInt(0, 2));
+        assertEquals(42, memory.atomicReadInt(0));
+        assertEquals(42, memory.atomicCmpxchgInt(0, 42, 7));
+        assertEquals(7, memory.atomicXchgInt(0, 1));
+
+        memory.atomicWriteLong(8, 1L);
+        assertEquals(1L, memory.atomicAddLong(8, 1L));
+        assertEquals(2L, memory.atomicReadLong(8));
+
+        memory.atomicWriteShort(16, (short) 3);
+        assertEquals((short) 3, memory.atomicAddShort(16, (short) 1));
+        assertEquals((short) 4, memory.atomicReadShort(16));
+
+        memory.atomicWriteByte(18, (byte) 5);
+        assertEquals((byte) 5, memory.atomicOrByte(18, (byte) 2));
+        assertEquals((byte) 7, memory.atomicReadByte(18));
+    }
+
+    // e.g. the host updating a non-shared memory from another thread
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("memoryImplementations")
+    public void concurrentAtomicsOnNonSharedMemory(String name, Supplier<Memory> memorySupplier)
+            throws Exception {
+        final int iterations = 20_000;
+        var memory = memorySupplier.get();
+
+        var start = new CountDownLatch(1);
+        Runnable adds =
+                () -> {
+                    awaitQuietly(start);
+                    for (int i = 0; i < iterations; i++) {
+                        memory.atomicAddInt(0, 1);
+                    }
+                };
+        var first = CompletableFuture.runAsync(adds);
+        var second = CompletableFuture.runAsync(adds);
+        start.countDown();
+        CompletableFuture.allOf(first, second).get(30, TimeUnit.SECONDS);
+
+        assertEquals(2 * iterations, memory.atomicReadInt(0));
+    }
+
+    // A waiter reads its value under the word lock, so mix wait/notify with atomics on that word
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("growableMemoryImplementations")
+    public void waitAndNotifyWithAtomicsOnSameWord(String name, Supplier<Memory> memorySupplier)
+            throws Exception {
+        final int addr = 4;
+        var memory = memorySupplier.get();
+        memory.atomicWriteInt(addr, 0);
+
+        var stop = new AtomicBoolean();
+        var adds =
+                CompletableFuture.runAsync(
+                        () -> {
+                            while (!stop.get()) {
+                                memory.atomicAddInt(0, 1);
+                            }
+                        });
+        try {
+            for (int round = 0; round < 100; round++) {
+                var waiter =
+                        CompletableFuture.supplyAsync(
+                                () -> memory.atomicWait(addr, 0, TimeUnit.SECONDS.toNanos(30)));
+                while (memory.atomicNotify(addr, 1) == 0 && !waiter.isDone()) {
+                    Thread.onSpinWait();
+                }
+                assertEquals(0, waiter.get(30, TimeUnit.SECONDS), "round " + round);
+            }
+        } finally {
+            stop.set(true);
+        }
+        adds.get(30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Overlapping atomics of different sizes must be atomic relative to each other. An i32 add at
+     * address 0 and an i16 add at address 2 both read-modify-write bytes 2-3; if they don't
+     * exclude each other, one of them overwrites the other's update.
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("growableMemoryImplementations")
+    public void overlappingAtomicsOfDifferentSizes(String name, Supplier<Memory> memorySupplier)
+            throws Exception {
+        final int iterations = 20_000;
+        var memory = memorySupplier.get();
+        memory.atomicWriteInt(0, 0);
+
+        var start = new CountDownLatch(1);
+        var ints =
+                CompletableFuture.runAsync(
+                        () -> {
+                            awaitQuietly(start);
+                            for (int i = 0; i < iterations; i++) {
+                                memory.atomicAddInt(0, 1);
+                            }
+                        });
+        var shorts =
+                CompletableFuture.runAsync(
+                        () -> {
+                            awaitQuietly(start);
+                            for (int i = 0; i < iterations; i++) {
+                                memory.atomicAddShort(2, (short) 1);
+                            }
+                        });
+        start.countDown();
+        CompletableFuture.allOf(ints, shorts).get(30, TimeUnit.SECONDS);
+
+        // little endian: the i32 adds land in the low half, the i16 adds in the high half
+        assertEquals(iterations | (iterations << 16), memory.atomicReadInt(0));
+    }
+
+    /**
+     * Byte atomics must exclude overlapping wider atomics too, also when only some sizes have
+     * hardware atomic support. The i32 adds only change the high half, so the low byte at address
+     * 1 should hold exactly the i8 adds (modulo 256).
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("growableMemoryImplementations")
+    public void overlappingByteAndIntAtomics(String name, Supplier<Memory> memorySupplier)
+            throws Exception {
+        final int iterations = 20_000;
+        var memory = memorySupplier.get();
+        memory.atomicWriteInt(0, 0);
+
+        var start = new CountDownLatch(1);
+        var ints =
+                CompletableFuture.runAsync(
+                        () -> {
+                            awaitQuietly(start);
+                            for (int i = 0; i < iterations; i++) {
+                                memory.atomicAddInt(0, 1 << 16);
+                            }
+                        });
+        var bytes =
+                CompletableFuture.runAsync(
+                        () -> {
+                            awaitQuietly(start);
+                            for (int i = 0; i < iterations; i++) {
+                                memory.atomicAddByte(1, (byte) 1);
+                            }
+                        });
+        start.countDown();
+        CompletableFuture.allOf(ints, bytes).get(30, TimeUnit.SECONDS);
+
+        assertEquals((iterations << 16) | ((iterations & 0xFF) << 8), memory.atomicReadInt(0));
+    }
+
+    private static void awaitQuietly(CountDownLatch latch) {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
         }
     }
 }

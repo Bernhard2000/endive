@@ -15,16 +15,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.github.jnr</groupId>
-      <artifactId>jffi</artifactId>
-    </dependency>
-    <dependency>
       <groupId>run.endive</groupId>
       <artifactId>redline-api-experimental</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>run.endive</groupId>
-      <artifactId>redline-bridge-experimental</artifactId>
     </dependency>
     <dependency>
       <groupId>run.endive</groupId>
@@ -37,8 +29,27 @@
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jffi</artifactId>
-      <classifier>native</classifier>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <configuration>
+          <rules>
+            <!-- Runners only load precompiled code; the compiler is build-time only -->
+            <bannedDependencies>
+              <excludes>
+                <exclude>run.endive:redline-bridge-experimental</exclude>
+                <exclude>run.endive:redline-compiler-experimental</exclude>
+              </excludes>
+            </bannedDependencies>
+          </rules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

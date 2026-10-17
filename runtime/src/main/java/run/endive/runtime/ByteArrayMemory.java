@@ -52,6 +52,14 @@ public final class ByteArrayMemory implements Memory {
     private static final boolean HAS_INT_ATOMICS = hasFullAtomicSupport(INT_ARR_HANDLE);
     private static final boolean HAS_LONG_ATOMICS = hasFullAtomicSupport(LONG_ARR_HANDLE);
 
+    // All atomics lock-free or all locked: the two don't exclude each other
+    private static final boolean LOCK_FREE =
+            HAS_BYTE_ATOMICS
+                    && HAS_INT_ATOMICS
+                    && HAS_LONG_ATOMICS
+                    && SHORT_ARR_HANDLE.isAccessModeSupported(AccessMode.GET_VOLATILE)
+                    && SHORT_ARR_HANDLE.isAccessModeSupported(AccessMode.SET_VOLATILE);
+
     // Page addressing constants
     private static final int PAGE_SHIFT = 16; // PAGE_SIZE = 65536 = 2^16
     private static final int PAGE_MASK = PAGE_SIZE - 1;
@@ -125,6 +133,7 @@ public final class ByteArrayMemory implements Memory {
     }
 
     private final Map<Integer, WaitState> waitStates;
+    private final WordLocks wordLocks = new WordLocks();
 
     @Override
     @SuppressWarnings("removal")
@@ -132,8 +141,8 @@ public final class ByteArrayMemory implements Memory {
         throw new UnsupportedOperationException();
     }
 
-    private Object monitor(int address) {
-        return waitStates.computeIfAbsent(address, k -> new WaitState());
+    private Object wordMonitor(int address) {
+        return wordLocks.forAddress(address);
     }
 
     // Wait IF condition is true
@@ -721,10 +730,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_BYTE_ATOMICS) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.getAndAdd(page, off, delta);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 byte value = (byte) BYTE_ARR_HANDLE.get(page, off);
                 BYTE_ARR_HANDLE.set(page, off, (byte) (value + delta));
                 return value;
@@ -739,10 +748,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.getAndAdd(page, off, delta);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 int value = (int) INT_ARR_HANDLE.get(page, off);
                 INT_ARR_HANDLE.set(page, off, value + delta);
                 return value;
@@ -757,10 +766,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_LONG_ATOMICS) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.getAndAdd(page, off, delta);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 long value = (long) LONG_ARR_HANDLE.get(page, off);
                 LONG_ARR_HANDLE.set(page, off, value + delta);
                 return value;
@@ -775,10 +784,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_SHORT_ATOMICS) {
+            if (LOCK_FREE && HAS_SHORT_ATOMICS) {
                 return (short) SHORT_ARR_HANDLE.getAndAdd(page, off, delta);
             }
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 // cas loop using aligned int
                 int alignedOff = off & ~3;
                 int shift = (off & 2) * 8;
@@ -794,7 +803,7 @@ public final class ByteArrayMemory implements Memory {
                     }
                 }
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 short value = (short) SHORT_ARR_HANDLE.get(page, off);
                 SHORT_ARR_HANDLE.set(page, off, (short) (value + delta));
                 return value;
@@ -809,10 +818,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_BYTE_ATOMICS) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.getAndBitwiseAnd(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 byte value = (byte) BYTE_ARR_HANDLE.get(page, off);
                 BYTE_ARR_HANDLE.set(page, off, (byte) (value & mask));
                 return value;
@@ -827,10 +836,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.getAndBitwiseAnd(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 int value = (int) INT_ARR_HANDLE.get(page, off);
                 INT_ARR_HANDLE.set(page, off, value & mask);
                 return value;
@@ -845,10 +854,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_LONG_ATOMICS) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.getAndBitwiseAnd(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 long value = (long) LONG_ARR_HANDLE.get(page, off);
                 LONG_ARR_HANDLE.set(page, off, value & mask);
                 return value;
@@ -863,10 +872,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_SHORT_ATOMICS) {
+            if (LOCK_FREE && HAS_SHORT_ATOMICS) {
                 return (short) SHORT_ARR_HANDLE.getAndBitwiseAnd(page, off, mask);
             }
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 // leverage that 0xFFFF is identity for and
                 int alignedOff = off & ~3;
                 int shift = (off & 2) * 8;
@@ -874,7 +883,7 @@ public final class ByteArrayMemory implements Memory {
                 int intValue = (int) INT_ARR_HANDLE.getAndBitwiseAnd(page, alignedOff, intMask);
                 return (short) ((intValue >>> shift) & 0xFFFF);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 short value = (short) SHORT_ARR_HANDLE.get(page, off);
                 SHORT_ARR_HANDLE.set(page, off, (short) (value & mask));
                 return value;
@@ -889,10 +898,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_BYTE_ATOMICS) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.compareAndExchange(page, off, expected, replacement);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 byte value = (byte) BYTE_ARR_HANDLE.get(page, off);
                 if (value == expected) {
                     BYTE_ARR_HANDLE.set(page, off, replacement);
@@ -909,10 +918,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.compareAndExchange(page, off, expected, replacement);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 int value = (int) INT_ARR_HANDLE.get(page, off);
                 if (value == expected) {
                     INT_ARR_HANDLE.set(page, off, replacement);
@@ -929,10 +938,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_LONG_ATOMICS) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.compareAndExchange(page, off, expected, replacement);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 long value = (long) LONG_ARR_HANDLE.get(page, off);
                 if (value == expected) {
                     LONG_ARR_HANDLE.set(page, off, replacement);
@@ -949,11 +958,11 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_SHORT_ATOMICS) {
+            if (LOCK_FREE && HAS_SHORT_ATOMICS) {
                 return (short)
                         SHORT_ARR_HANDLE.compareAndExchange(page, off, expected, replacement);
             }
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 int alignedOff = off & ~3;
                 int shift = (off & 2) * 8;
                 int mask = 0xFFFF << shift;
@@ -970,7 +979,7 @@ public final class ByteArrayMemory implements Memory {
                     }
                 }
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 short value = (short) SHORT_ARR_HANDLE.get(page, off);
                 if (value == expected) {
                     SHORT_ARR_HANDLE.set(page, off, replacement);
@@ -987,10 +996,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_BYTE_ATOMICS) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.getAndBitwiseOr(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 byte value = (byte) BYTE_ARR_HANDLE.get(page, off);
                 BYTE_ARR_HANDLE.set(page, off, (byte) (value | mask));
                 return value;
@@ -1005,10 +1014,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.getAndBitwiseOr(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 int value = (int) INT_ARR_HANDLE.get(page, off);
                 INT_ARR_HANDLE.set(page, off, value | mask);
                 return value;
@@ -1023,10 +1032,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_LONG_ATOMICS) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.getAndBitwiseOr(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 long value = (long) LONG_ARR_HANDLE.get(page, off);
                 LONG_ARR_HANDLE.set(page, off, value | mask);
                 return value;
@@ -1041,10 +1050,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_SHORT_ATOMICS) {
+            if (LOCK_FREE && HAS_SHORT_ATOMICS) {
                 return (short) SHORT_ARR_HANDLE.getAndBitwiseOr(page, off, mask);
             }
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 // leverage that 0x0000 is identity for or
                 int alignedOff = off & ~3;
                 int shift = (off & 2) * 8;
@@ -1052,7 +1061,7 @@ public final class ByteArrayMemory implements Memory {
                 int intValue = (int) INT_ARR_HANDLE.getAndBitwiseOr(page, alignedOff, intMask);
                 return (short) ((intValue >>> shift) & 0xFFFF);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 short value = (short) SHORT_ARR_HANDLE.get(page, off);
                 SHORT_ARR_HANDLE.set(page, off, (short) (value | mask));
                 return value;
@@ -1067,10 +1076,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (BYTE_ARR_HANDLE.isAccessModeSupported(AccessMode.GET_VOLATILE)) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.getVolatile(page, off);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 return (byte) BYTE_ARR_HANDLE.get(page, off);
             }
         } catch (RuntimeException e) {
@@ -1083,10 +1092,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (INT_ARR_HANDLE.isAccessModeSupported(AccessMode.GET_VOLATILE)) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.getVolatile(page, off);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 return (int) INT_ARR_HANDLE.get(page, off);
             }
         } catch (RuntimeException e) {
@@ -1099,10 +1108,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (LONG_ARR_HANDLE.isAccessModeSupported(AccessMode.GET_VOLATILE)) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.getVolatile(page, off);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 return (long) LONG_ARR_HANDLE.get(page, off);
             }
         } catch (RuntimeException e) {
@@ -1115,10 +1124,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (SHORT_ARR_HANDLE.isAccessModeSupported(AccessMode.GET_VOLATILE)) {
+            if (LOCK_FREE) {
                 return (short) SHORT_ARR_HANDLE.getVolatile(page, off);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 return (short) SHORT_ARR_HANDLE.get(page, off);
             }
         } catch (RuntimeException e) {
@@ -1131,11 +1140,11 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (BYTE_ARR_HANDLE.isAccessModeSupported(AccessMode.SET_VOLATILE)) {
+            if (LOCK_FREE) {
                 BYTE_ARR_HANDLE.setVolatile(page, off, value);
                 return;
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 BYTE_ARR_HANDLE.set(page, off, value);
             }
         } catch (RuntimeException e) {
@@ -1148,11 +1157,11 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (INT_ARR_HANDLE.isAccessModeSupported(AccessMode.SET_VOLATILE)) {
+            if (LOCK_FREE) {
                 INT_ARR_HANDLE.setVolatile(page, off, value);
                 return;
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 INT_ARR_HANDLE.set(page, off, value);
             }
         } catch (RuntimeException e) {
@@ -1165,11 +1174,11 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (LONG_ARR_HANDLE.isAccessModeSupported(AccessMode.SET_VOLATILE)) {
+            if (LOCK_FREE) {
                 LONG_ARR_HANDLE.setVolatile(page, off, value);
                 return;
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 LONG_ARR_HANDLE.set(page, off, value);
             }
         } catch (RuntimeException e) {
@@ -1182,11 +1191,11 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (SHORT_ARR_HANDLE.isAccessModeSupported(AccessMode.SET_VOLATILE)) {
+            if (LOCK_FREE) {
                 SHORT_ARR_HANDLE.setVolatile(page, off, value);
                 return;
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 SHORT_ARR_HANDLE.set(page, off, value);
             }
         } catch (RuntimeException e) {
@@ -1199,10 +1208,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_BYTE_ATOMICS) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.getAndSet(page, off, value);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 byte oldValue = (byte) BYTE_ARR_HANDLE.get(page, off);
                 BYTE_ARR_HANDLE.set(page, off, value);
                 return oldValue;
@@ -1217,10 +1226,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.getAndSet(page, off, value);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 int oldValue = (int) INT_ARR_HANDLE.get(page, off);
                 INT_ARR_HANDLE.set(page, off, value);
                 return oldValue;
@@ -1235,10 +1244,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_LONG_ATOMICS) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.getAndSet(page, off, value);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 long oldValue = (long) LONG_ARR_HANDLE.get(page, off);
                 LONG_ARR_HANDLE.set(page, off, value);
                 return oldValue;
@@ -1253,10 +1262,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_SHORT_ATOMICS) {
+            if (LOCK_FREE && HAS_SHORT_ATOMICS) {
                 return (short) SHORT_ARR_HANDLE.getAndSet(page, off, value);
             }
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 int alignedOff = off & ~3;
                 int shift = (off & 2) * 8;
                 int mask = 0xFFFF << shift;
@@ -1269,7 +1278,7 @@ public final class ByteArrayMemory implements Memory {
                     }
                 }
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 short oldValue = (short) SHORT_ARR_HANDLE.get(page, off);
                 SHORT_ARR_HANDLE.set(page, off, value);
                 return oldValue;
@@ -1284,10 +1293,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_BYTE_ATOMICS) {
+            if (LOCK_FREE) {
                 return (byte) BYTE_ARR_HANDLE.getAndBitwiseXor(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 byte value = (byte) BYTE_ARR_HANDLE.get(page, off);
                 BYTE_ARR_HANDLE.set(page, off, (byte) (value ^ mask));
                 return value;
@@ -1302,10 +1311,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 return (int) INT_ARR_HANDLE.getAndBitwiseXor(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 int value = (int) INT_ARR_HANDLE.get(page, off);
                 INT_ARR_HANDLE.set(page, off, value ^ mask);
                 return value;
@@ -1320,10 +1329,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_LONG_ATOMICS) {
+            if (LOCK_FREE) {
                 return (long) LONG_ARR_HANDLE.getAndBitwiseXor(page, off, mask);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 long value = (long) LONG_ARR_HANDLE.get(page, off);
                 LONG_ARR_HANDLE.set(page, off, value ^ mask);
                 return value;
@@ -1338,10 +1347,10 @@ public final class ByteArrayMemory implements Memory {
         try {
             byte[] page = pages[addr >>> PAGE_SHIFT];
             int off = addr & PAGE_MASK;
-            if (HAS_SHORT_ATOMICS) {
+            if (LOCK_FREE && HAS_SHORT_ATOMICS) {
                 return (short) SHORT_ARR_HANDLE.getAndBitwiseXor(page, off, mask);
             }
-            if (HAS_INT_ATOMICS) {
+            if (LOCK_FREE) {
                 // leverage that 0x0000 is identity for xor
                 int alignedOff = off & ~3;
                 int shift = (off & 2) * 8;
@@ -1349,7 +1358,7 @@ public final class ByteArrayMemory implements Memory {
                 int intValue = (int) INT_ARR_HANDLE.getAndBitwiseXor(page, alignedOff, intMask);
                 return (short) ((intValue >>> shift) & 0xFFFF);
             }
-            synchronized (monitor(addr)) {
+            synchronized (wordMonitor(addr)) {
                 short value = (short) SHORT_ARR_HANDLE.get(page, off);
                 SHORT_ARR_HANDLE.set(page, off, (short) (value ^ mask));
                 return value;

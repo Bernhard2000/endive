@@ -41,8 +41,19 @@ public final class MemCopyWorkaround {
         }
     }
 
+    // The compiler's Shaded decides whether generated code calls this class with the same rule:
+    // -Dendive.memCopyWorkaround overrides the Java version check.
+    static boolean isEnabled(String property, String version) {
+        if (property != null) {
+            return Boolean.parseBoolean(property);
+        }
+        return shouldUseMemWorkaround(version);
+    }
+
     static {
-        if (shouldUseMemWorkaround()) {
+        if (isEnabled(
+                System.getProperty("endive.memCopyWorkaround"),
+                System.getProperty("java.version"))) {
             MemoryCopyFunc noop1 = (destination, offset, size, memory) -> {};
             MemoryCopyFunc noop2 = (destination, offset, size, memory) -> {};
 
@@ -65,18 +76,34 @@ public final class MemCopyWorkaround {
                 MemCopyWorkaround.i32_lt_u(0, 0);
                 i32ltuFunc = noop4;
                 MemCopyWorkaround.i32_lt_u(0, 0);
-            }
 
-            memoryCopyFunc =
-                    (destination, offset, size, memory) -> memory.copy(destination, offset, size);
-            i32geuFunc = (a, b) -> OpcodeImpl.I32_GE_U(a, b);
-            i32ltuFunc = (a, b) -> OpcodeImpl.I32_LT_U(a, b);
+                i32gtuFunc = noop3;
+                MemCopyWorkaround.i32_gt_u(0, 0);
+                i32gtuFunc = noop4;
+                MemCopyWorkaround.i32_gt_u(0, 0);
+
+                i32leuFunc = noop3;
+                MemCopyWorkaround.i32_le_u(0, 0);
+                i32leuFunc = noop4;
+                MemCopyWorkaround.i32_le_u(0, 0);
+            }
         }
+
+        // Always set, so that a caller that enables the workaround on its own never finds them
+        // null.
+        memoryCopyFunc =
+                (destination, offset, size, memory) -> memory.copy(destination, offset, size);
+        i32geuFunc = (a, b) -> OpcodeImpl.I32_GE_U(a, b);
+        i32ltuFunc = (a, b) -> OpcodeImpl.I32_LT_U(a, b);
+        i32gtuFunc = (a, b) -> OpcodeImpl.I32_GT_U(a, b);
+        i32leuFunc = (a, b) -> OpcodeImpl.I32_LE_U(a, b);
     }
 
     private static MemoryCopyFunc memoryCopyFunc;
     private static I32GEUFunc i32geuFunc;
     private static I32GEUFunc i32ltuFunc;
+    private static I32GEUFunc i32gtuFunc;
+    private static I32GEUFunc i32leuFunc;
 
     public static void memoryCopy(int destination, int offset, int size, Memory memory) {
         memoryCopyFunc.apply(destination, offset, size, memory);
@@ -88,5 +115,13 @@ public final class MemCopyWorkaround {
 
     public static int i32_lt_u(int a, int b) {
         return i32ltuFunc.apply(a, b);
+    }
+
+    public static int i32_gt_u(int a, int b) {
+        return i32gtuFunc.apply(a, b);
+    }
+
+    public static int i32_le_u(int a, int b) {
+        return i32leuFunc.apply(a, b);
     }
 }

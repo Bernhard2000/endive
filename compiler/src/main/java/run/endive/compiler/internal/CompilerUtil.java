@@ -57,7 +57,6 @@ final class CompilerUtil {
     public static Class<?> jvmType(ValType type) {
         switch (type.opcode()) {
             case ValType.ID.I32:
-            case ValType.ID.ExnRef:
                 return int.class;
             case ValType.ID.Ref:
             case ValType.ID.RefNull:
@@ -78,7 +77,6 @@ final class CompilerUtil {
     public static Type asmType(ValType type) {
         switch (type.opcode()) {
             case ValType.ID.I32:
-            case ValType.ID.ExnRef:
                 return INT_TYPE;
             case ValType.ID.Ref:
             case ValType.ID.RefNull:
@@ -105,7 +103,6 @@ final class CompilerUtil {
     public static void emitLongToJvm(MethodVisitor asm, ValType type) {
         switch (type.opcode()) {
             case ValType.ID.I32:
-            case ValType.ID.ExnRef:
                 asm.visitInsn(Opcodes.L2I);
                 return;
             case ValType.ID.Ref:
@@ -133,7 +130,6 @@ final class CompilerUtil {
     public static void emitJvmToLong(MethodVisitor asm, ValType type) {
         switch (type.opcode()) {
             case ValType.ID.I32:
-            case ValType.ID.ExnRef:
                 asm.visitInsn(Opcodes.I2L);
                 return;
             case ValType.ID.Ref:
@@ -267,8 +263,6 @@ final class CompilerUtil {
                 if (type.isObjectRef()) {
                     return null; // GC refs use null as their default
                 }
-                return REF_NULL_VALUE;
-            case ValType.ID.ExnRef:
                 return REF_NULL_VALUE;
             default:
                 throw new IllegalArgumentException("Unsupported ValType: " + type);

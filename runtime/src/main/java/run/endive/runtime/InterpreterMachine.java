@@ -7,13 +7,13 @@ import static run.endive.wasm.types.Value.REF_NULL_VALUE;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import run.endive.runtime.internal.V128Ops;
 import run.endive.wasm.InvalidException;
 import run.endive.wasm.WasmEngineException;
 import run.endive.wasm.types.AnnotatedInstruction;
 import run.endive.wasm.types.BlockType;
 import run.endive.wasm.types.CatchOpCode;
 import run.endive.wasm.types.FunctionType;
-import run.endive.wasm.types.Instruction;
 import run.endive.wasm.types.OpCode;
 import run.endive.wasm.types.TypeSection;
 import run.endive.wasm.types.ValType;
@@ -50,17 +50,6 @@ public class InterpreterMachine implements Machine {
         long get(int index);
     }
 
-    @SuppressWarnings("DoNotCallSuggester")
-    protected void evalDefault(
-            MStack stack,
-            Instance instance,
-            Deque<StackFrame> callStack,
-            Instruction instruction,
-            Operands operands)
-            throws WasmEngineException {
-        throw new WasmEngineException("Machine doesn't recognize Instruction " + instruction);
-    }
-
     @Override
     public long[] call(int funcId, long[] args) throws WasmEngineException {
         return call(stack, instance, callStack, funcId, args, null, null, true);
@@ -88,12 +77,14 @@ public class InterpreterMachine implements Machine {
         // When called via call(int, long[]) with no refArgs and the function
         // has externref params, populate refArgs from longs so the ref stack
         // is set up correctly. Uses WasmExternRef (the proper externref type).
+        // Only externref has a meaningful long encoding here; any other object
+        // ref stays null rather than being wrapped in the wrong type.
         if (refArgs == null && type.hasObjectRefParams()) {
             refArgs = new Object[args.length];
             int slot = 0;
             for (int pi = 0; pi < type.params().size(); pi++) {
                 var param = type.params().get(pi);
-                if (param.isObjectRef()) {
+                if (param.isObjectRef() && isExternHeapType(param.typeIdx())) {
                     long val = args[slot];
                     refArgs[slot] = (val == REF_NULL_VALUE) ? null : new WasmExternRef(val);
                 }
@@ -102,6 +93,7 @@ public class InterpreterMachine implements Machine {
         }
 
         var func = instance.function(funcId);
+        var callDepth = callStack.size();
         if (func != null) {
             var stackFrame =
                     new StackFrame(
@@ -120,9 +112,8 @@ public class InterpreterMachine implements Machine {
             } catch (StackOverflowError e) {
                 throw new WasmEngineException("call stack exhausted", e);
             } finally {
-                if (!callStack.isEmpty() && callStack.peek() == stackFrame) {
-                    callStack.pop();
-                }
+                // tail calls may have replaced stackFrame
+                popCallStackTo(callStack, callDepth);
             }
         } else {
             var stackFrame = new StackFrame(instance, funcId, args);
@@ -159,13 +150,11 @@ public class InterpreterMachine implements Machine {
                     }
                 }
             } catch (WasmException e) {
-                THROW_REF(instance, instance.registerException(e), stack, stackFrame, callStack);
+                THROW_REF(instance, e, stack, stackFrame, callStack);
             } catch (StackOverflowError e) {
                 throw new WasmEngineException("call stack exhausted", e);
             } finally {
-                if (!callStack.isEmpty() && callStack.peek() == stackFrame) {
-                    callStack.pop();
-                }
+                popCallStackTo(callStack, callDepth);
             }
         }
 
@@ -205,6 +194,12 @@ public class InterpreterMachine implements Machine {
             }
         }
         return results;
+    }
+
+    private static void popCallStackTo(Deque<StackFrame> callStack, int depth) {
+        while (callStack.size() > depth) {
+            callStack.pop();
+        }
     }
 
     @Override
@@ -322,7 +317,7 @@ public class InterpreterMachine implements Machine {
                     }
                 case RETURN_CALL:
                     // swap in place the current frame
-                    frame = RETURN_CALL(stack, instance, callStack, operands, frame);
+                    frame = RETURN_CALL(stack, instance, callStack, (int) operands.get(0), frame);
                     break;
                 case RETURN_CALL_INDIRECT:
                     // swap in place the current frame
@@ -348,14 +343,12 @@ public class InterpreterMachine implements Machine {
                                         .args(args)
                                         .refArgs(refArgs)
                                         .build();
-                        var exceptionIdx = instance.registerException(exception);
-                        frame = THROW_REF(instance, exceptionIdx, stack, frame, callStack);
+                        frame = THROW_REF(instance, exception, stack, frame, callStack);
                         break;
                     }
                 case THROW_REF:
                     {
-                        var exceptionIdx = (int) stack.pop();
-                        frame = THROW_REF(instance, exceptionIdx, stack, frame, callStack);
+                        frame = THROW_REF(instance, stack.popRef(), stack, frame, callStack);
                         break;
                     }
                 case CALL_INDIRECT:
@@ -1191,10 +1184,11 @@ public class InterpreterMachine implements Machine {
                     EXTERN_CONVERT_ANY(stack);
                     break;
                 default:
-                    {
-                        evalDefault(stack, instance, callStack, instruction, operands);
-                        break;
+                    if (!V128Ops.eval(stack, instance, instruction)) {
+                        throw new WasmEngineException(
+                                "Machine doesn't recognize Instruction " + instruction);
                     }
+                    break;
             }
         }
     }
@@ -1714,13 +1708,13 @@ public class InterpreterMachine implements Machine {
 
     private static void I64_STORE32(MStack stack, Instance instance, Operands operands) {
         var value = stack.pop();
-        var ptr = (int) (operands.get(1) + (int) stack.pop());
+        var ptr = readMemPtr(stack, operands);
         instance.memory((int) operands.get(2)).writeI32(ptr, (int) value);
     }
 
     private static void I64_STORE8(MStack stack, Instance instance, Operands operands) {
         var value = (byte) stack.pop();
-        var ptr = (int) (operands.get(1) + (int) stack.pop());
+        var ptr = readMemPtr(stack, operands);
         instance.memory((int) operands.get(2)).writeByte(ptr, value);
     }
 
@@ -1874,9 +1868,7 @@ public class InterpreterMachine implements Machine {
     private static void REF_NULL(MStack stack, Operands operands) {
         var heapType = (int) operands.get(0);
         if (heapType == ValType.TypeIdxCode.FUNC.code()
-                || heapType == ValType.TypeIdxCode.NOFUNC.code()
-                || heapType == ValType.TypeIdxCode.EXN.code()
-                || heapType == ValType.TypeIdxCode.NOEXN.code()) {
+                || heapType == ValType.TypeIdxCode.NOFUNC.code()) {
             stack.push(REF_NULL_VALUE);
         } else {
             // GC refs, externref, noexternref all use Object null
@@ -2459,8 +2451,8 @@ public class InterpreterMachine implements Machine {
         if (localType.isObjectRef()) {
             currentStackFrame.setLocalRef(i, stack.popRef());
         } else if (localType.equals(ValType.V128)) {
-            currentStackFrame.setLocal(i, stack.pop());
             currentStackFrame.setLocal(i + 1, stack.pop());
+            currentStackFrame.setLocal(i, stack.pop());
         } else {
             currentStackFrame.setLocal(i, stack.pop());
         }
@@ -2474,10 +2466,10 @@ public class InterpreterMachine implements Machine {
         if (localType.isObjectRef()) {
             currentStackFrame.setLocalRef(i, stack.peekRef());
         } else if (localType.equals(ValType.V128)) {
-            var tmp = stack.pop();
-            currentStackFrame.setLocal(i, tmp);
-            currentStackFrame.setLocal(i + 1, stack.peek());
-            stack.push(tmp);
+            var high = stack.pop();
+            currentStackFrame.setLocal(i + 1, high);
+            currentStackFrame.setLocal(i, stack.peek());
+            stack.push(high);
         } else {
             currentStackFrame.setLocal(i, stack.peek());
         }
@@ -2846,9 +2838,8 @@ public class InterpreterMachine implements Machine {
             MStack stack,
             Instance instance,
             Deque<StackFrame> callStack,
-            Operands operands,
+            int funcId,
             StackFrame currentStackFrame) {
-        var funcId = (int) operands.get(0);
         var typeId = instance.functionType(funcId);
         var type = instance.type(typeId);
         var func = instance.function(funcId);
@@ -2906,10 +2897,7 @@ public class InterpreterMachine implements Machine {
                         }
                     }
                 } catch (WasmException e) {
-                    THROW_REF(instance, instance.registerException(e), stack, newFrame, callStack);
-                }
-                if (fromCallStack) {
-                    callStack.push(newFrame);
+                    THROW_REF(instance, e, stack, newFrame, callStack);
                 }
                 return newFrame;
             }
@@ -2930,87 +2918,17 @@ public class InterpreterMachine implements Machine {
 
         int funcId = table.requiredRef(funcTableIdx);
         var refInstance = requireNonNullElse(table.instance(funcTableIdx), instance);
-        var type = instance.type(typeId);
 
-        boolean sameInstance = refInstance == instance;
-        if (sameInstance) {
-            var actualTypeIdx = instance.functionType(funcId);
-            verifyIndirectCallByTypeIdx(actualTypeIdx, typeId, instance.module().typeSection());
-        } else {
+        if (refInstance != instance) {
             var actualType = refInstance.type(refInstance.functionType(funcId));
-            verifyIndirectCall(actualType, type, instance.module().typeSection());
-        }
-
-        var refMachine = refInstance.getMachine().getClass();
-        if (!sameInstance && !refMachine.equals(instance.getMachine().getClass())) {
+            verifyIndirectCall(actualType, instance.type(typeId), instance.module().typeSection());
             throw new WasmEngineException(
-                    "Indirect tail-call to a different Machine implementation is not supported: "
-                            + refMachine.getName());
+                    "Indirect tail-call to a function of another instance is not supported");
         }
+        var actualTypeIdx = instance.functionType(funcId);
+        verifyIndirectCallByTypeIdx(actualTypeIdx, typeId, instance.module().typeSection());
 
-        var extracted = extractArgsAndRefsForParams(stack, type.params(), instance);
-        var args = (long[]) extracted[0];
-        var refArgs = (Object[]) extracted[1];
-
-        // optimizing when the tail call happens in the same function
-        if (currentStackFrame.funcId() == funcId) {
-            var ctrlFrame = currentStackFrame.popCtrlTillCall();
-            StackFrame.doControlTransfer(ctrlFrame, stack);
-            currentStackFrame.reset(args, refArgs);
-            currentStackFrame.pushCtrl(ctrlFrame);
-            return currentStackFrame;
-        } else {
-            var func = instance.function(funcId);
-            var fromCallStack = !callStack.isEmpty();
-
-            if (func != null) {
-                var ctrlFrame =
-                        (fromCallStack)
-                                ? callStack.pop().popCtrlTillCall()
-                                : currentStackFrame.popCtrlTillCall();
-                StackFrame.doControlTransfer(ctrlFrame, stack);
-                var newFrame =
-                        new StackFrame(
-                                instance,
-                                funcId,
-                                args,
-                                refArgs,
-                                type.params(),
-                                func.localTypes(),
-                                func.instructions());
-                newFrame.pushCtrl(OpCode.CALL, 0, sizeOf(type.returns()), stack.size());
-                if (fromCallStack) {
-                    callStack.push(newFrame);
-                }
-                return newFrame;
-            } else {
-                var newFrame = new StackFrame(instance, funcId, args);
-                newFrame.pushCtrl(OpCode.CALL, 0, sizeOf(type.returns()), stack.size());
-                callStack.push(newFrame);
-
-                var imprt = instance.imports().function(funcId);
-
-                try {
-                    if (type.hasObjectRefParams() || type.hasObjectRefReturns()) {
-                        var cr = imprt.handle().applyWithRefs(instance, args, refArgs);
-                        pushCallResult(cr, type, stack);
-                    } else {
-                        var results = imprt.handle().apply(instance, args);
-                        if (results != null) {
-                            for (var result : results) {
-                                stack.push(result);
-                            }
-                        }
-                    }
-                } catch (WasmException e) {
-                    THROW_REF(instance, instance.registerException(e), stack, newFrame, callStack);
-                }
-                if (fromCallStack) {
-                    callStack.push(newFrame);
-                }
-                return newFrame;
-            }
-        }
+        return RETURN_CALL(stack, instance, callStack, funcId, currentStackFrame);
     }
 
     private static StackFrame RETURN_CALL_REF(
@@ -3022,38 +2940,7 @@ public class InterpreterMachine implements Machine {
         if (funcId == REF_NULL_VALUE) {
             throw new TrapException("Trapped on call_ref on null function reference");
         }
-        var typeId = instance.functionType(funcId);
-        var type = instance.type(typeId);
-        var func = instance.function(funcId);
-        // given a list of param types, let's pop those params off the stack
-        // and pass as args to the function call
-        var extracted = extractArgsAndRefsForParams(stack, type.params(), instance);
-        var args = (long[]) extracted[0];
-        var refArgs = (Object[]) extracted[1];
-
-        // optimizing when the tail call happens in the same function
-        if (currentStackFrame.funcId() == funcId) {
-            var ctrlFrame = currentStackFrame.popCtrlTillCall();
-            StackFrame.doControlTransfer(ctrlFrame, stack);
-            currentStackFrame.reset(args, refArgs);
-            currentStackFrame.pushCtrl(ctrlFrame);
-            return currentStackFrame;
-        } else {
-            var ctrlFrame = callStack.pop();
-            StackFrame.doControlTransfer(ctrlFrame.popCtrlTillCall(), stack);
-            var newFrame =
-                    new StackFrame(
-                            instance,
-                            funcId,
-                            args,
-                            refArgs,
-                            type.params(),
-                            func.localTypes(),
-                            func.instructions());
-            newFrame.pushCtrl(OpCode.CALL, 0, sizeOf(type.returns()), stack.size());
-            callStack.push(newFrame);
-            return newFrame;
-        }
+        return RETURN_CALL(stack, instance, callStack, funcId, currentStackFrame);
     }
 
     private void CALL_INDIRECT(
@@ -3135,11 +3022,11 @@ public class InterpreterMachine implements Machine {
 
     protected static StackFrame THROW_REF(
             Instance instance,
-            int exceptionIdx,
+            Object exnRef,
             MStack stack,
             StackFrame frame,
             Deque<StackFrame> callStack) {
-        var exception = instance.exn(exceptionIdx);
+        var exception = WasmException.checked(exnRef);
         boolean found = false;
         while (!found) {
             while (frame.ctrlStackSize() > 0) {
@@ -3155,44 +3042,29 @@ public class InterpreterMachine implements Machine {
                 for (int i = 0; i < catches.size() && !found; i++) {
                     var currentCatch = catches.get(i);
 
-                    // verify import compatibility
-                    var compatibleImport = false;
+                    // A tag matches by identity, whether it is defined here or imported
                     if ((currentCatch.opcode() == CatchOpCode.CATCH
-                            || currentCatch.opcode() == CatchOpCode.CATCH_REF)) {
-                        var currentCatchTag = instance.tag(currentCatch.tag());
-                        var exceptionTag = exception.instance().tag(exception.tagIdx());
-
-                        // if it's an import we verify the compatibility
-                        if (currentCatch.tag() < instance.imports().tagCount()
-                                && currentCatchTag.type().paramsMatch(exceptionTag.type())
-                                && currentCatchTag.type().returnsMatch(exceptionTag.type())) {
-                            compatibleImport = true;
-                        } else if (exceptionTag != currentCatchTag) {
-                            // if it's not an import the tag should be the same
-                            continue;
-                        }
+                                    || currentCatch.opcode() == CatchOpCode.CATCH_REF)
+                            && !exceptionMatches(exception, currentCatch.tag(), instance)) {
+                        continue;
                     }
 
                     switch (currentCatch.opcode()) {
                         case CATCH:
-                            if (currentCatch.tag() == exception.tagIdx() || compatibleImport) {
-                                found = true;
-                                pushExceptionArgs(exception, stack);
-                            }
+                            found = true;
+                            pushExceptionArgs(exception, stack);
                             break;
                         case CATCH_REF:
-                            if (currentCatch.tag() == exception.tagIdx() || compatibleImport) {
-                                found = true;
-                                pushExceptionArgs(exception, stack);
-                                stack.push(exceptionIdx);
-                            }
+                            found = true;
+                            pushExceptionArgs(exception, stack);
+                            stack.pushRef(exception);
                             break;
                         case CATCH_ALL:
                             found = true;
                             break;
                         case CATCH_ALL_REF:
                             found = true;
-                            stack.push(exceptionIdx);
+                            stack.pushRef(exception);
                             break;
                     }
 
@@ -3980,13 +3852,21 @@ public class InterpreterMachine implements Machine {
         }
     }
 
+    /** Tags match by identity: an imported tag is the very same instance as the exported one. */
+    static boolean exceptionMatches(WasmException exception, int tag, Instance instance) {
+        return instance.tag(tag) == exception.instance().tag(exception.tagIdx());
+    }
+
+    private static boolean isExternHeapType(int heapType) {
+        return heapType == ValType.TypeIdxCode.EXTERN.code()
+                || heapType == ValType.TypeIdxCode.NOEXTERN.code();
+    }
+
     private static boolean isSourceGcRef(int sourceHeapType) {
         return sourceHeapType != ValType.TypeIdxCode.FUNC.code()
                 && sourceHeapType != ValType.TypeIdxCode.NOFUNC.code()
                 && sourceHeapType != ValType.TypeIdxCode.EXTERN.code()
-                && sourceHeapType != ValType.TypeIdxCode.NOEXTERN.code()
-                && sourceHeapType != ValType.TypeIdxCode.EXN.code()
-                && sourceHeapType != ValType.TypeIdxCode.NOEXN.code();
+                && sourceHeapType != ValType.TypeIdxCode.NOEXTERN.code();
     }
 
     private static void REF_TEST(

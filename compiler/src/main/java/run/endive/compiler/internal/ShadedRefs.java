@@ -54,6 +54,8 @@ public final class ShadedRefs {
     static final Method MEMORY_ATOMIC_LONG_READ;
     static final Method I32_GE_U;
     static final Method I32_LT_U;
+    static final Method I32_GT_U;
+    static final Method I32_LE_U;
     static final Method REF_IS_NULL;
     static final Method GC_REF_IS_NULL;
     static final Method REF_AS_NON_NULL;
@@ -82,7 +84,7 @@ public final class ShadedRefs {
     // Exception handling methods
     static final Method CREATE_WASM_EXCEPTION;
     static final Method CREATE_WASM_EXCEPTION_GC;
-    static final Method INSTANCE_GET_EXCEPTION;
+    static final Method WASM_EXCEPTION_CHECKED;
     static final Method EXCEPTION_MATCHES;
 
     static final Method MEMORY_ATOMIC_INT_WRITE;
@@ -318,6 +320,8 @@ public final class ShadedRefs {
                             "memoryAtomicLongIntRead", int.class, int.class, Memory.class);
             I32_GE_U = Shaded.class.getMethod("i32_ge_u", int.class, int.class);
             I32_LT_U = Shaded.class.getMethod("i32_lt_u", int.class, int.class);
+            I32_GT_U = Shaded.class.getMethod("i32_gt_u", int.class, int.class);
+            I32_LE_U = Shaded.class.getMethod("i32_le_u", int.class, int.class);
             REF_IS_NULL = Shaded.class.getMethod("isRefNull", int.class);
             GC_REF_IS_NULL = Shaded.class.getMethod("isGcRefNull", Object.class);
             REF_AS_NON_NULL = Shaded.class.getMethod("refAsNonNull", int.class);
@@ -398,7 +402,7 @@ public final class ShadedRefs {
                             Object[].class,
                             int.class,
                             Instance.class);
-            INSTANCE_GET_EXCEPTION = Instance.class.getMethod("exn", int.class);
+            WASM_EXCEPTION_CHECKED = WasmException.class.getMethod("checked", Object.class);
             EXCEPTION_MATCHES =
                     Shaded.class.getMethod(
                             "exceptionMatches", WasmException.class, int.class, Instance.class);

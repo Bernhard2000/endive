@@ -12,17 +12,19 @@ import com.kenai.jffi.MemoryIO;
 import com.kenai.jffi.PageManager;
 import com.kenai.jffi.Type;
 import java.lang.ref.Reference;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import run.endive.redline.experimental.api.NativeCode;
 import run.endive.redline.experimental.api.internal.CtxBuffer;
-import run.endive.redline.experimental.api.internal.RedlineTarget;
+import run.endive.redline.experimental.api.internal.InterruptWatchdog;
+import run.endive.redline.experimental.api.internal.NativeCodeCheck;
 import run.endive.redline.experimental.api.internal.TypeMapUtils;
-import run.endive.redline.experimental.bridge.internal.CraneliftBridge;
 import run.endive.runtime.Instance;
 import run.endive.runtime.Machine;
 import run.endive.runtime.TrapException;
+import run.endive.runtime.WasmInterruptedException;
 import run.endive.runtime.WasmRuntimeException;
 import run.endive.wasm.WasmEngineException;
 import run.endive.wasm.types.FunctionType;
@@ -85,13 +87,10 @@ public final class JffiNativeMachine implements Machine {
     }
 
     private final Instance instance;
-    private final CallContext[] entryTrampolineCallCtxs; // entry trampoline CallContext per func
-    private final long[] entryTrampolineAddrs; // entry trampoline native addr per func
+    private final Function[] entryTrampolines; // entry trampoline per func
     private final FunctionType[] funcTypes; // wasm FunctionType per func
     private final long codeRegionAddr;
     private final int codeRegionOsPages;
-    private long trampolineRegionAddr;
-    private int trampolineRegionOsPages;
     private final long ctxBufferAddr;
     private final long funcTableAddr;
     private final long funcTableSize; // byte size
@@ -113,6 +112,7 @@ public final class JffiNativeMachine implements Machine {
     private JffiNativeMemory nativeMemory;
     private volatile Throwable pendingException;
     private int callDepth;
+    private final InterruptWatchdog.InterruptSink interruptFlag = this::raiseInterruptFlag;
 
     // Keep closure handles alive to prevent GC
     private final Closure.Handle trampolineHandle;
@@ -123,10 +123,10 @@ public final class JffiNativeMachine implements Machine {
             Instance instance,
             List<JffiNativeTable> sharedTables,
             long sharedGlobalsBufferAddr,
-            byte[][] precompiledCode,
-            java.util.function.Function<run.endive.wasm.WasmModule, byte[][]> compilerFunction) {
+            NativeCode precompiledCode) {
         this.instance = instance;
         var module = instance.module();
+        NativeCode code = NativeCodeCheck.check(precompiledCode, module);
         this.numImports =
                 (int)
                         module.importSection().stream()
@@ -137,8 +137,7 @@ public final class JffiNativeMachine implements Machine {
                                                                 .FUNCTION)
                                 .count();
         int totalFuncs = numImports + module.codeSection().functionBodyCount();
-        this.entryTrampolineCallCtxs = new CallContext[totalFuncs];
-        this.entryTrampolineAddrs = new long[totalFuncs];
+        this.entryTrampolines = new Function[totalFuncs];
         this.funcTypes = new FunctionType[totalFuncs];
         this.importHandles = new Closure.Handle[numImports];
 
@@ -186,11 +185,14 @@ public final class JffiNativeMachine implements Machine {
         this.tablePtrsArrayAddr = 0;
         this.tablesInitialized = false;
 
-        // Create CALL_INDIRECT trampoline closure
+        // Host stubs are called by compiled code with the platform ABI
         this.trampolineHandle = createTrampolineStub();
-
-        // Create memory.grow closure
         this.memGrowHandle = createMemGrowStub();
+        for (int funcId = 0; funcId < numImports; funcId++) {
+            var funcType = instance.imports().function(funcId).functionType();
+            funcTypes[funcId] = funcType;
+            importHandles[funcId] = createImportStub(funcId, funcType);
+        }
 
         // Write pointers to ctxBuffer
         MEM.putLong(ctxBufferAddr + CtxBuffer.FUNC_TABLE_PTR, funcTableAddr);
@@ -203,32 +205,11 @@ public final class JffiNativeMachine implements Machine {
         MEM.putLong(ctxBufferAddr + CtxBuffer.MEMMOVE_PTR, MEMMOVE_ADDR);
         MEM.putLong(ctxBufferAddr + CtxBuffer.MEMSET_PTR, MEMSET_ADDR);
 
-        // Use pre-compiled code, or compile at runtime
-        byte[][] compiledCode;
-        if (precompiledCode != null) {
-            compiledCode = precompiledCode;
-        } else if (compilerFunction != null) {
-            compiledCode = compilerFunction.apply(module);
-        } else {
-            throw new WasmEngineException(
-                    "No precompiled code provided. Use the redline-compiler-maven-plugin"
-                            + " to precompile, or use JffiNativeMachineFactory.builder(module)"
-                            + " for runtime compilation.");
-        }
-
-        // Calculate total code size
-        long totalSize = 0;
-        for (byte[] code : compiledCode) {
-            if (code != null) {
-                totalSize += CraneliftBridge.align(code.length, 16);
-            }
-        }
-        totalSize = Math.max(totalSize, 4096);
-        totalSize = CraneliftBridge.align(totalSize, 4096);
+        byte[] image = code.image();
 
         // Allocate executable code region via PageManager
         int osPageSize = (int) PM.pageSize();
-        this.codeRegionOsPages = (int) ((totalSize + osPageSize - 1) / osPageSize);
+        this.codeRegionOsPages = (Math.max(image.length, 1) + osPageSize - 1) / osPageSize;
         this.codeRegionAddr =
                 PM.allocatePages(codeRegionOsPages, PageManager.PROT_READ | PageManager.PROT_WRITE);
         if (codeRegionAddr == 0 || codeRegionAddr == -1) {
@@ -236,150 +217,45 @@ public final class JffiNativeMachine implements Machine {
         }
 
         try {
-            // Copy code and track per-function addresses and types
-            long offset = 0;
-            long[] funcCodeAddrs = new long[compiledCode.length];
-            FunctionType[] funcTypesByBody = new FunctionType[compiledCode.length];
-
-            for (int i = 0; i < compiledCode.length; i++) {
-                if (compiledCode[i] != null) {
-                    int funcId = numImports + i;
-                    MEM.putByteArray(
-                            codeRegionAddr + offset, compiledCode[i], 0, compiledCode[i].length);
-
-                    var funcType =
-                            (FunctionType)
-                                    module.typeSection()
-                                            .getType(module.functionSection().getFunctionType(i));
-
-                    long codePtr = codeRegionAddr + offset;
-                    funcCodeAddrs[i] = codePtr;
-                    funcTypesByBody[i] = funcType;
-                    funcTypes[funcId] = funcType;
-
-                    // Store native code address in function pointer table (Tail convention)
-                    MEM.putLong(funcTableAddr + (long) funcId * 8, codePtr);
-
-                    offset += CraneliftBridge.align(compiledCode[i].length, 16);
-                }
+            MEM.putByteArray(codeRegionAddr, image, 0, image.length);
+            for (int funcId = 0; funcId < numImports; funcId++) {
+                // the slot may be unaligned
+                byte[] stubAddress =
+                        ByteBuffer.allocate(8)
+                                .order(ByteOrder.nativeOrder())
+                                .putLong(importHandles[funcId].getAddress())
+                                .array();
+                MEM.putByteArray(
+                        codeRegionAddr + code.importStubSlotOffset(funcId), stubAddress, 0, 8);
             }
-
-            // Make code executable
             PM.protectPages(
                     codeRegionAddr,
                     codeRegionOsPages,
                     PageManager.PROT_READ | PageManager.PROT_EXEC);
 
-            // Create import closures (platform ABI)
-            long[] importStubAddrs = new long[numImports];
-            FunctionType[] importTypes = new FunctionType[numImports];
+            // Compiled code reaches imports through their trampolines
             for (int funcId = 0; funcId < numImports; funcId++) {
-                var importFunc = instance.imports().function(funcId);
-                var funcType = importFunc.functionType();
-                funcTypes[funcId] = funcType;
-                Closure.Handle handle = createImportStub(funcId, funcType);
-                importHandles[funcId] = handle;
-                importStubAddrs[funcId] = handle.getAddress();
-                importTypes[funcId] = funcType;
+                MEM.putLong(
+                        funcTableAddr + (long) funcId * 8,
+                        codeRegionAddr + code.importTrampolineOffset(funcId));
             }
 
-            // Compile ABI trampolines via Cranelift bridge
-            try (var bridge = new CraneliftBridge()) {
-                bridge.init(
-                        RedlineTarget.detectHost()
-                                .orElseThrow(
-                                        () ->
-                                                new WasmEngineException(
-                                                        "Unsupported platform for native"
-                                                                + " compilation"))
-                                .triple());
-                var trampolines =
-                        bridge.compileTrampolines(
-                                compiledCode,
-                                funcTypesByBody,
-                                importTypes,
-                                importStubAddrs,
-                                trampolineHandle.getAddress(),
-                                memGrowHandle.getAddress(),
-                                MEMMOVE_ADDR,
-                                MEMSET_ADDR);
-
-                long trampTotalSize = Math.max(trampolines.totalSize(), 4096);
-                trampTotalSize = CraneliftBridge.align(trampTotalSize, 4096);
-
-                // Allocate trampoline code region
-                this.trampolineRegionOsPages =
-                        (int) ((trampTotalSize + osPageSize - 1) / osPageSize);
-                this.trampolineRegionAddr =
-                        PM.allocatePages(
-                                trampolineRegionOsPages,
-                                PageManager.PROT_READ | PageManager.PROT_WRITE);
-                if (trampolineRegionAddr == 0 || trampolineRegionAddr == -1) {
-                    throw new WasmEngineException("Failed to allocate trampoline code pages");
-                }
-
-                long trampOffset = 0;
-
-                // Copy entry trampolines and record their addresses
-                Map<FunctionType, Long> entryTrampolinePtrs = new HashMap<>();
-                for (var entry : trampolines.entryTrampolines().entrySet()) {
-                    entryTrampolinePtrs.put(entry.getKey(), trampolineRegionAddr + trampOffset);
-                    trampOffset = copyCode(entry.getValue(), trampolineRegionAddr, trampOffset);
-                }
-
-                // Copy import trampolines and store addresses in funcTable
-                for (int funcId = 0; funcId < numImports; funcId++) {
-                    byte[] code = trampolines.importTrampolines()[funcId];
+            for (int i = 0; i < code.functionBodyCount(); i++) {
+                if (code.isCompiled(i)) {
+                    int funcId = numImports + i;
+                    var funcType =
+                            (FunctionType)
+                                    module.typeSection()
+                                            .getType(module.functionSection().getFunctionType(i));
+                    funcTypes[funcId] = funcType;
                     MEM.putLong(
-                            funcTableAddr + (long) funcId * 8, trampolineRegionAddr + trampOffset);
-                    trampOffset = copyCode(code, trampolineRegionAddr, trampOffset);
-                }
-
-                // Copy internal stub trampolines and update ctxBuffer
-                trampOffset =
-                        copyCodeAndUpdateCtx(
-                                trampolines.trampolineStubTramp(),
-                                trampolineRegionAddr,
-                                trampOffset,
-                                ctxBufferAddr,
-                                CtxBuffer.TRAMPOLINE_PTR);
-                trampOffset =
-                        copyCodeAndUpdateCtx(
-                                trampolines.memGrowStubTramp(),
-                                trampolineRegionAddr,
-                                trampOffset,
-                                ctxBufferAddr,
-                                CtxBuffer.MEM_GROW_PTR);
-                trampOffset =
-                        copyCodeAndUpdateCtx(
-                                trampolines.memmoveTramp(),
-                                trampolineRegionAddr,
-                                trampOffset,
-                                ctxBufferAddr,
-                                CtxBuffer.MEMMOVE_PTR);
-                copyCodeAndUpdateCtx(
-                        trampolines.memsetTramp(),
-                        trampolineRegionAddr,
-                        trampOffset,
-                        ctxBufferAddr,
-                        CtxBuffer.MEMSET_PTR);
-
-                PM.protectPages(
-                        trampolineRegionAddr,
-                        trampolineRegionOsPages,
-                        PageManager.PROT_READ | PageManager.PROT_EXEC);
-
-                // Set per-function entry trampoline addresses and CallContexts
-                for (int i = 0; i < compiledCode.length; i++) {
-                    if (compiledCode[i] != null) {
-                        int funcId = numImports + i;
-                        entryTrampolineAddrs[funcId] = entryTrampolinePtrs.get(funcTypesByBody[i]);
-                        entryTrampolineCallCtxs[funcId] =
-                                createEntryTrampolineCallContext(funcTypesByBody[i]);
-                    }
+                            funcTableAddr + (long) funcId * 8, codeRegionAddr + code.bodyOffset(i));
+                    entryTrampolines[funcId] =
+                            new Function(
+                                    codeRegionAddr + code.entryTrampolineOffset(i),
+                                    createEntryTrampolineCallContext(funcType));
                 }
             }
-
         } catch (WasmEngineException e) {
             throw e;
         } catch (Throwable e) {
@@ -425,9 +301,6 @@ public final class JffiNativeMachine implements Machine {
         }
         if (codeRegionOsPages > 0 && codeRegionAddr != 0) {
             PM.freePages(codeRegionAddr, codeRegionOsPages);
-        }
-        if (trampolineRegionOsPages > 0 && trampolineRegionAddr != 0) {
-            PM.freePages(trampolineRegionAddr, trampolineRegionOsPages);
         }
         MEM.freeMemory(ctxBufferAddr);
         MEM.freeMemory(funcTableAddr);
@@ -542,6 +415,14 @@ public final class JffiNativeMachine implements Machine {
         }
     }
 
+    // Host code may have grown the memory since compiled code last saw its size
+    private void refreshMemoryPages() {
+        var mem = instance.memory();
+        if (mem != null) {
+            MEM.putInt(ctxBufferAddr + CtxBuffer.MEMORY_PAGES, mem.pages());
+        }
+    }
+
     private long importDispatchDirect(int funcId) {
         try {
             int argCount = MEM.getInt(ctxBufferAddr + CtxBuffer.ARG_COUNT);
@@ -552,6 +433,7 @@ public final class JffiNativeMachine implements Machine {
             if (funcId < numImports) {
                 var importFunc = instance.imports().function(funcId);
                 long[] result = importFunc.handle().apply(instance, args);
+                refreshMemoryPages();
                 if (result == null || result.length == 0) {
                     return 0L;
                 }
@@ -931,7 +813,7 @@ public final class JffiNativeMachine implements Machine {
             return new TrapException("unaligned atomic");
         }
         if (trapCode == CtxBuffer.TRAP_INTERRUPTED) {
-            return new TrapException("interrupted");
+            return new WasmInterruptedException("Thread interrupted");
         }
         return new WasmEngineException("trap: unknown code " + trapCode);
     }
@@ -939,8 +821,7 @@ public final class JffiNativeMachine implements Machine {
     // --- Native function invocation ---
 
     private long invokeViaEntryTrampoline(
-            CallContext trampolineCallCtx,
-            long trampolineAddr,
+            Function trampoline,
             FunctionType funcType,
             long funcAddr,
             long memBase,
@@ -948,6 +829,8 @@ public final class JffiNativeMachine implements Machine {
             long[] wasmArgs) {
         // nativeArgCount = funcPtr + memBase + ctxPtr + wasm params
         int nativeArgCount = 3 + wasmArgs.length;
+        CallContext trampolineCallCtx = trampoline.getCallContext();
+        long trampolineAddr = trampoline.getFunctionAddress();
 
         switch (nativeArgCount) {
             case 3:
@@ -978,25 +861,17 @@ public final class JffiNativeMachine implements Machine {
             default:
                 // >6 args: use HeapInvocationBuffer
                 return invokeViaBufferWithTrampoline(
-                        trampolineCallCtx,
-                        trampolineAddr,
-                        funcType,
-                        funcAddr,
-                        memBase,
-                        ctxPtr,
-                        wasmArgs);
+                        trampoline, funcType, funcAddr, memBase, ctxPtr, wasmArgs);
         }
     }
 
     private long invokeViaBufferWithTrampoline(
-            CallContext trampolineCallCtx,
-            long trampolineAddr,
+            Function func,
             FunctionType funcType,
             long funcAddr,
             long memBase,
             long ctxPtr,
             long[] wasmArgs) {
-        var func = new Function(trampolineAddr, trampolineCallCtx);
         var buffer = new HeapInvocationBuffer(func);
         buffer.putAddress(funcAddr); // funcPtr (first arg to entry trampoline)
         buffer.putAddress(memBase);
@@ -1017,19 +892,6 @@ public final class JffiNativeMachine implements Machine {
         return INVOKER.invokeLong(func, buffer);
     }
 
-    // --- Trampoline copy helpers ---
-
-    private static long copyCode(byte[] code, long regionAddr, long offset) {
-        MEM.putByteArray(regionAddr + offset, code, 0, code.length);
-        return offset + CraneliftBridge.align(code.length, 16);
-    }
-
-    private static long copyCodeAndUpdateCtx(
-            byte[] code, long regionAddr, long offset, long ctxAddr, long ctxOffset) {
-        MEM.putLong(ctxAddr + ctxOffset, regionAddr + offset);
-        return copyCode(code, regionAddr, offset);
-    }
-
     // --- Main dispatch ---
 
     @Override
@@ -1042,8 +904,6 @@ public final class JffiNativeMachine implements Machine {
 
         var funcType = funcTypes[funcId];
         long funcAddr = MEM.getLong(funcTableAddr + (long) funcId * 8);
-        long trampolineAddr = entryTrampolineAddrs[funcId];
-        var trampolineCallCtx = entryTrampolineCallCtxs[funcId];
 
         try {
             boolean outermostCall = callDepth++ == 0;
@@ -1063,6 +923,9 @@ public final class JffiNativeMachine implements Machine {
                 if (mem instanceof JffiNativeMemory) {
                     cachedMemBase = ((JffiNativeMemory) mem).nativeAddress();
                     MEM.putLong(ctxBufferAddr + CtxBuffer.MEM_BASE_ADDR, cachedMemBase);
+                    MEM.putLong(
+                            ctxBufferAddr + CtxBuffer.MEMORY_PAGES_PTR,
+                            ((JffiNativeMemory) mem).pagesAddress());
                 } else if (mem != null) {
                     throw new WasmEngineException(foreignImportMessage("memory", mem));
                 } else {
@@ -1070,51 +933,30 @@ public final class JffiNativeMachine implements Machine {
                 }
                 memBaseInitialized = true;
             }
-            // MEMORY_PAGES can change via grow() — must refresh every call
-            var mem = instance.memory();
-            if (mem != null) {
-                MEM.putInt(ctxBufferAddr + CtxBuffer.MEMORY_PAGES, mem.pages());
+            refreshMemoryPages();
+
+            if (Thread.currentThread().isInterrupted()) {
+                throw new WasmInterruptedException("Thread interrupted");
             }
 
-            if (Thread.interrupted()) {
-                throw new TrapException("interrupted");
-            }
-
-            Thread caller = Thread.currentThread();
-            Thread watchdog =
-                    new Thread(
-                            () -> {
-                                // Keeps raising rather than returning after the
-                                // first: a nested call clears the flag when it
-                                // finishes, and the outer call still needs it.
-                                while (!Thread.currentThread().isInterrupted()) {
-                                    if (caller.isInterrupted()) {
-                                        requestInterrupt();
-                                    }
-                                    try {
-                                        Thread.sleep(1);
-                                    } catch (InterruptedException e) {
-                                        return;
-                                    }
-                                }
-                            });
-            watchdog.setDaemon(true);
-            watchdog.start();
+            // nested calls run inside the outermost call's watch
+            InterruptWatchdog.Registration watchdog =
+                    outermostCall ? InterruptWatchdog.enter(interruptFlag) : null;
             long result;
             try {
                 result =
                         invokeViaEntryTrampoline(
-                                trampolineCallCtx,
-                                trampolineAddr,
+                                entryTrampolines[funcId],
                                 funcType,
                                 funcAddr,
                                 cachedMemBase,
                                 ctxBufferAddr,
                                 args);
             } finally {
-                watchdog.interrupt();
-                // The flag only ever means "stop this call". Left set it would
-                // trap the next one on a thread nobody interrupted.
+                if (watchdog != null) {
+                    // exit first, so the poller cannot raise the flag after the clear
+                    InterruptWatchdog.exit(watchdog);
+                }
                 clearInterrupt();
             }
 
@@ -1134,7 +976,6 @@ public final class JffiNativeMachine implements Machine {
             if (trapCode != 0) {
                 MEM.putInt(ctxBufferAddr + CtxBuffer.TRAP_CODE, 0);
                 if (trapCode == CtxBuffer.TRAP_INTERRUPTED) {
-                    CHECKED_MEM.putLong(ctxBufferAddr + CtxBuffer.INTERRUPT_FLAG, 0L);
                     Thread.currentThread().interrupt();
                 }
                 throw trapException(trapCode);
@@ -1165,16 +1006,15 @@ public final class JffiNativeMachine implements Machine {
             // Prevent the JIT from considering this machine unreachable during
             // the native call, which would let GC collect and close() free
             // native memory while code is executing.
-            // (ctxBuffer, funcTypesArray, code region) while code is executing.
             Reference.reachabilityFence(this);
         }
     }
 
-    public void requestInterrupt() {
+    private void raiseInterruptFlag() {
         CHECKED_MEM.putLong(ctxBufferAddr + CtxBuffer.INTERRUPT_FLAG, 1L);
     }
 
-    public void clearInterrupt() {
+    private void clearInterrupt() {
         CHECKED_MEM.putLong(ctxBufferAddr + CtxBuffer.INTERRUPT_FLAG, 0L);
     }
 

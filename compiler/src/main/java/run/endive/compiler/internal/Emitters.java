@@ -37,7 +37,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
-import run.endive.runtime.Instance;
 import run.endive.runtime.OpCodeIdentifier;
 import run.endive.runtime.WasmException;
 import run.endive.wasm.WasmEngineException;
@@ -713,6 +712,14 @@ final class Emitters {
 
     public static void I32_LT_U(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
         emitInvokeStatic(asm, ShadedRefs.I32_LT_U);
+    }
+
+    public static void I32_GT_U(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        emitInvokeStatic(asm, ShadedRefs.I32_GT_U);
+    }
+
+    public static void I32_LE_U(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
+        emitInvokeStatic(asm, ShadedRefs.I32_LE_U);
     }
 
     public static void I32_ADD(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
@@ -1641,11 +1648,8 @@ final class Emitters {
     }
 
     public static void THROW_REF(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
-        // The exception reference is already on the stack as an integer
-        // Get the instance and retrieve the exception
-        asm.load(ctx.instanceSlot(), OBJECT_TYPE);
-        asm.swap(); // Swap instance and exception reference
-        emitInvokeVirtual(asm, ShadedRefs.INSTANCE_GET_EXCEPTION);
+        // Narrow the exnref on the stack, trapping if it is null
+        emitInvokeStatic(asm, ShadedRefs.WASM_EXCEPTION_CHECKED);
         asm.athrow();
     }
 
@@ -1779,15 +1783,8 @@ final class Emitters {
 
     public static void CATCH_REGISTER_EXCEPTION(
             Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
-        // Register exception and push its
-        // index
-        asm.load(ctx.instanceSlot(), OBJECT_TYPE);
+        // Push the caught exception, already stored as an object by CATCH_START
         asm.load(ctx.tempSlot(), OBJECT_TYPE);
-        asm.invokevirtual(
-                getInternalName(Instance.class),
-                "registerException",
-                getMethodDescriptor(INT_TYPE, getType(WasmException.class)),
-                false);
     }
 
     // ========= GC Operations =========

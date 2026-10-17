@@ -89,15 +89,12 @@ public final class ByteBufferMemory implements Memory {
     }
 
     private final Map<Integer, WaitState> waitStates;
+    private final WordLocks wordLocks = new WordLocks();
 
     @Override
     @SuppressWarnings("removal")
     public Object lock(int address) {
-        if (!shared()) {
-            // disable locking
-            return new Object();
-        }
-        return waitStates.computeIfAbsent(address, k -> new WaitState());
+        return wordLocks.forAddress(address);
     }
 
     // Wait IF condition is true
@@ -156,13 +153,13 @@ public final class ByteBufferMemory implements Memory {
     @Override
     @SuppressWarnings("removal")
     public int waitOn(int address, int expected, long timeout) {
-        return waitOn(address, () -> readInt(address) == expected, timeout);
+        return waitOn(address, () -> atomicReadInt(address) == expected, timeout);
     }
 
     @Override
     @SuppressWarnings("removal")
     public int waitOn(int address, long expected, long timeout) {
-        return waitOn(address, () -> readLong(address) == expected, timeout);
+        return waitOn(address, () -> atomicReadLong(address) == expected, timeout);
     }
 
     // Notify waiters at this address
