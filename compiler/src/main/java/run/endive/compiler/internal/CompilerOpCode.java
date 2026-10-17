@@ -17,6 +17,8 @@ enum CompilerOpCode {
     COND_JUMP,
     // fused comparison + select: [ValType id, BranchCondition id, keep first when true (0/1)]
     SELECT_COND,
+    // duplicates the value on top of the stack: [ValType id]
+    DUP,
     RETURN(OpCode.RETURN),
     CALL(OpCode.CALL),
     CALL_INDIRECT(OpCode.CALL_INDIRECT),
@@ -324,10 +326,7 @@ enum CompilerOpCode {
     RETURN_CALL_INDIRECT,
     RETURN_CALL_REF,
     // GC internal (no OpCode mapping) - used for control flow decomposition
-    BR_ON_NULL_CHECK,
-    BR_ON_NON_NULL_CHECK,
     BR_ON_CAST_CHECK,
-    BR_ON_CAST_FAIL_CHECK,
     ;
 
     private final Optional<OpCode> opcode;
