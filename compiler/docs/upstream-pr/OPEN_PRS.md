@@ -39,7 +39,7 @@ words.
 | 4 | `fix/build-sharp-edges` | `75249a83`, `1ec98224`, `a7034aba` | build hygiene | wasm-tools build with the versioned file; ApprovalTest with a stale approved file |
 | 2.5 | `fix/wide-multivalue-return` | `9d805fcf` | correctness: `bad parameter count 257` on valid modules | JDK 21: compiler 40, compiler-tests 34,113, machine-tests 228, wabt 6 |
 | 2.6 | `perf/switch-encoding` | `e4fb4d50` | size and dispatch speed | JDK 21: compiler 40, compiler-tests 34,114, machine-tests 228, wabt 6; JMH compiles |
-| 2.7 | `pr/leb128-spec-reader` | `83c5c3f0` (rebased copy of `fix/leb128-spec-reader`) | maintainability, only if wanted | build pending in this package |
+| 2.7 | `pr/leb128-spec-reader` | `83c5c3f0` (rebased copy of `fix/leb128-spec-reader`) | maintainability, only if wanted | JDK 21: wasm 34, runtime 96, runtime-tests 62,246 (incl. `binary-leb128.wast`), compiler-tests 34,110, machine-tests 228 |
 | — | discussion | — | unsigned `i32` fusion opt-in (§3.4) | implemented on the fork only |
 
 2.1, 2.2 and 2.4 first; 2.5 and 2.6 after the maintainers know the contributor.
