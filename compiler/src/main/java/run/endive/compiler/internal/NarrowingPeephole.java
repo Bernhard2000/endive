@@ -79,24 +79,31 @@ final class NarrowingPeephole {
     static List<CompilerInstruction> apply(List<CompilerInstruction> in) {
         List<CompilerInstruction> out = new ArrayList<>(in.size());
         for (var ins : in) {
-            switch (ins.opcode()) {
-                case I32_WRAP_I64:
-                    if (narrowBinary(out) || narrowLoad(out)) {
-                        continue;
-                    }
-                    break;
-                case I64_EXTEND_I32_U:
-                    if (!out.isEmpty() && BOOLEAN_PRODUCERS.contains(last(out).opcode())) {
-                        out.add(new CompilerInstruction(CompilerOpCode.I64_EXTEND_I32_S));
-                        continue;
-                    }
-                    break;
-                default:
-                    break;
+            if (!append(out, ins)) {
+                out.add(ins);
             }
-            out.add(ins);
         }
         return out;
+    }
+
+    /**
+     * Rewrites the end of {@code out} for {@code ins} and returns true, or returns false (with
+     * {@code out} unchanged) when {@code ins} completes no rewritable shape and is still to be
+     * appended. {@link #apply} is this, instruction by instruction.
+     */
+    static boolean append(List<CompilerInstruction> out, CompilerInstruction ins) {
+        switch (ins.opcode()) {
+            case I32_WRAP_I64:
+                return narrowBinary(out) || narrowLoad(out);
+            case I64_EXTEND_I32_U:
+                if (!out.isEmpty() && BOOLEAN_PRODUCERS.contains(last(out).opcode())) {
+                    out.add(new CompilerInstruction(CompilerOpCode.I64_EXTEND_I32_S));
+                    return true;
+                }
+                return false;
+            default:
+                return false;
+        }
     }
 
     // ... extend; i64.const c; op  ->  ... i32.const (int) c; op32
