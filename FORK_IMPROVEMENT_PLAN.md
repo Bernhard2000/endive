@@ -15,12 +15,12 @@ and [compiler/docs/branch-condition-fusion-benchmarks.md](compiler/docs/branch-c
 | 1.1 | Done: option A, recorded in thesis `docs/CLAIMS.md` | |
 | 1.2 | Done: `wasm-jvm-size-fork`/`endive-size-model-fork`; fork −3.35 % over 805,686 functions, no function ≥ 1 KiB grows (C-206) | thesis `docs/reports/FORK1_FORK_ORACLE_AND_MODEL.md` |
 | 1.3 | Done: evaluator rules (`position`, `condition_fusion`, `narrowing`, `switch.encoding`), `endive-fork-seed-v1.json`, max under-prediction 0.36 % against the fork oracle (C-207); default unchanged | same report |
-| 1.4 | Campaign and CI job ready (`ci/run_endive_fork_ab.sh`, `benchmark-endive-fork-ab-y2`), smoke-tested on both JDK legs. **Not run on kent-yuria**: needs the thesis commits pushed to the JKU GitLab and the job played by the author | |
-| 2.1–2.7, 4 | Branches rebased, tested (fusion also on JDK 11), descriptions drafted. **Not opened**: the Bytecode Alliance AI policy requires a human to review and open them, and tools must not be co-authors (trailers to replace first) | [compiler/docs/upstream-pr/OPEN_PRS.md](compiler/docs/upstream-pr/OPEN_PRS.md) |
+| 1.4 | Campaign and CI job ready (`ci/run_endive_fork_ab.sh`, `benchmark-endive-fork-ab-y2`), smoke-tested on both JDK legs. Pushing the thesis repo to the JKU GitLab and playing the job on kent-yuria: **the author does this** (decided 2026-10-18) | |
+| 2.1–2.7, 4 | Branches rebased, tested (fusion also on JDK 11), descriptions drafted. Review, trailer replacement and opening: **the author does this** (decided 2026-10-18; the Bytecode Alliance AI policy requires it) | [compiler/docs/upstream-pr/OPEN_PRS.md](compiler/docs/upstream-pr/OPEN_PRS.md) |
 | 3.1 | Done: narrowing peephole + inline helpers (Go −4.6 %) | [compiler/docs/narrowing-and-trivial-helpers.md](compiler/docs/narrowing-and-trivial-helpers.md) |
 | 3.2 | Done, off by default (no gain on split workloads) | [compiler/docs/opt-in-comparison-lowerings.md](compiler/docs/opt-in-comparison-lowerings.md) |
 | 3.3 | Done: sound `select_t` and scope types, `ref.eq` fusion | [compiler/docs/ref-eq-fusion.md](compiler/docs/ref-eq-fusion.md) |
-| 3.4 | Implemented on the fork (opt-in; automatic in `MachineFactoryCompiler` on Java 18+); maintainer discussion drafted, not posted | `OPEN_PRS.md`, `opt-in-comparison-lowerings.md` |
+| 3.4 | Implemented on the fork (opt-in; automatic in `MachineFactoryCompiler` on Java 18+); maintainer discussion drafted; **the author posts it** (decided 2026-10-18) | `OPEN_PRS.md`, `opt-in-comparison-lowerings.md` |
 | 3.5 | Done: `BenchmarkLargeMethod` | [compiler/docs/large-method-benchmark.md](compiler/docs/large-method-benchmark.md) |
 | 3.6 | Done: cold-JVM cost of the post-passes, halved by incremental passes | [compiler/docs/compile-time-regression.md](compiler/docs/compile-time-regression.md) |
 | 3.7 | Done: upstream C2 refuses 779 of 806 helper calls (`size > DesiredMethodLimit`) in a 7.8 kB method | [compiler/docs/inlining-at-8000-bytes.md](compiler/docs/inlining-at-8000-bytes.md) |
