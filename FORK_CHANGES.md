@@ -1,7 +1,8 @@
 # Endive fork changes and benefits
 
-Snapshot: 2026-10-02, updated 2026-10-17 for the fusion extensions (`5a02a7dd`), branch
-`fuse-branch-conditions`. This document covers the fork-specific
+Snapshot: 2026-10-02, updated 2026-10-17 for the fusion extensions (`5a02a7dd`) and
+2026-10-18 for the improvement plan ([FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md),
+section 10 below), branch `fuse-branch-conditions`. This document covers the fork-specific
 work visible in this repository: the current compiler changes, earlier contributions accepted
 upstream, and work retained on separate branches or in plans.
 
@@ -25,6 +26,12 @@ this branch's implementation. The history inventory uses local Git refs.
 | Signed and unambiguous block types | Decodes `s33` and distinguishes empty, value-type, and type-index forms | Correctly accepts valid multivalue modules and rejects malformed encodings | Included through upstream `4892e774` |
 | Android-compatible block-type corpus | Uses the compatible three-argument stream write API | Allows the regression corpus to run on older Android versions | Included through upstream `4892e774` |
 | Shared LEB128 reader | Consolidates three integer decoding loops | Simpler format validation and maintenance | Separate branch, `59392150` |
+| Narrowing peephole, inline trivial helpers | `i64` work wrapped back to `i32` done in `i32`; one-instruction helpers emitted inline or as JDK intrinsics | Go −4.6 % bytecode, 16,615 → 585 extend helper calls | Current branch, `17542744` |
+| Sound reference types, `ref.eq` fusion | `select_t` and scope exits typed soundly; `ref.eq` as `if_acmpeq` when one side cannot be `i31ref` | Correct static types; fewer `refEq` calls in GC code | Current branch, `50a7c320` |
+| Opt-in unsigned `i32` fusion, branchless booleans | `Integer.compareUnsigned` + jump (on where the JVM allows), call-free value booleans (off) | Unsigned helper calls −70 to −99 %; 2× on a large generated method | Current branch, `9e613f66` |
+| Incremental analyzer passes | Narrowing and fusion run while the instruction list is built | Halves the cold-JVM compile overhead | Current branch, `fa661588` |
+| `-Dendive.memCopyWorkaround` NPE fix | The workaround class honours the property; `gt_u`/`le_u` covered too | No NPE on Java 18+ with the property | Merged from `fix/memcopy-workaround-property` |
+| Build sharp edges | Versioned wasm-tools download, approval file rendered every run, Spotless fix | No stale-binary failures | Merged from `fix/build-sharp-edges` |
 
 ## 1. Numeric comparison and branch fusion
 
@@ -288,3 +295,24 @@ raw results, pins, and remaining opportunities are in
 [split-function-optimization-results.md](compiler/docs/split-function-optimization-results.md);
 the implementation sequence is in
 [split-function-optimization-plan.md](compiler/docs/split-function-optimization-plan.md).
+
+## 10. Improvement plan, 2026-10-18
+
+Implemented from [FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md); details per item:
+
+| plan item | what | where |
+| --- | --- | --- |
+| 0.1 | Fork builds use their own Maven repository (`scripts/mvn-fork.sh`); the thesis harness stamps the installed Endive and records it in every results file | `scripts/mvn-fork.sh`; thesis repo `tools/endive_stamp.py` |
+| 0.2 | Topic branches pushed to the fork; integration branch merged upstream main `1580f534` | [upstream-pr/OPEN_PRS.md](compiler/docs/upstream-pr/OPEN_PRS.md) |
+| 1.1–1.4 | Engine decision (vendored Endive for the thesis), fork oracle, fork size model, fixed-runner A/B campaign | thesis repo `docs/CLAIMS.md`, `docs/reports/ENDIVE_FORK_TRACK.md`, `ci/run_endive_fork_ab.sh` |
+| 2.x, 4 | PR branches rebased, tested (also on Java 11), described; not opened (policy: a human opens them) | [upstream-pr/OPEN_PRS.md](compiler/docs/upstream-pr/OPEN_PRS.md) |
+| 3.1 | Narrowing peephole and inline helpers | [narrowing-and-trivial-helpers.md](compiler/docs/narrowing-and-trivial-helpers.md) |
+| 3.2, 3.4 | Branchless booleans (off), unsigned `i32` fusion (opt-in, automatic in `MachineFactoryCompiler` on Java 18+) | [opt-in-comparison-lowerings.md](compiler/docs/opt-in-comparison-lowerings.md) |
+| 3.3 | Sound `select_t`/scope types, `ref.eq` fusion | [ref-eq-fusion.md](compiler/docs/ref-eq-fusion.md) |
+| 3.5 | `BenchmarkLargeMethod` | [large-method-benchmark.md](compiler/docs/large-method-benchmark.md) |
+| 3.6 | Runtime-compile regression: cold-JVM cost of the post-passes, halved | [compile-time-regression.md](compiler/docs/compile-time-regression.md) |
+| 3.7 | C2 refuses 97 % of helper calls near 8000 bytes upstream | [inlining-at-8000-bytes.md](compiler/docs/inlining-at-8000-bytes.md) |
+
+All runtime numbers in these notes are laptop measurements; the thesis cites fork speed only
+from the fixed-runner campaign.
+
