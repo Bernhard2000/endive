@@ -49,15 +49,20 @@ instruction or a direct call of the JDK method:
 | `F32/F64_CONVERT_I32/I64_S` | `i2f`, `l2f`, `i2d`, `l2d` |
 | `I32_EXTEND_8_S`, `I32_EXTEND_16_S`; `I64_EXTEND_8/16/32_S` | `i2b`, `i2s`; `l2i` + `i2b`/`i2s` + `i2l`, `l2i` + `i2l` |
 | `I32_CLZ/CTZ/POPCNT`, `I32_ROTL/ROTR` | `Integer.numberOfLeadingZeros` etc., `Integer.rotateLeft/Right` |
-| `I64_CLZ/CTZ/POPCNT`, `I64_ROTL/ROTR` | `Long.*` + `i2l`; `l2i` + `Long.rotateLeft/Right` |
 | reinterprets | `Float.floatToRawIntBits`, `Float.intBitsToFloat`, `Double.doubleToRawLongBits`, `Double.longBitsToDouble` |
 | `F32_ABS`, `F64_ABS`, `F64_SQRT` | `Math.abs`, `Math.sqrt` |
-| `I64_EXTEND_I32_U`, `F32/F64_CONVERT_I32_U` | `Integer.toUnsignedLong` (+ `l2f`/`l2d`) |
+| `I64_EXTEND_I32_U` | `Integer.toUnsignedLong` |
 
 The JDK methods are C1/C2 intrinsics (except `Integer.toUnsignedLong`, which is a trivial
 method), so they cost no inlining budget, and they have the same bytecode size as the helper
-call. Seven of them are one byte larger (an added `l2i` or `i2l`), which the rule of the plan
-allows ("inline form no larger than 4 bytes"); no module grows overall.
+call.
+
+`I64_CLZ/CTZ/POPCNT`, `I64_ROTL/ROTR` and `F32/F64_CONVERT_I32_U` were first emitted as the JDK
+call plus an `l2i` or `i2l` (4 bytes, which the plan's rule allows). The 57-module size corpus
+of the thesis repo showed what that costs: SHA-512's `sha512_update` in CPython grew from 14,002
+to 14,738 bytes (736 `i64.rotr`s), one of 21 functions that grew at all. Per the plan's "verify
+per helper that method sizes do not grow", those seven stay helper calls (`2026-10-18`, after
+`c379bde9`); with that, no function grows.
 
 Not done: helpers whose inline form is a branch diamond (`I32_TRUNC_*`, `F64_COPYSIGN`, ...),
 and an inline `I64_EXTEND_I32_U` for the remaining general sites (`i2l; ldc2_w; land`, 5 bytes

@@ -780,7 +780,9 @@ final class Emitters {
 
     // Helpers that only delegate to a JVM instruction or a JDK method (an intrinsic of C1 and
     // C2) are emitted as that instruction or call: no larger than the helper call, and without
-    // an extra method for the JIT to inline or the interpreter to call.
+    // an extra method for the JIT to inline or the interpreter to call. Forms that would need
+    // an extra l2i or i2l around the JDK call (i64 rotations, clz/ctz/popcnt, unsigned
+    // int-to-float) stay helper calls: one byte more per site grew SHA-512 code by 5 %.
 
     public static void F32_CONVERT_I32_S(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
         asm.visitInsn(Opcodes.I2F);
@@ -795,18 +797,6 @@ final class Emitters {
     }
 
     public static void F64_CONVERT_I64_S(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitInsn(Opcodes.L2D);
-    }
-
-    public static void F32_CONVERT_I32_U(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitMethodInsn(
-                Opcodes.INVOKESTATIC, "java/lang/Integer", "toUnsignedLong", "(I)J", false);
-        asm.visitInsn(Opcodes.L2F);
-    }
-
-    public static void F64_CONVERT_I32_U(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitMethodInsn(
-                Opcodes.INVOKESTATIC, "java/lang/Integer", "toUnsignedLong", "(I)J", false);
         asm.visitInsn(Opcodes.L2D);
     }
 
@@ -854,23 +844,6 @@ final class Emitters {
         asm.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "bitCount", "(I)I", false);
     }
 
-    public static void I64_CLZ(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitMethodInsn(
-                Opcodes.INVOKESTATIC, "java/lang/Long", "numberOfLeadingZeros", "(J)I", false);
-        asm.visitInsn(Opcodes.I2L);
-    }
-
-    public static void I64_CTZ(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitMethodInsn(
-                Opcodes.INVOKESTATIC, "java/lang/Long", "numberOfTrailingZeros", "(J)I", false);
-        asm.visitInsn(Opcodes.I2L);
-    }
-
-    public static void I64_POPCNT(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Long", "bitCount", "(J)I", false);
-        asm.visitInsn(Opcodes.I2L);
-    }
-
     public static void I32_ROTL(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
         asm.visitMethodInsn(
                 Opcodes.INVOKESTATIC, "java/lang/Integer", "rotateLeft", "(II)I", false);
@@ -879,16 +852,6 @@ final class Emitters {
     public static void I32_ROTR(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
         asm.visitMethodInsn(
                 Opcodes.INVOKESTATIC, "java/lang/Integer", "rotateRight", "(II)I", false);
-    }
-
-    public static void I64_ROTL(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitInsn(Opcodes.L2I);
-        asm.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Long", "rotateLeft", "(JI)J", false);
-    }
-
-    public static void I64_ROTR(Context ctx, CompilerInstruction ins, MethodVisitor asm) {
-        asm.visitInsn(Opcodes.L2I);
-        asm.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Long", "rotateRight", "(JI)J", false);
     }
 
     public static void I32_REINTERPRET_F32(
