@@ -164,9 +164,11 @@ forks of the same arm, so no effect is detectable.
    This fits the static picture: fusion shrinks methods by 2–4 % and removes most comparison
    helper calls, which leaves more of C2's inlining budget for the rest of the method.
 4. **Compile time.** Runtime compilation is up to +2.5 % slower on the unsplit modules
-   (+17 ms on Lua, +27 ms on SQLite). The split modules show no significant change. The
-   cause was not investigated; the fusion pass itself is a single linear scan. This cost is
-   paid once per instantiation and is small next to the execution gains here.
+   (+17 ms on Lua, +27 ms on SQLite). The split modules show no significant change. This
+   cost is paid once per instantiation and is small next to the execution gains here.
+   Investigated later ([compile-time-regression.md](compile-time-regression.md)): it is a
+   cold-JVM cost of the extra pass over, and copy of, every function's instruction list; warm
+   compiles do not differ. The fork now runs the passes while the list is built.
 5. **Endive's JMH suite does not show the effect.** Its compiled benchmarks are tiny
    functions. C2 inlines the comparison helpers in tiny functions and folds the 0/1 away, so
    fusion changes little after warm-up, which is what the static analysis predicted. The

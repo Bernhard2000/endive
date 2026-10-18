@@ -7,6 +7,7 @@ import static run.endive.compiler.internal.CompilerUtil.localType;
 import static run.endive.compiler.internal.CompilerUtil.slotCount;
 import static run.endive.compiler.internal.TypeStack.FUNCTION_SCOPE;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +61,8 @@ final class WasmAnalyzer {
     private final WasmModule module;
     private final boolean unsignedCompareFusion;
     private final boolean branchlessBooleans;
+    // tests only: analyze without the peephole passes, to compare against the batch passes
+    private boolean peepholes = true;
     private final List<ValType> globalTypes;
     private final List<FunctionType> functionTypes;
     private final List<ValType> tableTypes;
@@ -82,6 +85,12 @@ final class WasmAnalyzer {
         this.functionImports = module.importSection().count(ExternalType.FUNCTION);
         this.tailCallFunctions = scanTailCallFunctions();
         this.hasTailCalls = anyTrue(tailCallFunctions);
+    }
+
+    /** Tests only: the analysis output before the narrowing and fusion passes. */
+    WasmAnalyzer withoutPeepholes() {
+        this.peepholes = false;
+        return this;
     }
 
     public List<ValType> globalTypes() {
@@ -206,7 +215,8 @@ final class WasmAnalyzer {
         var stack = new TypeStack(module.typeSection());
         int nextLabel = body.instructions().size();
         int trySaveSlotOffset = 0;
-        List<CompilerInstruction> result = new ArrayList<>();
+        var output = new PeepholeList(module.typeSection(), unsignedCompareFusion);
+        List<CompilerInstruction> result = peepholes ? output : new ArrayList<>();
         // Collect TRY_CATCH_BLOCK instructions during the forward pass and
         // prepend them in reverse order at the end. JVM tries exception handlers
         // in registration order, so inner (nested) handlers must come before
@@ -812,8 +822,11 @@ final class WasmAnalyzer {
         reverse(tryCatchBlockInstructions);
         result.addAll(0, tryCatchBlockInstructions);
 
-        result = NarrowingPeephole.apply(result);
-        result = fuseBranchConditions(result, module.typeSection(), unsignedCompareFusion);
+        if (!peepholes) {
+            return new AnalysisResult(result, 0);
+        }
+        // NarrowingPeephole and fusion already ran as the instructions were appended
+        result = output.instructions();
         if (branchlessBooleans) {
             result = branchlessBooleans(result);
         }
@@ -852,58 +865,112 @@ final class WasmAnalyzer {
             List<CompilerInstruction> in, TypeSection typeSection, boolean unsignedCompareFusion) {
         List<CompilerInstruction> out = new ArrayList<>(in.size());
         for (var ins : in) {
-            var opcode = ins.opcode();
-            if (opcode != CompilerOpCode.IFEQ
-                    && opcode != CompilerOpCode.IFNE
-                    && opcode != CompilerOpCode.SELECT) {
-                out.add(ins);
-                continue;
-            }
-
-            // IFEQ jumps when its operand is zero; IFNE and SELECT's "keep first" when non-zero
-            boolean whenTrue = opcode != CompilerOpCode.IFEQ;
-            boolean fused = false;
-            while (!out.isEmpty()) {
-                if (last(out).opcode() == CompilerOpCode.I32_EQZ) {
-                    out.remove(out.size() - 1);
-                } else if (isExtendedEqz(out)) {
-                    // i64.eqz of an extended i32 is i32.eqz of the i32 itself. Go stores
-                    // booleans as i64 and negates them this way: (i64.eqz (i64.extend_i32_u b))
-                    out.remove(out.size() - 1);
-                    out.remove(out.size() - 1);
-                } else {
-                    break;
-                }
-                whenTrue = !whenTrue;
-                fused = true;
-            }
-            var condition =
-                    out.isEmpty() ? null : takeCondition(out, typeSection, unsignedCompareFusion);
-            if (condition != null) {
-                fused = true;
-            } else {
-                condition = BranchCondition.I32_NEZ;
-            }
-
-            if (!fused) {
-                out.add(ins);
-            } else if (opcode == CompilerOpCode.SELECT) {
-                out.add(
-                        new CompilerInstruction(
-                                CompilerOpCode.SELECT_COND,
-                                ins.operand(0),
-                                condition.id(),
-                                whenTrue ? 1 : 0));
-            } else {
-                out.add(
-                        new CompilerInstruction(
-                                CompilerOpCode.COND_JUMP,
-                                ins.operand(0),
-                                condition.id(),
-                                whenTrue ? 1 : 0));
-            }
+            appendFused(out, ins, typeSection, unsignedCompareFusion);
         }
         return out;
+    }
+
+    /**
+     * Appends {@code ins} to {@code out}, fusing it with the condition at the end of {@code out}
+     * when {@code ins} is a conditional jump or select. Appending a list instruction by
+     * instruction is the same as {@link #fuseBranchConditions}, which is how {@link
+     * PeepholeList} runs the pass during analysis, without a second pass or copy.
+     */
+    static void appendFused(
+            List<CompilerInstruction> out,
+            CompilerInstruction ins,
+            TypeSection typeSection,
+            boolean unsignedCompareFusion) {
+        var opcode = ins.opcode();
+        if (opcode != CompilerOpCode.IFEQ
+                && opcode != CompilerOpCode.IFNE
+                && opcode != CompilerOpCode.SELECT) {
+            out.add(ins);
+            return;
+        }
+
+        // IFEQ jumps when its operand is zero; IFNE and SELECT's "keep first" when non-zero
+        boolean whenTrue = opcode != CompilerOpCode.IFEQ;
+        boolean fused = false;
+        while (!out.isEmpty()) {
+            if (last(out).opcode() == CompilerOpCode.I32_EQZ) {
+                out.remove(out.size() - 1);
+            } else if (isExtendedEqz(out)) {
+                // i64.eqz of an extended i32 is i32.eqz of the i32 itself. Go stores
+                // booleans as i64 and negates them this way: (i64.eqz (i64.extend_i32_u b))
+                out.remove(out.size() - 1);
+                out.remove(out.size() - 1);
+            } else {
+                break;
+            }
+            whenTrue = !whenTrue;
+            fused = true;
+        }
+        var condition =
+                out.isEmpty() ? null : takeCondition(out, typeSection, unsignedCompareFusion);
+        if (condition != null) {
+            fused = true;
+        } else {
+            condition = BranchCondition.I32_NEZ;
+        }
+
+        if (!fused) {
+            out.add(ins);
+        } else if (opcode == CompilerOpCode.SELECT) {
+            out.add(
+                    new CompilerInstruction(
+                            CompilerOpCode.SELECT_COND,
+                            ins.operand(0),
+                            condition.id(),
+                            whenTrue ? 1 : 0));
+        } else {
+            out.add(
+                    new CompilerInstruction(
+                            CompilerOpCode.COND_JUMP,
+                            ins.operand(0),
+                            condition.id(),
+                            whenTrue ? 1 : 0));
+        }
+    }
+
+    /**
+     * The analyzer's output list. Instructions appended at the end go through {@link
+     * NarrowingPeephole} and branch-condition fusion right away, so neither needs a pass over
+     * (and a copy of) the finished list; insertions elsewhere (the try-catch blocks prepended at
+     * the end of a function) are stored as they are. The analysis only appends otherwise.
+     */
+    static final class PeepholeList extends AbstractList<CompilerInstruction> {
+        private final ArrayList<CompilerInstruction> out = new ArrayList<>();
+        private final TypeSection typeSection;
+        private final boolean unsignedCompareFusion;
+
+        PeepholeList(TypeSection typeSection, boolean unsignedCompareFusion) {
+            this.typeSection = typeSection;
+            this.unsignedCompareFusion = unsignedCompareFusion;
+        }
+
+        @Override
+        public CompilerInstruction get(int index) {
+            return out.get(index);
+        }
+
+        @Override
+        public int size() {
+            return out.size();
+        }
+
+        @Override
+        public void add(int index, CompilerInstruction ins) {
+            if (index != out.size()) {
+                out.add(index, ins);
+            } else if (!NarrowingPeephole.append(out, ins)) {
+                appendFused(out, ins, typeSection, unsignedCompareFusion);
+            }
+        }
+
+        List<CompilerInstruction> instructions() {
+            return out;
+        }
     }
 
     /**
