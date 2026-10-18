@@ -54,9 +54,10 @@ a branch):
 `MIN_VALUE`).
 
 **Default: off.** Every site grows by 3 to 7 bytes; on the corpus that is +0.07 % (code.wasm)
-to +0.42 % (Go) of `func_*` bytecode. Off unless the large-method benchmark shows a gain
-(`-Dendive.compiler.branchlessBooleans=true` or `withBranchlessBooleans(true)`); see the
-measurement section below.
+to +0.42 % (Go) of `func_*` bytecode. The large-method benchmark favours it, but the split
+workloads show no gain and slightly slower compilation
+([large-method-benchmark.md](large-method-benchmark.md)), so it stays opt-in
+(`-Dendive.compiler.branchlessBooleans=true` or `withBranchlessBooleans(true)`).
 
 ## Tests
 

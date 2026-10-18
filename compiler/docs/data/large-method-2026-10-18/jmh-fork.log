@@ -1,0 +1,299 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 1 s each
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkLargeMethod.largeMethod
+# Parameters: (lowering = default, sites = 320)
+
+# Run progress: 0,00% complete, ETA 00:02:00
+# Fork: 1 of 2
+# Warmup Iteration   1: 17,091 us/op
+# Warmup Iteration   2: 14,051 us/op
+# Warmup Iteration   3: 14,018 us/op
+# Warmup Iteration   4: 14,210 us/op
+# Warmup Iteration   5: 13,908 us/op
+Iteration   1: 13,925 us/op
+Iteration   2: 13,944 us/op
+Iteration   3: 13,986 us/op
+Iteration   4: 14,052 us/op
+Iteration   5: 13,930 us/op
+
+# Run progress: 8,33% complete, ETA 00:01:58
+# Fork: 2 of 2
+# Warmup Iteration   1: 17,195 us/op
+# Warmup Iteration   2: 14,077 us/op
+# Warmup Iteration   3: 14,078 us/op
+# Warmup Iteration   4: 14,060 us/op
+# Warmup Iteration   5: 14,056 us/op
+Iteration   1: 14,102 us/op
+Iteration   2: 14,119 us/op
+Iteration   3: 14,086 us/op
+Iteration   4: 14,110 us/op
+Iteration   5: 14,076 us/op
+
+
+Result "run.endive.bench.BenchmarkLargeMethod.largeMethod":
+  14,033 ±(99.9%) 0,119 us/op [Average]
+  (min, avg, max) = (13,925, 14,033, 14,119), stdev = 0,079
+  CI (99.9%): [13,914, 14,152] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 1 s each
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkLargeMethod.largeMethod
+# Parameters: (lowering = default, sites = 600)
+
+# Run progress: 16,67% complete, ETA 00:01:47
+# Fork: 1 of 2
+# Warmup Iteration   1: 1182,949 us/op
+# Warmup Iteration   2: 1188,920 us/op
+# Warmup Iteration   3: 1185,886 us/op
+# Warmup Iteration   4: 1166,422 us/op
+# Warmup Iteration   5: 1175,918 us/op
+Iteration   1: 1175,437 us/op
+Iteration   2: 1173,986 us/op
+Iteration   3: 1175,474 us/op
+Iteration   4: 1180,713 us/op
+Iteration   5: 1174,778 us/op
+
+# Run progress: 25,00% complete, ETA 00:01:36
+# Fork: 2 of 2
+# Warmup Iteration   1: 1166,632 us/op
+# Warmup Iteration   2: 1163,803 us/op
+# Warmup Iteration   3: 1172,953 us/op
+# Warmup Iteration   4: 1173,138 us/op
+# Warmup Iteration   5: 1172,038 us/op
+Iteration   1: 1169,977 us/op
+Iteration   2: 1166,150 us/op
+Iteration   3: 1168,374 us/op
+Iteration   4: 1180,616 us/op
+Iteration   5: 1187,261 us/op
+
+
+Result "run.endive.bench.BenchmarkLargeMethod.largeMethod":
+  1175,277 ±(99.9%) 9,598 us/op [Average]
+  (min, avg, max) = (1166,150, 1175,277, 1187,261), stdev = 6,348
+  CI (99.9%): [1165,679, 1184,874] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 1 s each
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkLargeMethod.largeMethod
+# Parameters: (lowering = unsigned-off, sites = 320)
+
+# Run progress: 33,33% complete, ETA 00:01:26
+# Fork: 1 of 2
+# Warmup Iteration   1: 35,183 us/op
+# Warmup Iteration   2: 28,203 us/op
+# Warmup Iteration   3: 27,993 us/op
+# Warmup Iteration   4: 28,093 us/op
+# Warmup Iteration   5: 27,994 us/op
+Iteration   1: 28,012 us/op
+Iteration   2: 28,277 us/op
+Iteration   3: 28,171 us/op
+Iteration   4: 28,193 us/op
+Iteration   5: 28,080 us/op
+
+# Run progress: 41,67% complete, ETA 00:01:15
+# Fork: 2 of 2
+# Warmup Iteration   1: 35,148 us/op
+# Warmup Iteration   2: 27,770 us/op
+# Warmup Iteration   3: 28,084 us/op
+# Warmup Iteration   4: 27,749 us/op
+# Warmup Iteration   5: 27,721 us/op
+Iteration   1: 27,858 us/op
+Iteration   2: 27,796 us/op
+Iteration   3: 28,031 us/op
+Iteration   4: 27,742 us/op
+Iteration   5: 27,874 us/op
+
+
+Result "run.endive.bench.BenchmarkLargeMethod.largeMethod":
+  28,003 ±(99.9%) 0,274 us/op [Average]
+  (min, avg, max) = (27,742, 28,003, 28,277), stdev = 0,181
+  CI (99.9%): [27,729, 28,277] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 1 s each
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkLargeMethod.largeMethod
+# Parameters: (lowering = unsigned-off, sites = 600)
+
+# Run progress: 50,00% complete, ETA 00:01:04
+# Fork: 1 of 2
+# Warmup Iteration   1: 1221,215 us/op
+# Warmup Iteration   2: 1198,841 us/op
+# Warmup Iteration   3: 1187,332 us/op
+# Warmup Iteration   4: 1198,174 us/op
+# Warmup Iteration   5: 1189,741 us/op
+Iteration   1: 1190,862 us/op
+Iteration   2: 1190,593 us/op
+Iteration   3: 1196,492 us/op
+Iteration   4: 1190,928 us/op
+Iteration   5: 1197,221 us/op
+
+# Run progress: 58,33% complete, ETA 00:00:53
+# Fork: 2 of 2
+# Warmup Iteration   1: 1227,202 us/op
+# Warmup Iteration   2: 1177,528 us/op
+# Warmup Iteration   3: 1180,557 us/op
+# Warmup Iteration   4: 1165,955 us/op
+# Warmup Iteration   5: 1172,949 us/op
+Iteration   1: 1172,388 us/op
+Iteration   2: 1196,808 us/op
+Iteration   3: 1187,160 us/op
+Iteration   4: 1175,707 us/op
+Iteration   5: 1188,583 us/op
+
+
+Result "run.endive.bench.BenchmarkLargeMethod.largeMethod":
+  1188,674 ±(99.9%) 12,844 us/op [Average]
+  (min, avg, max) = (1172,388, 1188,674, 1197,221), stdev = 8,496
+  CI (99.9%): [1175,830, 1201,518] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 1 s each
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkLargeMethod.largeMethod
+# Parameters: (lowering = branchless, sites = 320)
+
+# Run progress: 66,67% complete, ETA 00:00:42
+# Fork: 1 of 2
+# Warmup Iteration   1: 10,701 us/op
+# Warmup Iteration   2: 9,097 us/op
+# Warmup Iteration   3: 9,133 us/op
+# Warmup Iteration   4: 9,078 us/op
+# Warmup Iteration   5: 9,126 us/op
+Iteration   1: 9,109 us/op
+Iteration   2: 9,097 us/op
+Iteration   3: 9,129 us/op
+Iteration   4: 9,115 us/op
+Iteration   5: 9,109 us/op
+
+# Run progress: 75,00% complete, ETA 00:00:32
+# Fork: 2 of 2
+# Warmup Iteration   1: 11,002 us/op
+# Warmup Iteration   2: 9,354 us/op
+# Warmup Iteration   3: 9,365 us/op
+# Warmup Iteration   4: 9,379 us/op
+# Warmup Iteration   5: 9,371 us/op
+Iteration   1: 9,409 us/op
+Iteration   2: 9,401 us/op
+Iteration   3: 9,395 us/op
+Iteration   4: 9,466 us/op
+Iteration   5: 9,353 us/op
+
+
+Result "run.endive.bench.BenchmarkLargeMethod.largeMethod":
+  9,258 ±(99.9%) 0,237 us/op [Average]
+  (min, avg, max) = (9,097, 9,258, 9,466), stdev = 0,157
+  CI (99.9%): [9,021, 9,495] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1+1-suse-01699-x8664
+# VM invoker: /usr/lib64/jvm/java-21-openjdk-21/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 1 s each
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: run.endive.bench.BenchmarkLargeMethod.largeMethod
+# Parameters: (lowering = branchless, sites = 600)
+
+# Run progress: 83,33% complete, ETA 00:00:21
+# Fork: 1 of 2
+# Warmup Iteration   1: 1060,597 us/op
+# Warmup Iteration   2: 1065,932 us/op
+# Warmup Iteration   3: 1052,474 us/op
+# Warmup Iteration   4: 1067,511 us/op
+# Warmup Iteration   5: 1059,151 us/op
+Iteration   1: 1073,340 us/op
+Iteration   2: 1040,222 us/op
+Iteration   3: 1057,385 us/op
+Iteration   4: 1060,706 us/op
+Iteration   5: 1065,018 us/op
+
+# Run progress: 91,67% complete, ETA 00:00:10
+# Fork: 2 of 2
+# Warmup Iteration   1: 1062,865 us/op
+# Warmup Iteration   2: 1054,860 us/op
+# Warmup Iteration   3: 1087,395 us/op
+# Warmup Iteration   4: 1069,283 us/op
+# Warmup Iteration   5: 1064,084 us/op
+Iteration   1: 1056,455 us/op
+Iteration   2: 1057,476 us/op
+Iteration   3: 1058,786 us/op
+Iteration   4: 1056,049 us/op
+Iteration   5: 1053,732 us/op
+
+
+Result "run.endive.bench.BenchmarkLargeMethod.largeMethod":
+  1057,917 ±(99.9%) 12,685 us/op [Average]
+  (min, avg, max) = (1040,222, 1057,917, 1073,340), stdev = 8,390
+  CI (99.9%): [1045,232, 1070,601] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:02:08
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                           (lowering)  (sites)  Mode  Cnt     Score    Error  Units
+BenchmarkLargeMethod.largeMethod       default      320  avgt   10    14,033 ±  0,119  us/op
+BenchmarkLargeMethod.largeMethod       default      600  avgt   10  1175,277 ±  9,598  us/op
+BenchmarkLargeMethod.largeMethod  unsigned-off      320  avgt   10    28,003 ±  0,274  us/op
+BenchmarkLargeMethod.largeMethod  unsigned-off      600  avgt   10  1188,674 ± 12,844  us/op
+BenchmarkLargeMethod.largeMethod    branchless      320  avgt   10     9,258 ±  0,237  us/op
+BenchmarkLargeMethod.largeMethod    branchless      600  avgt   10  1057,917 ± 12,685  us/op
+
+Benchmark result is saved to compiler/docs/data/large-method-2026-10-18/jmh-fork.json
