@@ -1,0 +1,33 @@
+Starting CD benchmark ...
+CD: iterations=1 runtime: 676653us
+CD: iterations=1 runtime: 495998us
+CD: iterations=1 runtime: 274419us
+CD: iterations=3 average: 482357us total: 1447070us
+
+
+Total Runtime: 1447070us
+Starting CD benchmark ...
+CD: iterations=1 runtime: 273403us
+CD: iterations=1 runtime: 258075us
+CD: iterations=1 runtime: 211832us
+CD: iterations=3 average: 247770us total: 743310us
+
+
+Total Runtime: 743310us
+Starting CD benchmark ...
+CD: iterations=1 runtime: 199880us
+CD: iterations=1 runtime: 201250us
+CD: iterations=1 runtime: 190429us
+CD: iterations=3 average: 197186us total: 591559us
+
+
+Total Runtime: 591559us
+Starting CD benchmark ...
+CD: iterations=1 runtime: 219493us
+CD: iterations=1 runtime: 198845us
+CD: iterations=1 runtime: 190119us
+CD: iterations=3 average: 202819us total: 608457us
+
+
+Total Runtime: 608457us
+{"label":"fork","bytes":1083455,"parse_ms":425.560,"machine_compile_ms":837.378,"compile_ms":1262.938,"first_exec_ms":1943.879,"last_exec_ms":708.676,"warmup_penalty_ms":1231.570,"exec_ms_median":712.309,"exec_ms_min":708.676,"instantiate_ms":[16.179518, 0.89556, 0.911791, 0.891303],"start_ms":[1907.100749, 946.448842, 711.067698, 707.458885],"memory_backend":"bytebuffer","rss_hwm_kb":804400,"all_exec_ms":[1943.879239, 947.657915, 712.308888, 708.676013]}

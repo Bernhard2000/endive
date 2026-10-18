@@ -1,0 +1,33 @@
+title: "CPU_INSTRS"
+cgb flag: CGB_FLAG_SUPPORTED
+sgb flag: SGB_FLAG_NONE
+cart type: CART_TYPE_MBC1
+rom size: ROM_SIZE_64K
+ext ram size: EXT_RAM_SIZE_NONE
+header checksum: 0x3b [OK]
+frames=400 checksum=2427588608
+title: "CPU_INSTRS"
+cgb flag: CGB_FLAG_SUPPORTED
+sgb flag: SGB_FLAG_NONE
+cart type: CART_TYPE_MBC1
+rom size: ROM_SIZE_64K
+ext ram size: EXT_RAM_SIZE_NONE
+header checksum: 0x3b [OK]
+frames=400 checksum=2427588608
+title: "CPU_INSTRS"
+cgb flag: CGB_FLAG_SUPPORTED
+sgb flag: SGB_FLAG_NONE
+cart type: CART_TYPE_MBC1
+rom size: ROM_SIZE_64K
+ext ram size: EXT_RAM_SIZE_NONE
+header checksum: 0x3b [OK]
+frames=400 checksum=2427588608
+title: "CPU_INSTRS"
+cgb flag: CGB_FLAG_SUPPORTED
+sgb flag: SGB_FLAG_NONE
+cart type: CART_TYPE_MBC1
+rom size: ROM_SIZE_64K
+ext ram size: EXT_RAM_SIZE_NONE
+header checksum: 0x3b [OK]
+frames=400 checksum=2427588608
+{"label":"fork","bytes":251286,"parse_ms":177.785,"machine_compile_ms":421.336,"compile_ms":599.120,"first_exec_ms":4587.649,"last_exec_ms":4441.713,"warmup_penalty_ms":171.868,"exec_ms_median":4415.781,"exec_ms_min":4382.212,"instantiate_ms":[8.956415, 0.582902, 0.556583, 0.757185],"start_ms":[4553.911088, 4381.102642, 4414.833057, 4440.167464],"memory_backend":"bytebuffer","rss_hwm_kb":151884,"all_exec_ms":[4587.649497, 4382.212292, 4415.781397, 4441.712773]}

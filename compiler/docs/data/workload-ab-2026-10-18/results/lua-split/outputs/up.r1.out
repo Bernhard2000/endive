@@ -1,0 +1,8 @@
+checksum=1428122437
+checksum=1428122437
+checksum=1428122437
+checksum=1428122437
+checksum=1428122437
+checksum=1428122437
+checksum=1428122437
+{"label":"up","bytes":529886,"parse_ms":218.007,"machine_compile_ms":413.419,"compile_ms":631.426,"first_exec_ms":572.718,"last_exec_ms":269.920,"warmup_penalty_ms":298.853,"exec_ms_median":273.864,"exec_ms_min":269.920,"instantiate_ms":[6.728437, 1.119408, 0.776511, 0.554128, 0.520876, 0.469501, 0.469321],"start_ms":[549.347067, 270.819621, 350.240598, 271.632991, 273.328707, 273.063896, 269.127911],"memory_backend":"bytebuffer","rss_hwm_kb":185816,"all_exec_ms":[572.717686, 272.1986, 351.312998, 272.481736, 274.179796, 273.864402, 269.920332]}

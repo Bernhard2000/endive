@@ -1,0 +1,29 @@
+
+DIAGNOSTICS II V1.2 - CPU TEST
+COPYRIGHT (C) 1981 - SUPERSOFT ASSOCIATES
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+CPU IS 8080/8085
+BEGIN TIMING TEST
+END TIMING TEST
+CPU TESTS OK
+
+--- i8080 benchmark done ---
+instructions=33971311
+cycles=255653383
+print_checksum=138414177
+
+DIAGNOSTICS II V1.2 - CPU TEST
+COPYRIGHT (C) 1981 - SUPERSOFT ASSOCIATES
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+CPU IS 8080/8085
+BEGIN TIMING TEST
+END TIMING TEST
+CPU TESTS OK
+
+--- i8080 benchmark done ---
+instructions=33971311
+cycles=255653383
+print_checksum=138414177
+{"label":"up","bytes":119897,"parse_ms":123.381,"machine_compile_ms":230.162,"compile_ms":353.544,"first_exec_ms":15796.244,"last_exec_ms":15725.754,"warmup_penalty_ms":0.000,"exec_ms_median":15796.244,"exec_ms_min":15725.754,"instantiate_ms":[7.050696, 0.854707],"start_ms":[15769.669034, 15724.386563],"memory_backend":"bytebuffer","rss_hwm_kb":95308,"all_exec_ms":[15796.243666, 15725.754221]}

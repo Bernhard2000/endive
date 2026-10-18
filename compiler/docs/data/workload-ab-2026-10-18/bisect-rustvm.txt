@@ -1,0 +1,14 @@
+# rustvm-base (rustvm_wasi.wasm, 4M iterations), exec_ms_median of 0 warmup / 2 reps,
+# fresh JVM per sample, taskset -c 4-7, upstream 1580f534 and candidate alternated.
+# bisect_arm.sh <commit>; exp-tableswitch = 44f68a6f with SwitchEmitter forced to tableswitch.
+5a02a7dd        up=6318 6555 6375 cand=7398 7054 8139
+82f39301        up=6503 6280 6276 cand=7228 7146 7243
+b4d973e1        up=6275 6260 6624 cand=6224 6533 6545
+3ba75b28        up=6996 6342 6365 cand=6288 6430 7187
+f5225324        up=6351 6340 6671 cand=6291 6994 6604
+f5225324        up=6461 6529 6131 cand=6334 6224 6476
+exp-tableswitch up=6458 6595 6356 cand=6454 6311 6521
+# runtime toggle, 44f68a6f: -Dendive.compiler.unsignedCompareFusion=false
+up 6525 6679 6374 | fork 7112 7345 8407 | fork-nounsigned 7308 7174 7540
+# z80-base control (also an interpreted > 8000 B dispatcher): no switch effect
+up 11768 11131 11732 | fork 11086 11476 11372 | exp-tableswitch 11238 11126 11415

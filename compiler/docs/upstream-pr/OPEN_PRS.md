@@ -139,6 +139,11 @@ and a wide tuple with an `externref` whose identity must survive. All three fail
 
 ## 2.6 `perf/switch-encoding` — "Compiler: choose a compact switch encoding for br_table"
 
+> **On hold (2026-10-18).** The size-first choice makes `rustvm-base` 12.6 % slower: a sparse
+> 160-entry table becomes a `lookupswitch` in a method HotSpot interprets, so each dispatch is a
+> binary search. Add a speed-aware threshold and re-measure before opening this PR
+> ([workload-ab-2026-10-18.md](../workload-ab-2026-10-18.md)).
+
 **Summary.** `br_table` always became a `tableswitch` (4 bytes per entry). Large sparse tables
 (thousands of entries for one common target, typical of interpreters and of function splitting)
 are now encoded as the smaller of: a `lookupswitch` without the entries equal to the default;

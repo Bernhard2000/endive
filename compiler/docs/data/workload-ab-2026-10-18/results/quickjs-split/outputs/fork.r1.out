@@ -1,0 +1,4 @@
+checksum=-1789054891
+checksum=-1789054891
+checksum=-1789054891
+{"label":"fork","bytes":1096029,"parse_ms":405.670,"machine_compile_ms":810.499,"compile_ms":1216.169,"first_exec_ms":7887.871,"last_exec_ms":7849.362,"warmup_penalty_ms":38.509,"exec_ms_median":7849.362,"exec_ms_min":7805.176,"instantiate_ms":[9.454042, 1.12578, 0.756124],"start_ms":[7860.421218, 7803.741112, 7848.321376],"memory_backend":"bytebuffer","rss_hwm_kb":811860,"all_exec_ms":[7887.871054, 7805.176385, 7849.361927]}

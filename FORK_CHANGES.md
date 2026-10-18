@@ -163,6 +163,13 @@ These are sequential local JMH trials with two forks per compiler. Host drift an
 are outside their confidence intervals; they establish an exploratory result for this case,
 not a general CPython or split-workload speedup.
 
+**Measured cost (2026-10-18).** Choosing by size alone can slow dispatch. `rustvm`'s `exec_op`
+(16.6 kB, interpreted by HotSpot) has a 160-entry table with 70 explicit keys. It now gets a
+`lookupswitch`, which saves 84 bytes, but HotSpot's interpreter executes it as a binary search.
+The whole run is 12.6 % slower than upstream; forcing `tableswitch` removes the slowdown.
+Bisected to this change; see [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md).
+The rule needs a speed-aware threshold before it is offered upstream.
+
 **Relevance to function splitting.** Smaller dispatch code can reduce the size of parents and
 helpers, provide headroom for other instructions, and reduce pressure to split further. The
 Endive size oracle and compiled artifacts should be rebuilt before retuning the Binaryen size
@@ -312,6 +319,7 @@ Implemented from [FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md); details p
 | 3.5 | `BenchmarkLargeMethod` | [large-method-benchmark.md](compiler/docs/large-method-benchmark.md) |
 | 3.6 | Runtime-compile regression: cold-JVM cost of the post-passes, halved | [compile-time-regression.md](compiler/docs/compile-time-regression.md) |
 | 3.7 | C2 refuses 97 % of helper calls near 8000 bytes upstream | [inlining-at-8000-bytes.md](compiler/docs/inlining-at-8000-bytes.md) |
+| — | Fork against upstream on 31 workload cells: faster in 21 (typically −5 to −11 %), one regression (`rustvm-base` +12.6 %, compact switch encoding), outputs identical | [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md) |
 
 All runtime numbers in these notes are laptop measurements; the thesis cites fork speed only
 from the fixed-runner campaign.

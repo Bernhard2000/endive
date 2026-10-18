@@ -1,0 +1,5 @@
+frames=120 viewport=320x224 video=3117936248 audio=3049676608
+frames=120 viewport=320x224 video=3117936248 audio=3049676608
+frames=120 viewport=320x224 video=3117936248 audio=3049676608
+frames=120 viewport=320x224 video=3117936248 audio=3049676608
+{"label":"up","bytes":2420239,"parse_ms":610.924,"machine_compile_ms":986.813,"compile_ms":1597.737,"first_exec_ms":1843.276,"last_exec_ms":939.321,"warmup_penalty_ms":893.743,"exec_ms_median":949.533,"exec_ms_min":939.321,"instantiate_ms":[68.049171, 6.958955, 9.763018, 8.024091],"start_ms":[1757.606283, 942.151217, 957.4821, 931.000744],"memory_backend":"bytebuffer","rss_hwm_kb":562892,"all_exec_ms":[1843.276326, 949.533298, 967.761167, 939.320875]}

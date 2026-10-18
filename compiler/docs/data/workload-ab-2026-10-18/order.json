@@ -1,0 +1,1 @@
+["lua-base", "lua-split", "sqlite-split", "quickjs-split", "python-split", "binjgb-base", "binjgb-split", "i8080-base", "i8080-split", "z80-base", "z80-split", "genesis-base", "genesis-split", "rustvm-base", "rustvm-split", "fkernel-base", "fkernel-split", "rv32ima-base", "sqlite-app-split", "speedtest1-split"]

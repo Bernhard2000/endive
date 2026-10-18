@@ -1,0 +1,9 @@
+0f6f06f4 000104ac
+RV OK digest=4053113792
+0f6f06f4 000104ac
+RV OK digest=4053113792
+0f6f06f4 000104ac
+RV OK digest=4053113792
+0f6f06f4 000104ac
+RV OK digest=4053113792
+{"label":"up","bytes":29646,"parse_ms":101.643,"machine_compile_ms":177.289,"compile_ms":278.933,"first_exec_ms":1999.122,"last_exec_ms":1782.488,"warmup_penalty_ms":213.922,"exec_ms_median":1785.200,"exec_ms_min":1782.488,"instantiate_ms":[21.678379, 3.862177, 2.713756, 2.383043],"start_ms":[1957.968944, 1846.446628, 1782.102261, 1779.46652],"memory_backend":"bytebuffer","rss_hwm_kb":137980,"all_exec_ms":[1999.122465, 1850.64102, 1785.200381, 1782.487816]}

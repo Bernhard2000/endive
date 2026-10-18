@@ -1,0 +1,5 @@
+wasi-python-workload 25209
+wasi-python-workload 25209
+wasi-python-workload 25209
+wasi-python-workload 25209
+{"label":"fork","bytes":26545547,"parse_ms":1603.410,"machine_compile_ms":4518.670,"compile_ms":6122.080,"first_exec_ms":729.338,"last_exec_ms":316.477,"warmup_penalty_ms":324.650,"exec_ms_median":404.688,"exec_ms_min":316.477,"instantiate_ms":[37.829313, 10.702967, 8.314615, 8.029806],"start_ms":[672.659989, 401.106564, 395.79773, 308.121526],"memory_backend":"bytebuffer","rss_hwm_kb":2457040,"all_exec_ms":[729.338451, 412.122432, 404.688183, 316.477478]}

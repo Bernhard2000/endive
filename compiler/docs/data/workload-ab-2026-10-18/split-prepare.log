@@ -1,0 +1,120 @@
+== corpus split matrix | corpus: binjgb i8080 z80 genesis
+== out: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits
+
+===== [binjgb] binjgb_wasi.wasm (251286 B) =====
+== [binjgb] collect profile (3 runs)
+(node:15966) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 1440716933 edge hits, 111 transitions, 1816 label pairs
+  run 2: 1440716933 edge hits, 111 transitions, 1816 label pairs
+  run 3: 1440716933 edge hits, 111 transitions, 1816 label pairs
+edges=3776 countTable=true -> /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/binjgb/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/binjgb/mapping.json
+  Trace source:   /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/binjgb/trace.json
+  Target profile: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/binjgb/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   71
+  Functions executed:       40
+  Cold functions (<= 5):   38
+  Functions with expr data: 40
+  Total entry count:        78291618
+  Call-transition sources:  40
+  Call-transition pairs:    111
+  Label-transition funcs:   40
+  Label-transition pairs:   1816
+  First-touch functions:    40
+   base         wasm    251286 B | jvm total   109528 | jvm max  42051 | over8k  3 | over64k 0 | funcs 71
+   split-8kB    wasm    250801 B | jvm total   122174 | jvm max  24763 | over8k  1 | over64k 0 | funcs 198
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 3 -> 1, over-64k 0 -> 0)
+
+===== [i8080] i8080_wasi.wasm (119897 B) =====
+== [i8080] collect profile (3 runs)
+(node:17226) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 8543813151 edge hits, 41 transitions, 581 label pairs
+  run 2: 8543813151 edge hits, 41 transitions, 581 label pairs
+  run 3: 8543813151 edge hits, 41 transitions, 581 label pairs
+edges=614 countTable=true -> /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/i8080/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/i8080/mapping.json
+  Trace source:   /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/i8080/trace.json
+  Target profile: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/i8080/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   27
+  Functions executed:       21
+  Cold functions (<= 5):   7
+  Functions with expr data: 21
+  Total entry count:        305887431
+  Call-transition sources:  21
+  Call-transition pairs:    41
+  Label-transition funcs:   19
+  Label-transition pairs:   581
+  First-touch functions:    21
+   base         wasm    119897 B | jvm total    14813 | jvm max  11388 | over8k  1 | over64k 0 | funcs 27
+   split-8kB    wasm    107525 B | jvm total    16648 | jvm max   7737 | over8k  0 | over64k 0 | funcs 28
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 1 -> 0, over-64k 0 -> 0)
+
+===== [z80] z80_wasi.wasm (126885 B) =====
+== [z80] collect profile (3 runs)
+(node:18506) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 9516680098 edge hits, 40 transitions, 477 label pairs
+  run 2: 9516680098 edge hits, 40 transitions, 477 label pairs
+  run 3: 9516680098 edge hits, 40 transitions, 477 label pairs
+edges=1678 countTable=true -> /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/z80/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/z80/mapping.json
+  Trace source:   /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/z80/trace.json
+  Target profile: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/z80/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   51
+  Functions executed:       19
+  Cold functions (<= 5):   33
+  Functions with expr data: 19
+  Total entry count:        402960003
+  Call-transition sources:  19
+  Call-transition pairs:    40
+  Label-transition funcs:   17
+  Label-transition pairs:   477
+  First-touch functions:    19
+   base         wasm    126885 B | jvm total    45817 | jvm max  16328 | over8k  2 | over64k 0 | funcs 51
+   split-8kB    wasm    122130 B | jvm total    48387 | jvm max  10921 | over8k  1 | over64k 0 | funcs 53
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 2 -> 1, over-64k 0 -> 0)
+
+===== [genesis] genesis_wasi.wasm (2457385 B) =====
+== [genesis] collect profile (3 runs)
+(node:19409) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  run 1: 241896785 edge hits, 2978 transitions, 3535 label pairs
+  run 2: 241896785 edge hits, 2978 transitions, 3535 label pairs
+  run 3: 241896785 edge hits, 2978 transitions, 3535 label pairs
+edges=36059 countTable=true -> /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/genesis/trace.json
+Translating edge traces into a splitting profile...
+  Mapping source: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/genesis/mapping.json
+  Trace source:   /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/genesis/trace.json
+  Target profile: /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/genesis/profile.json
+Success! Generated profile JSON.
+  Profile version:          4
+  Functions instrumented:   4728
+  Functions executed:       411
+  Cold functions (<= 5):   4362
+  Functions with expr data: 411
+  Total entry count:        11818440
+  Call-transition sources:  410
+  Call-transition pairs:    2978
+  Label-transition funcs:   367
+  Label-transition pairs:   3535
+  First-touch functions:    411
+   base         wasm   2457385 B | jvm total  1384056 | jvm max  41356 | over8k  8 | over64k 0 | funcs 4728
+   split-8kB    wasm   2420239 B | jvm total  1397585 | jvm max  21452 | over8k  3 | over64k 0 | funcs 4963
+   G1 correctness: ok (outputs identical to pristine base)
+   G2 wall split-8kB: ok (over-8k 8 -> 3, over-64k 0 -> 0)
+
+== prepared: binjgb i8080 z80 genesis  -> /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits

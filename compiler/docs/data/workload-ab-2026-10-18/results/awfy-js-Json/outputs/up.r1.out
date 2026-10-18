@@ -1,0 +1,33 @@
+Starting Json benchmark ...
+Json: iterations=1 runtime: 751303us
+Json: iterations=1 runtime: 425392us
+Json: iterations=1 runtime: 327673us
+Json: iterations=3 average: 501456us total: 1504368us
+
+
+Total Runtime: 1504368us
+Starting Json benchmark ...
+Json: iterations=1 runtime: 308030us
+Json: iterations=1 runtime: 281275us
+Json: iterations=1 runtime: 270841us
+Json: iterations=3 average: 286715us total: 860146us
+
+
+Total Runtime: 860146us
+Starting Json benchmark ...
+Json: iterations=1 runtime: 283732us
+Json: iterations=1 runtime: 269043us
+Json: iterations=1 runtime: 266730us
+Json: iterations=3 average: 273168us total: 819505us
+
+
+Total Runtime: 819505us
+Starting Json benchmark ...
+Json: iterations=1 runtime: 299066us
+Json: iterations=1 runtime: 263212us
+Json: iterations=1 runtime: 273119us
+Json: iterations=3 average: 278466us total: 835397us
+
+
+Total Runtime: 835397us
+{"label":"up","bytes":1083455,"parse_ms":412.400,"machine_compile_ms":792.897,"compile_ms":1205.297,"first_exec_ms":1963.322,"last_exec_ms":936.488,"warmup_penalty_ms":992.553,"exec_ms_median":970.770,"exec_ms_min":936.488,"instantiate_ms":[12.758675, 0.94379, 1.885596, 1.053253],"start_ms":[1931.464381, 1064.652693, 968.244794, 935.0616],"memory_backend":"bytebuffer","rss_hwm_kb":860568,"all_exec_ms":[1963.322258, 1065.9401, 970.769555, 936.488175]}

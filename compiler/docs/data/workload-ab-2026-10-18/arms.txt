@@ -1,0 +1,5 @@
+up 1580f5349ae0ce9a771fa42ee8397ba6d2553685 6101f7741503c805
+fork 44f68a6f38c32855c4ef8c2831e39fbbcaa36cc4 9dfba22650eac0ec
+openjdk version "21.0.12.1" 2026-08-18
+OpenJDK Runtime Environment (build 21.0.12.1+1-suse-01699-x8664)
+OpenJDK 64-Bit Server VM (build 21.0.12.1+1-suse-01699-x8664, mixed mode, sharing)

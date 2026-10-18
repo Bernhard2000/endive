@@ -1,0 +1,124 @@
+{
+ "schema": "bench_lib-v1",
+ "phase": "instantiate",
+ "env": {
+  "date": "2026-10-18T22:54:52",
+  "host": "tuxedoPulse14Gen3",
+  "kernel": "7.2.10-1-default",
+  "governor": "ondemand",
+  "turbo": "on",
+  "taskset_cores": "4-7",
+  "aslr": "2",
+  "engines": {
+   "/usr/bin/java": "openjdk 21.0.12.1 2026-08-18"
+  },
+  "module_sha256": {
+   "/home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/genesis/base.wasm": "fd38c1f086f9326956b1e7a39cc672dddffd46ec5269bc1d356d51911a4af9fb"
+  },
+  "pass_config": "engine-ab up=1580f534 fork=44f68a6f workload=genesis-base args=120 warmup=1 reps=3 cores=4-7",
+  "endive": {
+   "commit": "e60e5e1de7de846dce884adccc54e6be3173c648",
+   "content_id": "vendored:fec0cbf4bc162d6d0ad2e6bda8440e499fca271e",
+   "dirty": false,
+   "dirty_sha256": null,
+   "installed_at": "2026-10-17T20:16:51",
+   "jars_sha256": {
+    "build-time-compiler": "475082a6ba3ceea74d1894b0648c65a4144be218b1a455dfffb60d21031d5890",
+    "compiler": "c26524eedfef84a10ffbb48f475f424566ee7f0976fa728711950d334381cdee",
+    "endive-compiler-maven-plugin": "e5fc4656d5297b49ee3ca0500808000d2ba2ccc9df20c25fde5b31197b74cf1d",
+    "runtime": "1b0ed024072ecd34f451d5fb5855d58e41b66c8fcc6332b12f141c86d74b6f61",
+    "wasi": "d0c56b8eecb88639ec6aa9896434ba62393d9a6b750c5a405431a263b6d74790",
+    "wasm": "1bcc3cbee6640ae28bd1b1c3bf0101aa7fd28971c4f3af6f8914b6a425fd27cd"
+   },
+   "kind": "vendored",
+   "m2": "/home/bernhard/.m2/repository",
+   "source_path": "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/endive",
+   "tree": "fec0cbf4bc162d6d0ad2e6bda8440e499fca271e",
+   "verified": true
+  }
+ },
+ "runs_ns": {
+  "up": [
+   1711344000,
+   1730732000,
+   1756855000,
+   1837584000,
+   1799854000,
+   1726772000,
+   1735388000,
+   1746879000,
+   1942972000,
+   1868940000,
+   1823493000,
+   1884346000
+  ],
+  "fork": [
+   1905266000,
+   1820182000,
+   1872690000,
+   1838594000,
+   1814872000,
+   1815084000,
+   1841403000,
+   1806125000,
+   1909674000,
+   1805335000,
+   1936595000,
+   1812461000
+  ]
+ },
+ "interleaved": true,
+ "warmup_rounds_discarded": 0,
+ "order_mode": "permuted",
+ "order_seed": "20261018",
+ "round_orders": [
+  [
+   "fork",
+   "up"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "fork",
+   "up"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "fork",
+   "up"
+  ],
+  [
+   "up",
+   "fork"
+  ]
+ ]
+}

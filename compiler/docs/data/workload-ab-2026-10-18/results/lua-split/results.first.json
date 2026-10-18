@@ -1,0 +1,124 @@
+{
+ "schema": "bench_lib-v1",
+ "phase": "first-call",
+ "env": {
+  "date": "2026-10-18T21:49:16",
+  "host": "tuxedoPulse14Gen3",
+  "kernel": "7.2.10-1-default",
+  "governor": "ondemand",
+  "turbo": "on",
+  "taskset_cores": "4-7",
+  "aslr": "2",
+  "engines": {
+   "/usr/bin/java": "openjdk 21.0.12.1 2026-08-18"
+  },
+  "module_sha256": {
+   "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/results/2026-10-17/fork-fusion-ab/splits/lua/split-8kB.wasm": "3377e89c0054d6d775417c44e01cc1aeb576db54307fe6576f7a8f91893b18e1"
+  },
+  "pass_config": "engine-ab up=1580f534 fork=44f68a6f workload=lua-split args=2 a warmup=2 reps=5 cores=4-7",
+  "endive": {
+   "commit": "e60e5e1de7de846dce884adccc54e6be3173c648",
+   "content_id": "vendored:fec0cbf4bc162d6d0ad2e6bda8440e499fca271e",
+   "dirty": false,
+   "dirty_sha256": null,
+   "installed_at": "2026-10-17T20:16:51",
+   "jars_sha256": {
+    "build-time-compiler": "475082a6ba3ceea74d1894b0648c65a4144be218b1a455dfffb60d21031d5890",
+    "compiler": "c26524eedfef84a10ffbb48f475f424566ee7f0976fa728711950d334381cdee",
+    "endive-compiler-maven-plugin": "e5fc4656d5297b49ee3ca0500808000d2ba2ccc9df20c25fde5b31197b74cf1d",
+    "runtime": "1b0ed024072ecd34f451d5fb5855d58e41b66c8fcc6332b12f141c86d74b6f61",
+    "wasi": "d0c56b8eecb88639ec6aa9896434ba62393d9a6b750c5a405431a263b6d74790",
+    "wasm": "1bcc3cbee6640ae28bd1b1c3bf0101aa7fd28971c4f3af6f8914b6a425fd27cd"
+   },
+   "kind": "vendored",
+   "m2": "/home/bernhard/.m2/repository",
+   "source_path": "/home/bernhard/Dokumente/MasterThesis/gitlab/experimental/endive",
+   "tree": "fec0cbf4bc162d6d0ad2e6bda8440e499fca271e",
+   "verified": true
+  }
+ },
+ "runs_ns": {
+  "up": [
+   572718000,
+   530457999,
+   732328000,
+   609127000,
+   691017000,
+   521166000,
+   579019000,
+   509323000,
+   565527000,
+   672859000,
+   660613000,
+   628412000
+  ],
+  "fork": [
+   649925000,
+   582614000,
+   589762000,
+   546117000,
+   553689000,
+   564470000,
+   526453999,
+   570384000,
+   523623000,
+   513150999,
+   576638000,
+   523647000
+  ]
+ },
+ "interleaved": true,
+ "warmup_rounds_discarded": 0,
+ "order_mode": "permuted",
+ "order_seed": "20261018",
+ "round_orders": [
+  [
+   "fork",
+   "up"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "fork",
+   "up"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "up",
+   "fork"
+  ],
+  [
+   "fork",
+   "up"
+  ],
+  [
+   "up",
+   "fork"
+  ]
+ ]
+}
