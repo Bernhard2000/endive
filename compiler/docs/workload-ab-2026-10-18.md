@@ -113,7 +113,7 @@ the other entries in those columns are significant.
 
 ![Absolute steady time of unsplit and split modules on both engines](data/workload-ab-2026-10-18/plots/base-vs-split.png)
 
-The second figure shows the order of effects: splitting moves the time by up to 7× (i8080,
+The second figure shows the order of effects: splitting cuts the time by 4–12× (i8080,
 z80, rustvm, fkernel), and the fork adds a smaller step on top. rustvm unsplit is the one row where
 the fork's dot sits right of upstream's.
 
