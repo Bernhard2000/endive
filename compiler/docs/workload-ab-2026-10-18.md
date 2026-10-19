@@ -36,6 +36,8 @@ plus ASM 9.10.1. The fork's compiler jar is the one the thesis report
   Lua split −7.6 % (PR: −4.1 %), SQLite split −10.4 % (−9.5 %), QuickJS split −7.5 % (−6.4 %),
   Lua base −4.7 % (−5.5 %).
 
+![Steady-state change per workload, fork against upstream, with 95 % CIs](data/workload-ab-2026-10-18/plots/steady-forest.png)
+
 ## Setup
 
 **Machine:** AMD Ryzen 7 7840HS, Linux 7.2.10, OpenJDK 21.0.12.1 (`/usr/bin/java`), `ondemand`
@@ -107,6 +109,16 @@ compile time are in [data/workload-ab-2026-10-18/results/SUMMARY.md](data/worklo
 Bold: the CI excludes 0. "n.s." in the first-exec and compile columns marks a CI that includes 0;
 the other entries in those columns are significant.
 
+![Steady state, first execution and compile time side by side](data/workload-ab-2026-10-18/plots/metrics-forest.png)
+
+![Absolute steady time of unsplit and split modules on both engines](data/workload-ab-2026-10-18/plots/base-vs-split.png)
+
+The second figure shows the order of effects: splitting moves the time by up to 7× (i8080,
+z80, rustvm, fkernel), and the fork adds a smaller step on top. rustvm unsplit is the one row where
+the fork's dot sits right of upstream's.
+
+![Per-JVM samples of the two unstable cells](data/workload-ab-2026-10-18/plots/bimodal-cells.png)
+
 **Bimodal cells.** `rv32ima-base` and `awfy-lua-NBody` switch between two JIT states from JVM to
 JVM in **both** arms. rv32ima runs either about 1.73 s (both arms) or 2.88 s upstream against
 2.23 s on the fork. NBody runs either about 90 ms or about 200 ms, and the share of slow JVMs
@@ -158,6 +170,8 @@ Bisection (`bisect-rustvm.txt`, three alternating fresh-JVM samples per commit a
 | `44f68a6f` with `-Dendive.compiler.unsignedCompareFusion=false` | +13 % |
 | `44f68a6f` with `SwitchEmitter` forced to `tableswitch` (local experiment, not committed) | ≈ 0 |
 
+![rustvm-base time against upstream at each bisected commit](data/workload-ab-2026-10-18/plots/rustvm-bisect.png)
+
 z80-base is also an interpreted dispatcher over 8000 bytes, and the forced-`tableswitch` build
 does not change it.
 
@@ -201,4 +215,5 @@ SPLIT_LIMITS=8 OUT_DIR=$B/splits ./run_corpus_split_matrix.sh prepare binjgb i80
 # blanket 8-64-bt splits of lua_awfy, qjs_awfy, sqlite_app, speedtest1: see "SQLite apps"/"AWFY" rows
 $B/campaign.sh 12 && python3 $B/summarize.py > $B/results/SUMMARY.md
 $B/bisect_arm.sh <commit>
+python3 compiler/docs/data/workload-ab-2026-10-18/plot.py   # figures
 ```
