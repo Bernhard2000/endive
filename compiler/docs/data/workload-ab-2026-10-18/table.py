@@ -6,7 +6,7 @@ from pathlib import Path
 HERE = Path(__file__).parent
 s = json.loads((HERE / "results" / "summary.json").read_text())
 order = json.loads((HERE / "order.json").read_text())
-UNSTABLE = {"awfy-lua-split-NBody"}
+UNSTABLE = set()
 
 
 def pct(m, bold=False):

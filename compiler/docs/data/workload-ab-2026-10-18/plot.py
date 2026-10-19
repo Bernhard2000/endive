@@ -20,7 +20,7 @@ OUT.mkdir(exist_ok=True)
 SURFACE, INK, INK2, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#8a8985", "#e4e3df"
 FASTER, SLOWER, NEUTRAL = "#2a78d6", "#e34948", "#a3a29d"
 FORK, UP = "#2a78d6", "#eb6834"
-BIMODAL = {"awfy-lua-split-NBody"}
+BIMODAL = set()   # awfy-lua-split-NBody was unstable; replaced by the longer NBody-long cell
 
 LUA_B = ["Richards", "DeltaBlue", "Json", "NBody", "CD"]
 JS_B = ["Richards", "DeltaBlue", "Json", "NBody", "Bounce", "CD"]
@@ -29,14 +29,17 @@ FAMILIES = [
     ("Emulators", ["binjgb-base", "binjgb-split", "i8080-base", "i8080-split", "z80-base",
                    "z80-split", "genesis-base", "genesis-split"]),
     ("SQLite applications", ["sqlite-app-split", "speedtest1-split"]),
-    ("AWFY on Lua", [f"awfy-lua-{k}-{b}" for b in LUA_B for k in ("unsplit", "split")]),
+    ("AWFY on Lua", [f"awfy-lua-{k}-{b}" + ("-long" if (k, b) == ("split", "NBody") else "")
+                     for b in LUA_B for k in ("unsplit", "split")]),
     ("AWFY on QuickJS", [f"awfy-js-{k}-{b}" for b in JS_B for k in ("unsplit", "split")]),
 ]
 
 
 def label(w):
-    m = re.match(r"awfy-(lua|js)-(unsplit|split)-(\w+)$", w)
-    return f"{m.group(3)}, {m.group(2)}" if m else w
+    m = re.match(r"awfy-(lua|js)-(unsplit|split)-(\w+)(-long)?$", w)
+    if not m:
+        return w
+    return f"{m.group(3)}, {m.group(2)}" + (" (10× longer)" if m.group(4) else "")
 
 
 METRICS = [("steady", "Steady state"), ("first", "First execution"),
@@ -146,7 +149,7 @@ forest(ax, "steady", annotate=ANNOTATE)
 ax.set_xlabel("steady-state time, fork vs upstream (paired median, 95 % bootstrap CI)")
 ax.set_title("Fork 44f68a6f against upstream 1580f534: steady state, 12 rounds per cell",
              loc="left", x=-0.42)
-verdict_legend(fig, "lower left")
+verdict_legend(fig, "lower left", bimodal=bool(BIMODAL))
 save(fig, "steady-forest")
 
 # 2. Small multiples: steady, first execution, compile ---------------------------------
@@ -161,14 +164,16 @@ axes[0].set_yticks([y for y, _ in rows()[1]])
 axes[0].set_yticklabels([label(w) for _, w in rows()[1]])
 for ax in axes:
     ax.set_xlabel("fork vs upstream", color=INK2)
-verdict_legend(fig, None)
+verdict_legend(fig, None, bimodal=bool(BIMODAL))
 fig.subplots_adjust(wspace=0.12, bottom=0.09)
 save(fig, "metrics-forest")
 
 # 3. Unsplit and split, both engines, absolute steady time ----------------------------
 panels = [
     ("Corpus workloads", [(n, f"{n}-base", f"{n}-split") for n in ("lua", "binjgb", "i8080", "z80", "genesis")]),
-    ("AWFY (Lua, then QuickJS)", [(f"Lua {b}", f"awfy-lua-unsplit-{b}", f"awfy-lua-split-{b}") for b in LUA_B]
+    # Lua NBody is left out: its split cell runs 10× the iterations of the unsplit one
+    ("AWFY (Lua, then QuickJS)", [(f"Lua {b}", f"awfy-lua-unsplit-{b}", f"awfy-lua-split-{b}")
+                                  for b in LUA_B if b != "NBody"]
      + [(f"JS {b}", f"awfy-js-unsplit-{b}", f"awfy-js-split-{b}") for b in JS_B]),
 ]
 fig, axes = plt.subplots(1, 2, figsize=(11, 7.2), sharex=True,
@@ -249,25 +254,26 @@ ax.legend(handles=[Line2D([], [], lw=0, marker="o", ms=6, color=SLOWER, label="r
 ax.set_ylim(-8, 34)
 save(fig, "rustvm-bisect")
 
-# 5. Unstable cells, per sample -----------------------------------------------------------
-cells = sorted(BIMODAL)
-fig, axes = plt.subplots(1, len(cells), figsize=(max(6.4, 4.2 * len(cells)), 3.2), squeeze=False)
-for ax, w in zip(axes[0], cells):
-    a, b = runs(w, "steady")
-    scale, unit = (1e9, "s") if statistics.median(a) > 2e9 else (1e6, "ms")
-    for j, (vals, c) in enumerate(((a, UP), (b, FORK))):
-        xs = [j + (k - (len(vals) - 1) / 2) * 0.03 for k in range(len(vals))]
-        ax.plot(xs, [v / scale for v in vals], "o", ms=7, color=c, mec=SURFACE, mew=1.5)
-    ax.set_xticks([0, 1])
-    ax.set_xticklabels(["upstream", "fork"])
-    ax.set_xlim(-0.6, 1.6)
-    ax.grid(axis="y", color=GRID, lw=1)
-    ax.set_axisbelow(True)
-    ax.tick_params(axis="y", colors=INK2)
-    ax.set_ylabel(f"steady time per run ({unit})", color=INK2)
-    ax.set_title(f"{w} (one dot per JVM)", loc="left")
-fig.suptitle("Unstable cell: JVMs land in different JIT states in both arms",
-             x=0.02, ha="left", fontweight="bold", fontsize=10)
-fig.tight_layout()
-save(fig, "bimodal-cells")
+if BIMODAL:
+    # 5. Unstable cells, per sample -----------------------------------------------------------
+    cells = sorted(BIMODAL)
+    fig, axes = plt.subplots(1, len(cells), figsize=(max(6.4, 4.2 * len(cells)), 3.2), squeeze=False)
+    for ax, w in zip(axes[0], cells):
+        a, b = runs(w, "steady")
+        scale, unit = (1e9, "s") if statistics.median(a) > 2e9 else (1e6, "ms")
+        for j, (vals, c) in enumerate(((a, UP), (b, FORK))):
+            xs = [j + (k - (len(vals) - 1) / 2) * 0.03 for k in range(len(vals))]
+            ax.plot(xs, [v / scale for v in vals], "o", ms=7, color=c, mec=SURFACE, mew=1.5)
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(["upstream", "fork"])
+        ax.set_xlim(-0.6, 1.6)
+        ax.grid(axis="y", color=GRID, lw=1)
+        ax.set_axisbelow(True)
+        ax.tick_params(axis="y", colors=INK2)
+        ax.set_ylabel(f"steady time per run ({unit})", color=INK2)
+        ax.set_title(f"{w} (one dot per JVM)", loc="left")
+    fig.suptitle("Unstable cell: JVMs land in different JIT states in both arms",
+                 x=0.02, ha="left", fontweight="bold", fontsize=10)
+    fig.tight_layout()
+    save(fig, "bimodal-cells")
 print("wrote", sorted(p.name for p in OUT.iterdir()))

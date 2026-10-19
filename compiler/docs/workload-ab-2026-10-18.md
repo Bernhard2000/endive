@@ -22,7 +22,7 @@ plus ASM 9.10.1. The fork's compiler jar is the one the thesis report
 ## Summary
 
 - **The fork is faster in 29 of 37 cells by steady state** (paired 95 % CI excludes 0), median
-  **−6.7 %**, range −4.7 to −16.6 %. The other eight cells are not significant; six of them have
+  **−6.7 %**, range −4.7 to −16.6 %. The other eight cells are not significant; seven of them have
   a median below zero. **No cell is significantly slower.**
 - **AWFY on the unsplit interpreters improves in all 11 cells**: Lua −4.8 to −6.4 %, QuickJS
   −5.7 to −10.4 %. So the gain does not depend on splitting.
@@ -67,7 +67,7 @@ not split against unsplit.
 | earlier anchors | lua base/split, sqlite split, quickjs split, python split | thesis `results/2026-10-17/fork-fusion-ab/splits` (pinned) and the tracked corpus |
 | emulators | binjgb, i8080, z80, genesis (base and 8 kB split) | tracked corpus; splits made with `run_corpus_split_matrix.sh prepare` (canonical endive-throughput recipe: 3-run Node edge profile, `jvm` metric, 8 kB, post-cleanup, `br_table` grouping). Gates: G1 output identical to pristine, G2 over-8 kB methods 3→1 / 1→0 / 2→1 / 8→3 (`split-prepare.log`) |
 | SQLite apps | `sqlite_app --mode inmem`, `speedtest1 --memdb --size 5 --testset mix1` | blanket split 8-64 with `br_table` grouping, no profile (the unsplit modules run `sqlite3_step` > 64 KB in Endive's interpreter: 33 s and 39 s per run, where fusion cannot act) |
-| AWFY Lua | Richards, DeltaBlue, Json, NBody, CD on `lua_awfy_wasi.wasm`, unsplit (5 methods over 8000 bytes, largest 25.5 kB) and split | blanket split 8-64-bt (as `run_awfy_lua_startup.sh`), AWFY sources mounted at `/awfy` |
+| AWFY Lua | Richards, DeltaBlue, Json, NBody, CD on `lua_awfy_wasi.wasm`, unsplit (5 methods over 8000 bytes, largest 25.5 kB) and split; the split NBody cell runs 10× longer (see below) | blanket split 8-64-bt (as `run_awfy_lua_startup.sh`), AWFY sources mounted at `/awfy` |
 | AWFY JS | Richards, DeltaBlue, Json, NBody, Bounce, CD on `qjs_awfy_wasi.wasm`, unsplit (11 methods over 8000 bytes, largest 55.9 kB, all under 64 KB) and split | blanket split 8-64-bt |
 
 The split modules were sized by the thesis `wasm-opt` against the *vendored* Endive's costs.
@@ -105,7 +105,7 @@ compile time are in [data/workload-ab-2026-10-18/results/SUMMARY.md](data/worklo
 | awfy-lua-unsplit-Json | 12 | 4,490 | 4,207 | **−6.4 %** | [−8.2, −5.4] | −6.3 % | +8.2 % |
 | awfy-lua-split-Json | 12 | 928 | 926 | −5.9 % | [−8.7, +5.0] | −4.6 % n.s. | +3.2 % |
 | awfy-lua-unsplit-NBody | 12 | 313 | 302 | **−4.8 %** | [−10.5, −0.6] | −5.9 % n.s. | +4.4 % n.s. |
-| awfy-lua-split-NBody | 12 | 135 | 202 | +23.5 % (unstable) | [−2.4, +64.1] | −5.2 % n.s. | +3.6 % |
+| awfy-lua-split-NBody-long | 12 | 564 | 543 | −3.5 % | [−5.1, +1.1] | +3.1 % n.s. | +6.0 % |
 | awfy-lua-unsplit-CD | 12 | 47,309 | 45,491 | **−5.1 %** | [−5.5, −2.7] | −4.4 % | +1.3 % n.s. |
 | awfy-lua-split-CD | 12 | 11,072 | 10,396 | **−6.1 %** | [−8.5, −4.8] | −4.6 % | +5.9 % |
 | awfy-js-unsplit-Richards | 12 | 8,576 | 8,022 | **−6.5 %** | [−9.9, −4.7] | −7.0 % | +15.5 % |
@@ -130,15 +130,18 @@ the other entries in those columns are significant.
 
 The second figure shows the order of effects. Splitting cuts the time by up to 7× (i8080, Lua,
 AWFY Lua Richards; binjgb and JS DeltaBlue/NBody only 1.1–1.2×), and the fork adds a smaller step
-on top, both unsplit and split. Lua NBody split is the one row where the fork's dot sits right of
-upstream's; that cell is unstable (next figure).
+on top, both unsplit and split. Lua NBody is left out of this figure, because its split cell
+now runs ten times as many iterations as the unsplit one.
 
-![Per-JVM samples of the unstable cell](data/workload-ab-2026-10-18/plots/bimodal-cells.png)
-
-**Unstable cell.** In `awfy-lua-split-NBody`, each JVM settles into one of several JIT states,
-in **both** arms: runs take about 90 ms, about 160 ms, or about 220 ms, and the share of slow
-JVMs differs between the arms by chance. A per-round ratio then compares states, not engines, so
-read this cell as undetermined. The unsplit NBody cell is stable and 4.8 % faster on the fork.
+**Lua NBody split, retested with a longer cell.** The original split cell (NBody 500 iterations,
+2 warm-up + 5 measured runs of about 100–300 ms each) did not settle. Samples spread from 90 to
+320 ms in both arms, and it read +23.5 % [−2.4, +64.1] on 2026-10-18 and +22.3 % [−23.2, +46.9]
+in a rerun on 2026-10-19 08:43 (load average 4.0–5.6, desktop busy). Runs that short let a busy
+core or a late JIT compile decide the median. The replacement cell `awfy-lua-split-NBody-long`
+runs 5,000 iterations, 3 warm-up + 5 measured runs of about 0.55 s each (2026-10-19 08:46–08:49,
+load average 2.2–3.7). Its samples stay within 525–646 ms in both arms, and the result is
+**−3.5 % [−5.1, +1.1]**, not significant. The two short runs are kept in `results-superseded/`.
+The unsplit NBody cell (about 300 ms per run) was stable from the start: −4.8 %.
 
 ## Interpretation
 
@@ -219,6 +222,9 @@ Do not open it as an upstream PR before this is resolved.
 - Runtime compiler only (`MachineFactoryCompiler`); build-time compilation not measured.
 - The AWFY and SQLite-app splits are blanket (no profile) splits. Their quality does not matter
   for an engine A/B, but they are not the thesis' product recipe.
+- The longer Lua NBody split cell replaced a short one after the short one proved unstable
+  twice (see Results). It was decided on noise, not on the result, and run once with the
+  standard 12 rounds.
 - The unsplit AWFY cells ran in a second session about seven hours later. Each cell is paired
   within its own rounds, so this matters only when comparing cells with each other.
 - The data directory keeps one guest output per arm and cell; the identical-output check ran on

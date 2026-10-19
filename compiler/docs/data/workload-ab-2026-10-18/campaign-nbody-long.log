@@ -1,0 +1,25 @@
+l1_protocol: within-round order=permuted seed=20261018
+[08:46:17] awfy-lua-split-NBody-long round 1 fork steady 561.604 first 1431.267 compile 759.483
+[08:46:24] awfy-lua-split-NBody-long round 1 up steady 558.797 first 1169.774 compile 692.216
+[08:46:30] awfy-lua-split-NBody-long round 2 up steady 555.747 first 1094.59 compile 758.068
+[08:46:37] awfy-lua-split-NBody-long round 2 fork steady 531.24 first 1144.22 compile 825.157
+[08:46:43] awfy-lua-split-NBody-long round 3 up steady 560.779 first 1153.004 compile 785.949
+[08:46:51] awfy-lua-split-NBody-long round 3 fork steady 537.783 first 1506.063 compile 750.633
+[08:46:57] awfy-lua-split-NBody-long round 4 up steady 565.505 first 1091.091 compile 738.109
+[08:47:04] awfy-lua-split-NBody-long round 4 fork steady 541.511 first 1108.967 compile 784.077
+[08:47:10] awfy-lua-split-NBody-long round 5 up steady 559.913 first 1197.61 compile 744.367
+[08:47:17] awfy-lua-split-NBody-long round 5 fork steady 571.726 first 1403.499 compile 716.934
+[08:47:23] awfy-lua-split-NBody-long round 6 fork steady 535.704 first 1078.276 compile 774.025
+[08:47:31] awfy-lua-split-NBody-long round 6 up steady 645.895 first 1259.914 compile 737.346
+[08:47:38] awfy-lua-split-NBody-long round 7 up steady 590.608 first 1170.707 compile 724.717
+[08:47:44] awfy-lua-split-NBody-long round 7 fork steady 556.813 first 1259.275 compile 826.532
+[08:47:51] awfy-lua-split-NBody-long round 8 up steady 595.954 first 1257.175 compile 736.835
+[08:47:59] awfy-lua-split-NBody-long round 8 fork steady 608.694 first 1201.876 compile 831.041
+[08:48:05] awfy-lua-split-NBody-long round 9 up steady 561.628 first 1174.394 compile 728.468
+[08:48:12] awfy-lua-split-NBody-long round 9 fork steady 544.876 first 1095.478 compile 778.631
+[08:48:18] awfy-lua-split-NBody-long round 10 up steady 535.845 first 1197.538 compile 739.033
+[08:48:24] awfy-lua-split-NBody-long round 10 fork steady 525.167 first 1001.36 compile 764.907
+[08:48:31] awfy-lua-split-NBody-long round 11 fork steady 539.273 first 1512.494 compile 733.465
+[08:48:38] awfy-lua-split-NBody-long round 11 up steady 593.312 first 1293.923 compile 693.701
+[08:48:45] awfy-lua-split-NBody-long round 12 up steady 565.409 first 1469.612 compile 741.059
+[08:48:51] awfy-lua-split-NBody-long round 12 fork steady 574.557 first 1220.417 compile 750.375

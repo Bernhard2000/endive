@@ -24,7 +24,7 @@
 | awfy-lua-unsplit-Json | 12 | 4,489.6 | 4,206.7 | -6.4 % | [-8.2 %, -5.4 %] | yes |
 | awfy-lua-split-Json | 12 | 928.1 | 925.9 | -5.9 % | [-8.7 %, +5.0 %] | no |
 | awfy-lua-unsplit-NBody | 12 | 312.6 | 301.6 | -4.8 % | [-10.5 %, -0.6 %] | yes |
-| awfy-lua-split-NBody | 12 | 135.2 | 202.2 | +23.5 % | [-2.4 %, +64.1 %] | no |
+| awfy-lua-split-NBody-long | 12 | 563.5 | 543.2 | -3.5 % | [-5.1 %, +1.1 %] | no |
 | awfy-lua-unsplit-CD | 12 | 47,308.6 | 45,491.2 | -5.1 % | [-5.5 %, -2.7 %] | yes |
 | awfy-lua-split-CD | 12 | 11,071.5 | 10,395.9 | -6.1 % | [-8.5 %, -4.8 %] | yes |
 | awfy-js-unsplit-Richards | 12 | 8,576.2 | 8,022.0 | -6.5 % | [-9.9 %, -4.7 %] | yes |
@@ -66,7 +66,7 @@
 | awfy-lua-unsplit-Json | 12 | 4,790.7 | 4,501.8 | -6.3 % | [-8.3 %, -5.2 %] | yes |
 | awfy-lua-split-Json | 12 | 1,918.7 | 1,838.0 | -4.6 % | [-9.4 %, +0.4 %] | no |
 | awfy-lua-unsplit-NBody | 12 | 527.7 | 505.7 | -5.9 % | [-13.7 %, +6.2 %] | no |
-| awfy-lua-split-NBody | 12 | 428.7 | 432.3 | -5.2 % | [-11.5 %, +10.5 %] | no |
+| awfy-lua-split-NBody-long | 12 | 1,186.0 | 1,211.1 | +3.1 % | [-10.6 %, +17.0 %] | no |
 | awfy-lua-unsplit-CD | 12 | 48,555.1 | 46,802.7 | -4.4 % | [-6.9 %, -1.5 %] | yes |
 | awfy-lua-split-CD | 12 | 11,998.9 | 11,459.9 | -4.6 % | [-6.2 %, -3.6 %] | yes |
 | awfy-js-unsplit-Richards | 12 | 8,842.6 | 8,236.2 | -7.0 % | [-7.2 %, -6.6 %] | yes |
@@ -108,7 +108,7 @@
 | awfy-lua-unsplit-Json | 12 | 772.6 | 822.7 | +8.2 % | [+0.3 %, +10.7 %] | yes |
 | awfy-lua-split-Json | 12 | 714.8 | 744.6 | +3.2 % | [+0.3 %, +5.1 %] | yes |
 | awfy-lua-unsplit-NBody | 12 | 764.2 | 780.9 | +4.4 % | [-2.3 %, +12.9 %] | no |
-| awfy-lua-split-NBody | 12 | 701.0 | 724.9 | +3.6 % | [+0.8 %, +5.3 %] | yes |
+| awfy-lua-split-NBody-long | 12 | 737.7 | 769.5 | +6.0 % | [+2.4 %, +9.3 %] | yes |
 | awfy-lua-unsplit-CD | 12 | 727.1 | 731.1 | +1.3 % | [-0.6 %, +4.7 %] | no |
 | awfy-lua-split-CD | 12 | 712.1 | 734.8 | +5.9 % | [+3.8 %, +9.4 %] | yes |
 | awfy-js-unsplit-Richards | 12 | 1,453.8 | 1,661.7 | +15.5 % | [+6.5 %, +21.7 %] | yes |
@@ -150,7 +150,7 @@
 | awfy-lua-unsplit-Json | yes (2) |
 | awfy-lua-split-Json | yes (2) |
 | awfy-lua-unsplit-NBody | yes (2) |
-| awfy-lua-split-NBody | yes (2) |
+| awfy-lua-split-NBody-long | yes (2) |
 | awfy-lua-unsplit-CD | yes (2) |
 | awfy-lua-split-CD | yes (2) |
 | awfy-js-unsplit-Richards | yes (2) |

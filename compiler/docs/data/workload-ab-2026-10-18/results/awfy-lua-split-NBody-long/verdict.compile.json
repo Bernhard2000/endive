@@ -1,0 +1,20 @@
+{
+  "schema": "l1-verdict-v1",
+  "phase": "instantiate",
+  "resamples": 10000,
+  "seed": 42,
+  "comparisons": [
+    {
+      "baseline": "up",
+      "candidate": "fork",
+      "baseline_median_ns": 737727500.0,
+      "candidate_median_ns": 769466000.0,
+      "median_delta_ns": 31738500.0,
+      "ci95_ns": [
+        12062000.0,
+        67526500.0
+      ],
+      "significant": true
+    }
+  ]
+}

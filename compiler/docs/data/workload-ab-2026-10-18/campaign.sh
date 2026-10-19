@@ -50,6 +50,7 @@ TABLE=(
   "awfy-lua-split-DeltaBlue|$S/awfy/lua_awfy-split-8-64-bt.wasm|2|5|$LUA_AWFY|/awfy/harness.lua DeltaBlue 100 1"
   "awfy-lua-split-Json|$S/awfy/lua_awfy-split-8-64-bt.wasm|2|5|$LUA_AWFY|/awfy/harness.lua Json 10 1"
   "awfy-lua-split-NBody|$S/awfy/lua_awfy-split-8-64-bt.wasm|2|5|$LUA_AWFY|/awfy/harness.lua NBody 500 1"
+  "awfy-lua-split-NBody-long|$S/awfy/lua_awfy-split-8-64-bt.wasm|3|5|$LUA_AWFY|/awfy/harness.lua NBody 5000 1"
   "awfy-lua-split-CD|$S/awfy/lua_awfy-split-8-64-bt.wasm|2|5|$LUA_AWFY|/awfy/harness.lua CD 150 2"
   "awfy-js-split-Richards|$S/awfy/qjs_awfy-split-8-64-bt.wasm|1|3|$JS_AWFY|/awfy/harness.js Richards 2 1"
   "awfy-js-split-DeltaBlue|$S/awfy/qjs_awfy-split-8-64-bt.wasm|1|3|$JS_AWFY|/awfy/harness.js DeltaBlue 10 1"
