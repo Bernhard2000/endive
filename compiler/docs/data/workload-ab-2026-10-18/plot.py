@@ -11,6 +11,7 @@ from matplotlib.lines import Line2D
 
 HERE = Path(__file__).parent
 R = HERE / "results"
+RX = HERE / "results-excluded"   # synthetic cells, kept for the rustvm-base regression only
 OUT = HERE / "plots"
 OUT.mkdir(exist_ok=True)
 
@@ -19,20 +20,25 @@ OUT.mkdir(exist_ok=True)
 SURFACE, INK, INK2, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#8a8985", "#e4e3df"
 FASTER, SLOWER, NEUTRAL = "#2a78d6", "#e34948", "#a3a29d"
 FORK, UP = "#2a78d6", "#eb6834"
-BIMODAL = {"rv32ima-base", "awfy-lua-NBody"}
+BIMODAL = {"awfy-lua-split-NBody"}
 
+LUA_B = ["Richards", "DeltaBlue", "Json", "NBody", "CD"]
+JS_B = ["Richards", "DeltaBlue", "Json", "NBody", "Bounce", "CD"]
 FAMILIES = [
     ("Earlier anchors", ["lua-base", "lua-split", "sqlite-split", "quickjs-split", "python-split"]),
     ("Emulators", ["binjgb-base", "binjgb-split", "i8080-base", "i8080-split", "z80-base",
                    "z80-split", "genesis-base", "genesis-split"]),
-    ("Synthetic Rust and control", ["rustvm-base", "rustvm-split", "fkernel-base",
-                                    "fkernel-split", "rv32ima-base"]),
     ("SQLite applications", ["sqlite-app-split", "speedtest1-split"]),
-    ("AWFY on Lua (split)", ["awfy-lua-Richards", "awfy-lua-DeltaBlue", "awfy-lua-Json",
-                             "awfy-lua-NBody", "awfy-lua-CD"]),
-    ("AWFY on QuickJS (split)", ["awfy-js-Richards", "awfy-js-DeltaBlue", "awfy-js-Json",
-                                 "awfy-js-NBody", "awfy-js-Bounce", "awfy-js-CD"]),
+    ("AWFY on Lua", [f"awfy-lua-{k}-{b}" for b in LUA_B for k in ("unsplit", "split")]),
+    ("AWFY on QuickJS", [f"awfy-js-{k}-{b}" for b in JS_B for k in ("unsplit", "split")]),
 ]
+
+
+def label(w):
+    m = re.match(r"awfy-(lua|js)-(unsplit|split)-(\w+)$", w)
+    return f"{m.group(3)}, {m.group(2)}" if m else w
+
+
 METRICS = [("steady", "Steady state"), ("first", "First execution"),
            ("compile", "Parse + runtime compile")]
 
@@ -52,7 +58,8 @@ def boot(vals, n=10000, seed=42):
 
 
 def runs(w, metric):
-    d = json.loads((R / w / f"results.{metric}.json").read_text())["runs_ns"]
+    f = R / w / f"results.{metric}.json"
+    d = json.loads((f if f.exists() else RX / w / f"results.{metric}.json").read_text())["runs_ns"]
     return d["up"], d["fork"]
 
 
@@ -101,7 +108,7 @@ def forest(ax, metric, show_labels=True, annotate=(), xlim=(-30, 30)):
                         va="center", ha="left", color=INK2, fontsize=8)
     ax.set_ylim(ymax, -0.8)
     ax.set_yticks([y for y, _ in labels])
-    ax.set_yticklabels([w for _, w in labels] if show_labels else [])
+    ax.set_yticklabels([label(w) for _, w in labels] if show_labels else [])
     for y, fam in headers:
         if show_labels:
             ax.text(-0.02, y, fam, transform=ax.get_yaxis_transform(), ha="right", va="center",
@@ -120,8 +127,8 @@ def verdict_legend(fig, loc, bimodal=True):
                 label="no significant difference")]
     if bimodal:
         h.append(Line2D([], [], color=MUTED, lw=0, marker="o", ms=7, mfc=SURFACE, mec=MUTED,
-                        mew=2, label="bimodal cell (undetermined)"))
-    fig.legend(handles=h, loc="lower center", bbox_to_anchor=(0.5, -0.03), ncol=len(h),
+                        mew=2, label="unstable cell (undetermined)"))
+    fig.legend(handles=h, loc="lower center", bbox_to_anchor=(0.5, 0.0), ncol=len(h),
               frameon=False, fontsize=8, handlelength=2.6)
 
 
@@ -131,9 +138,11 @@ def save(fig, name):
     plt.close(fig)
 
 
+ANNOTATE = ("sqlite-split", "awfy-js-split-DeltaBlue")
+
 # 1. Forest plot of the steady-state change -------------------------------------------
-fig, ax = plt.subplots(figsize=(7.2, 9.2))
-forest(ax, "steady", annotate=("rustvm-base", "fkernel-base", "sqlite-split", "awfy-js-DeltaBlue"))
+fig, ax = plt.subplots(figsize=(7.2, 11.5))
+forest(ax, "steady", annotate=ANNOTATE)
 ax.set_xlabel("steady-state time, fork vs upstream (paired median, 95 % bootstrap CI)")
 ax.set_title("Fork 44f68a6f against upstream 1580f534: steady state, 12 rounds per cell",
              loc="left", x=-0.42)
@@ -141,55 +150,61 @@ verdict_legend(fig, "lower left")
 save(fig, "steady-forest")
 
 # 2. Small multiples: steady, first execution, compile ---------------------------------
-fig, axes = plt.subplots(1, 3, figsize=(11, 9.2), sharey=True,
-                         gridspec_kw={"width_ratios": [1, 1, 0.8]})
+fig, axes = plt.subplots(1, 3, figsize=(11, 11.5), sharey=True,
+                         gridspec_kw={"width_ratios": [1, 1, 0.9]})
 for i, (ax, (metric, title)) in enumerate(zip(axes, METRICS)):
     forest(ax, metric, show_labels=(i == 0),
-           xlim=(-30, 30) if metric != "compile" else (-10, 15))
+           xlim=(-30, 30) if metric != "compile" else (-12, 30))
     ax.set_title(title, loc="left")
-    ax.set_xticks([-20, 0, 20] if metric != "compile" else [-5, 0, 5, 10])
+    ax.set_xticks([-20, 0, 20] if metric != "compile" else [-10, 0, 10, 20])
 axes[0].set_yticks([y for y, _ in rows()[1]])
-axes[0].set_yticklabels([w for _, w in rows()[1]])
+axes[0].set_yticklabels([label(w) for _, w in rows()[1]])
 for ax in axes:
     ax.set_xlabel("fork vs upstream", color=INK2)
 verdict_legend(fig, None)
 fig.subplots_adjust(wspace=0.12, bottom=0.09)
 save(fig, "metrics-forest")
 
-# 3. Base and split, both engines, absolute steady time --------------------------------
-pairs = [("lua", "lua-base", "lua-split"), ("binjgb", "binjgb-base", "binjgb-split"),
-         ("i8080", "i8080-base", "i8080-split"), ("z80", "z80-base", "z80-split"),
-         ("genesis", "genesis-base", "genesis-split"), ("rustvm", "rustvm-base", "rustvm-split"),
-         ("fkernel", "fkernel-base", "fkernel-split")]
-fig, ax = plt.subplots(figsize=(7.2, 5.4))
-labels, y = [], 0
-for name, base, split in pairs:
-    for w, kind in ((base, "unsplit"), (split, "8 kB split")):
-        a, b = runs(w, "steady")
-        ma, mb = statistics.median(a) / 1e9, statistics.median(b) / 1e9
-        ax.plot([ma, mb], [y, y], color=GRID, lw=2, zorder=1, solid_capstyle="round")
-        ax.plot(mb, y, "o", ms=7, color=FORK, mec=SURFACE, mew=1.5, zorder=3)
-        ax.plot(ma, y, "o", ms=10, mfc="none", mec=UP, mew=2, zorder=4)
-        labels.append((y, f"{name}  {kind}"))
-        y += 1
-    y += 0.5
-ax.set_xscale("log")
-ax.set_xlim(0.15, 25)
-ax.set_xticks([0.2, 0.5, 1, 2, 5, 10, 20])
-ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g} s"))
-ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
-ax.set_yticks([p for p, _ in labels])
-ax.set_yticklabels([t for _, t in labels])
-ax.set_ylim(y - 0.5, -0.8)
-ax.grid(axis="x", color=GRID, lw=1)
-ax.set_axisbelow(True)
-ax.set_xlabel("steady-state time per run (median of 12 fresh JVMs, log scale)")
-ax.set_title("Splitting moves the big step; the fork adds a smaller one on top", loc="left")
-ax.legend(handles=[Line2D([], [], lw=0, marker="o", ms=10, mfc="none", mec=UP, mew=2,
-                          label="upstream 1580f534"),
-                   Line2D([], [], lw=0, marker="o", ms=7, color=FORK, mec=SURFACE, mew=1.5,
-                          label="fork 44f68a6f")],
-          loc="lower right", frameon=False, fontsize=8)
+# 3. Unsplit and split, both engines, absolute steady time ----------------------------
+panels = [
+    ("Corpus workloads", [(n, f"{n}-base", f"{n}-split") for n in ("lua", "binjgb", "i8080", "z80", "genesis")]),
+    ("AWFY (Lua, then QuickJS)", [(f"Lua {b}", f"awfy-lua-unsplit-{b}", f"awfy-lua-split-{b}") for b in LUA_B]
+     + [(f"JS {b}", f"awfy-js-unsplit-{b}", f"awfy-js-split-{b}") for b in JS_B]),
+]
+fig, axes = plt.subplots(1, 2, figsize=(11, 7.2), sharex=True,
+                         gridspec_kw={"width_ratios": [1, 1]})
+for ax, (title, pairs) in zip(axes, panels):
+    labels, y = [], 0
+    for name, base, split in pairs:
+        for w, kind in ((base, "unsplit"), (split, "split")):
+            a, b = runs(w, "steady")
+            ma, mb = statistics.median(a) / 1e9, statistics.median(b) / 1e9
+            ax.plot([ma, mb], [y, y], color=GRID, lw=2, zorder=1, solid_capstyle="round")
+            ax.plot(mb, y, "o", ms=7, color=FORK, mec=SURFACE, mew=1.5, zorder=3)
+            ax.plot(ma, y, "o", ms=10, mfc="none", mec=UP, mew=2, zorder=4)
+            labels.append((y, f"{name}  {kind}"))
+            y += 1
+        y += 0.4
+    ax.set_xscale("log")
+    ax.set_xlim(0.1, 60)
+    ax.set_xticks([0.1, 0.3, 1, 3, 10, 30])
+    ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g} s"))
+    ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+    ax.set_yticks([p for p, _ in labels])
+    ax.set_yticklabels([t for _, t in labels], fontsize=8)
+    ax.set_ylim(y - 0.4, -0.8)
+    ax.grid(axis="x", color=GRID, lw=1)
+    ax.set_axisbelow(True)
+    ax.set_title(title, loc="left")
+    ax.set_xlabel("steady time per run (median of 12 fresh JVMs, log scale)")
+fig.suptitle("Splitting moves the big step; the fork adds a smaller one on top",
+             x=0.02, ha="left", fontweight="bold", fontsize=10)
+fig.legend(handles=[Line2D([], [], lw=0, marker="o", ms=10, mfc="none", mec=UP, mew=2,
+                           label="upstream 1580f534"),
+                    Line2D([], [], lw=0, marker="o", ms=7, color=FORK, mec=SURFACE, mew=1.5,
+                           label="fork 44f68a6f")],
+           loc="lower center", bbox_to_anchor=(0.5, -0.04), ncol=2, frameon=False, fontsize=8)
+fig.tight_layout()
 save(fig, "base-vs-split")
 
 # 4. rustvm-base bisection ---------------------------------------------------------------
@@ -225,7 +240,7 @@ ax.grid(axis="y", color=GRID, lw=1)
 ax.set_axisbelow(True)
 ax.tick_params(axis="y", colors=INK2)
 ax.set_ylabel("rustvm-base time vs upstream median", color=INK2)
-ax.set_title("rustvm-base: the slowdown arrives with 82f39301 and leaves with tableswitch",
+ax.set_title("rustvm-base (synthetic): the slowdown arrives with 82f39301 and leaves with tableswitch",
              loc="left")
 ax.legend(handles=[Line2D([], [], lw=0, marker="o", ms=6, color=SLOWER, label="regressed (median > +5 %)"),
                    Line2D([], [], lw=0, marker="o", ms=6, color=NEUTRAL, label="≈ upstream"),
@@ -234,11 +249,13 @@ ax.legend(handles=[Line2D([], [], lw=0, marker="o", ms=6, color=SLOWER, label="r
 ax.set_ylim(-8, 34)
 save(fig, "rustvm-bisect")
 
-# 5. The two bimodal cells, per sample ---------------------------------------------------
-fig, axes = plt.subplots(1, 2, figsize=(8.4, 3.2))
-for ax, (w, unit, scale) in zip(axes, (("rv32ima-base", "s", 1e9), ("awfy-lua-NBody", "ms", 1e6))):
+# 5. Unstable cells, per sample -----------------------------------------------------------
+cells = sorted(BIMODAL)
+fig, axes = plt.subplots(1, len(cells), figsize=(max(6.4, 4.2 * len(cells)), 3.2), squeeze=False)
+for ax, w in zip(axes[0], cells):
     a, b = runs(w, "steady")
-    for j, (vals, c, name) in enumerate(((a, UP, "upstream"), (b, FORK, "fork"))):
+    scale, unit = (1e9, "s") if statistics.median(a) > 2e9 else (1e6, "ms")
+    for j, (vals, c) in enumerate(((a, UP), (b, FORK))):
         xs = [j + (k - (len(vals) - 1) / 2) * 0.03 for k in range(len(vals))]
         ax.plot(xs, [v / scale for v in vals], "o", ms=7, color=c, mec=SURFACE, mew=1.5)
     ax.set_xticks([0, 1])
@@ -248,9 +265,9 @@ for ax, (w, unit, scale) in zip(axes, (("rv32ima-base", "s", 1e9), ("awfy-lua-NB
     ax.set_axisbelow(True)
     ax.tick_params(axis="y", colors=INK2)
     ax.set_ylabel(f"steady time per run ({unit})", color=INK2)
-    ax.set_title(w, loc="left")
-fig.suptitle("Unstable cells: JVMs land in different JIT states, in both arms (one dot per JVM)",
-             x=0.06, ha="left", fontweight="bold", fontsize=10)
+    ax.set_title(f"{w} (one dot per JVM)", loc="left")
+fig.suptitle("Unstable cell: JVMs land in different JIT states in both arms",
+             x=0.02, ha="left", fontweight="bold", fontsize=10)
 fig.tight_layout()
 save(fig, "bimodal-cells")
 print("wrote", sorted(p.name for p in OUT.iterdir()))

@@ -1,0 +1,69 @@
+Starting NBody benchmark ...
+NBody: iterations=1 runtime: 2123us
+NBody: iterations=1 runtime: 2037us
+NBody: iterations=1 runtime: 2179us
+NBody: iterations=1 runtime: 1776us
+NBody: iterations=1 runtime: 1659us
+NBody: iterations=1 runtime: 1649us
+NBody: iterations=1 runtime: 1635us
+NBody: iterations=1 runtime: 1657us
+NBody: iterations=1 runtime: 1624us
+NBody: iterations=1 runtime: 1638us
+NBody: iterations=1 runtime: 1710us
+NBody: iterations=1 runtime: 1549us
+NBody: iterations=12 average: 1770us total: 21236us
+
+
+Total Runtime: 21236us
+Starting NBody benchmark ...
+NBody: iterations=1 runtime: 1878us
+NBody: iterations=1 runtime: 1676us
+NBody: iterations=1 runtime: 1535us
+NBody: iterations=1 runtime: 1398us
+NBody: iterations=1 runtime: 1371us
+NBody: iterations=1 runtime: 1399us
+NBody: iterations=1 runtime: 1394us
+NBody: iterations=1 runtime: 1599us
+NBody: iterations=1 runtime: 1615us
+NBody: iterations=1 runtime: 1429us
+NBody: iterations=1 runtime: 1412us
+NBody: iterations=1 runtime: 1438us
+NBody: iterations=12 average: 1512us total: 18144us
+
+
+Total Runtime: 18144us
+Starting NBody benchmark ...
+NBody: iterations=1 runtime: 1801us
+NBody: iterations=1 runtime: 1335us
+NBody: iterations=1 runtime: 1545us
+NBody: iterations=1 runtime: 1465us
+NBody: iterations=1 runtime: 1471us
+NBody: iterations=1 runtime: 4457us
+NBody: iterations=1 runtime: 1292us
+NBody: iterations=1 runtime: 1450us
+NBody: iterations=1 runtime: 1323us
+NBody: iterations=1 runtime: 1286us
+NBody: iterations=1 runtime: 1255us
+NBody: iterations=1 runtime: 1273us
+NBody: iterations=12 average: 1663us total: 19953us
+
+
+Total Runtime: 19953us
+Starting NBody benchmark ...
+NBody: iterations=1 runtime: 1621us
+NBody: iterations=1 runtime: 1274us
+NBody: iterations=1 runtime: 1345us
+NBody: iterations=1 runtime: 1293us
+NBody: iterations=1 runtime: 1252us
+NBody: iterations=1 runtime: 1254us
+NBody: iterations=1 runtime: 1327us
+NBody: iterations=1 runtime: 1437us
+NBody: iterations=1 runtime: 1253us
+NBody: iterations=1 runtime: 1222us
+NBody: iterations=1 runtime: 1412us
+NBody: iterations=1 runtime: 1293us
+NBody: iterations=12 average: 1332us total: 15983us
+
+
+Total Runtime: 15983us
+{"label":"fork","bytes":1107133,"parse_ms":414.775,"machine_compile_ms":1410.473,"compile_ms":1825.248,"first_exec_ms":449.354,"last_exec_ms":159.815,"warmup_penalty_ms":242.385,"exec_ms_median":206.970,"exec_ms_min":159.815,"instantiate_ms":[17.45552, 1.812271, 1.531931, 2.407735],"start_ms":[408.046496, 232.055327, 204.782851, 156.974383],"memory_backend":"bytebuffer","rss_hwm_kb":591632,"all_exec_ms":[449.354309, 234.280674, 206.969586, 159.81509]}

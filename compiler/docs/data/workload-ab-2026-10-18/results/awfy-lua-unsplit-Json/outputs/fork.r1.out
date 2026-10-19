@@ -1,0 +1,57 @@
+Starting Json benchmark ...
+Json: iterations=1 runtime: 531273us
+Json: iterations=1 runtime: 462419us
+Json: iterations=1 runtime: 432501us
+Json: iterations=1 runtime: 419847us
+Json: iterations=1 runtime: 453313us
+Json: iterations=1 runtime: 438674us
+Json: iterations=1 runtime: 429472us
+Json: iterations=1 runtime: 476187us
+Json: iterations=1 runtime: 433117us
+Json: iterations=1 runtime: 399038us
+Json: iterations=10 average: 447584us total: 4475842us
+
+Total Runtime: 4475842us
+Starting Json benchmark ...
+Json: iterations=1 runtime: 458062us
+Json: iterations=1 runtime: 411066us
+Json: iterations=1 runtime: 415292us
+Json: iterations=1 runtime: 418115us
+Json: iterations=1 runtime: 404580us
+Json: iterations=1 runtime: 402758us
+Json: iterations=1 runtime: 417587us
+Json: iterations=1 runtime: 448617us
+Json: iterations=1 runtime: 417391us
+Json: iterations=1 runtime: 408793us
+Json: iterations=10 average: 420226us total: 4202261us
+
+Total Runtime: 4202261us
+Starting Json benchmark ...
+Json: iterations=1 runtime: 434800us
+Json: iterations=1 runtime: 407719us
+Json: iterations=1 runtime: 419070us
+Json: iterations=1 runtime: 406363us
+Json: iterations=1 runtime: 421904us
+Json: iterations=1 runtime: 418526us
+Json: iterations=1 runtime: 405501us
+Json: iterations=1 runtime: 405510us
+Json: iterations=1 runtime: 413054us
+Json: iterations=1 runtime: 420916us
+Json: iterations=10 average: 415336us total: 4153363us
+
+Total Runtime: 4153363us
+Starting Json benchmark ...
+Json: iterations=1 runtime: 413423us
+Json: iterations=1 runtime: 414979us
+Json: iterations=1 runtime: 404323us
+Json: iterations=1 runtime: 406328us
+Json: iterations=1 runtime: 416990us
+Json: iterations=1 runtime: 425622us
+Json: iterations=1 runtime: 421592us
+Json: iterations=1 runtime: 413495us
+Json: iterations=1 runtime: 412568us
+Json: iterations=1 runtime: 418582us
+Json: iterations=10 average: 414790us total: 4147901us
+
+Total Runtime: 4147901us
+{"label":"fork","bytes":564592,"parse_ms":279.308,"machine_compile_ms":549.593,"compile_ms":828.901,"first_exec_ms":4623.195,"last_exec_ms":4202.016,"warmup_penalty_ms":408.566,"exec_ms_median":4214.628,"exec_ms_min":4202.016,"instantiate_ms":[10.77523, 0.823818, 0.710638, 0.733821],"start_ms":[4590.735773, 4266.398522, 4213.557197, 4200.74607],"memory_backend":"bytebuffer","rss_hwm_kb":195044,"all_exec_ms":[4623.194843, 4267.596543, 4214.628434, 4202.016286]}

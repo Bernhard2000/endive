@@ -1,0 +1,28 @@
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 2526963us
+Richards: iterations=1 runtime: 2475841us
+Richards: iterations=1 runtime: 2490251us
+Richards: iterations=1 runtime: 2485016us
+Richards: iterations=1 runtime: 2557603us
+Richards: iterations=5 average: 2507135us total: 12535673us
+
+Total Runtime: 12535673us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 2471391us
+Richards: iterations=1 runtime: 2450977us
+Richards: iterations=1 runtime: 2467365us
+Richards: iterations=1 runtime: 2395328us
+Richards: iterations=1 runtime: 2431626us
+Richards: iterations=5 average: 2443338us total: 12216688us
+
+Total Runtime: 12216688us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 2425317us
+Richards: iterations=1 runtime: 2431775us
+Richards: iterations=1 runtime: 2421891us
+Richards: iterations=1 runtime: 2411821us
+Richards: iterations=1 runtime: 2357115us
+Richards: iterations=5 average: 2409584us total: 12047918us
+
+Total Runtime: 12047918us
+{"label":"up","bytes":564592,"parse_ms":282.446,"machine_compile_ms":575.839,"compile_ms":858.286,"first_exec_ms":12627.749,"last_exec_ms":12076.767,"warmup_penalty_ms":380.405,"exec_ms_median":12247.344,"exec_ms_min":12076.767,"instantiate_ms":[8.72044, 1.082686, 0.839846],"start_ms":[12593.039902, 12245.937299, 12075.582606],"memory_backend":"bytebuffer","rss_hwm_kb":179112,"all_exec_ms":[12627.749164, 12247.343685, 12076.767031]}

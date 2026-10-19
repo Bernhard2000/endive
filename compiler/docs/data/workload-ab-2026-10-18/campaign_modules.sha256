@@ -1,4 +1,6 @@
+9b3814ebf2d9d50dcb159183ab1acd49cb5b99ac74d9551df6782c288eda4b49  /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/awfy/lua_awfy-base.wasm
 91a45b854cbe4d3e432e105f75e3da47e664f52cfe45ca64759a17905435bd87  /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/awfy/lua_awfy-split-8-64-bt.wasm
+0abcf991282e2a351dd4e98eac9e92a7edcc289b67433758f8cd36bd05588d97  /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/awfy/qjs_awfy-base.wasm
 e18d169e5dbae87fe32d7e97560374ff7df56ae90a2615f49e1c0c7825bfc851  /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/awfy/qjs_awfy-split-8-64-bt.wasm
 fd5e8724831e9b4e63007fac8f7b94cfdbcb0e0a55e08a17c23540851e44c39b  /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/binjgb/base.wasm
 8768839e8fba236216108081317725f9e15be8f21f30b377cf19cf6b97098b10  /home/bernhard/Dokumente/MasterThesis/Endive/fork/bench-workloads-2026-10-18/splits/binjgb/split-8kB.wasm

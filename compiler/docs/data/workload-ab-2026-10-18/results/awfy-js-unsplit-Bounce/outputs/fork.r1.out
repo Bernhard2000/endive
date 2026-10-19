@@ -1,0 +1,45 @@
+Starting Bounce benchmark ...
+Bounce: iterations=1 runtime: 119461us
+Bounce: iterations=1 runtime: 114314us
+Bounce: iterations=1 runtime: 123874us
+Bounce: iterations=1 runtime: 89228us
+Bounce: iterations=1 runtime: 91073us
+Bounce: iterations=1 runtime: 96487us
+Bounce: iterations=6 average: 105740us total: 634437us
+
+
+Total Runtime: 634437us
+Starting Bounce benchmark ...
+Bounce: iterations=1 runtime: 102497us
+Bounce: iterations=1 runtime: 105929us
+Bounce: iterations=1 runtime: 111501us
+Bounce: iterations=1 runtime: 106696us
+Bounce: iterations=1 runtime: 102788us
+Bounce: iterations=1 runtime: 94722us
+Bounce: iterations=6 average: 104022us total: 624133us
+
+
+Total Runtime: 624133us
+Starting Bounce benchmark ...
+Bounce: iterations=1 runtime: 99187us
+Bounce: iterations=1 runtime: 99521us
+Bounce: iterations=1 runtime: 95826us
+Bounce: iterations=1 runtime: 87954us
+Bounce: iterations=1 runtime: 93600us
+Bounce: iterations=1 runtime: 85844us
+Bounce: iterations=6 average: 93655us total: 561932us
+
+
+Total Runtime: 561932us
+Starting Bounce benchmark ...
+Bounce: iterations=1 runtime: 97525us
+Bounce: iterations=1 runtime: 85084us
+Bounce: iterations=1 runtime: 84316us
+Bounce: iterations=1 runtime: 86489us
+Bounce: iterations=1 runtime: 86784us
+Bounce: iterations=1 runtime: 88348us
+Bounce: iterations=6 average: 88091us total: 528546us
+
+
+Total Runtime: 528546us
+{"label":"fork","bytes":1107133,"parse_ms":500.991,"machine_compile_ms":1344.035,"compile_ms":1845.026,"first_exec_ms":1045.179,"last_exec_ms":684.423,"warmup_penalty_ms":322.123,"exec_ms_median":723.056,"exec_ms_min":684.423,"instantiate_ms":[19.467729, 2.094101, 1.672369, 1.529595],"start_ms":[997.493157, 827.307755, 720.998203, 682.526825],"memory_backend":"bytebuffer","rss_hwm_kb":470016,"all_exec_ms":[1045.179243, 829.794334, 723.056057, 684.423089]}
