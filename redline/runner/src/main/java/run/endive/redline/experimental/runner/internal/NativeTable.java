@@ -5,6 +5,7 @@ import static run.endive.wasm.types.Value.REF_NULL_VALUE;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.util.Arrays;
 import run.endive.redline.experimental.api.internal.CtxBuffer;
 import run.endive.runtime.Instance;
 import run.endive.runtime.TableInstance;
@@ -19,14 +20,22 @@ import run.endive.wasm.types.ValType;
  *
  * <p>Layout: [size:i32 @ 0][max:i32 @ 4][entries... @ 8]
  *
- * <p>Each entry is 16 bytes:
+ * <p>Each entry is 24 bytes:
  * <pre>
  *   [0..4)   i32  canonicalTypeIdx
  *   [4..8)   i32  funcId
  *   [8..16)  i64  funcPtr (native address)
+ *   [16..24) i64  ownerId (id of the native instance defining the function)
  * </pre>
  *
- * <p>NULL entry: funcId == REF_NULL_VALUE (-1), funcPtr == 0, typeIdx == 0.
+ * <p>NULL entry: funcId == REF_NULL_VALUE (-1), funcPtr == 0, typeIdx == 0, ownerId == 0.
+ *
+ * <p>The type index, function id and pointer belong to the instance that owns
+ * the function, which is not necessarily the one using the table. Native code
+ * calls an entry directly only from the owner's instance. The table keeps every
+ * native instance whose id its entries hold, see {@link #writers}. An entry
+ * owned by an instance without native code has no pointer and no owner id; its
+ * owner is kept in {@link #owners} instead.
  *
  * <p>The entries array is pre-allocated to the table's max capacity so that
  * {@code TABLE.GROW} only bumps the size field without reallocation.
@@ -44,6 +53,19 @@ public final class NativeTable extends TableInstance {
     private final MemorySegment buffer;
     private final int capacity;
     private final boolean isExternRef;
+
+    /**
+     * Owner of each entry written from Java without an owner id: one not
+     * yet resolved, or one owned by an instance without native code. It grows
+     * with the table instead of being allocated at capacity, which can be a
+     * million entries.
+     */
+    private Instance[] owners = new Instance[0];
+
+    // Machines whose ids entries may hold, replaced on change so readers need no lock
+    private volatile NativeMachine[] writers = new NativeMachine[0];
+    private int pruneAt = 8;
+    private volatile NativeMachine lastWriter;
 
     public NativeTable(Table table, int initValue, Arena arena) {
         super(table, initValue);
@@ -68,10 +90,9 @@ public final class NativeTable extends TableInstance {
         }
 
         if (initValue != REF_NULL_VALUE) {
-            // The instance has no machine yet, so funcPtr cannot be resolved
-            // here. resolvePendingRefs fills it in once there is one.
+            // Instance records the owner right after; otherwise the first caller takes it
             for (int i = 0; i < initial; i++) {
-                writeUnresolvedEntry(i, initValue);
+                writeUnresolvedEntry(i, initValue, null);
             }
         }
     }
@@ -81,71 +102,248 @@ public final class NativeTable extends TableInstance {
     }
 
     private void writeNullEntry(int index) {
-        long base = entryBase(index);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, 0);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, REF_NULL_VALUE);
-        buffer.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, 0L);
-    }
-
-    /** A funcref whose native address is not known yet. */
-    private void writeUnresolvedEntry(int index, int value) {
-        long base = entryBase(index);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, 0);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, value);
-        buffer.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, 0L);
+        writeEntry(index, 0, REF_NULL_VALUE, 0L, 0L);
+        setOwner(index, null);
     }
 
     /**
-     * Fills in the native address of entries written before the instance had a
-     * machine, which is the case for a table initialiser.
+     * Writes a funcref with no native address, either not resolved yet or owned
+     * by an instance without native code.
+     *
+     * @param index the entry to write
+     * @param value the function id, in {@code owner}'s index space
+     * @param owner the instance that defines the function, or {@code null} if
+     *     unknown
      */
+    private void writeUnresolvedEntry(int index, int value, Instance owner) {
+        writeEntry(index, 0, value, 0L, 0L);
+        setOwner(index, owner);
+    }
+
+    /**
+     * Writes every field of entry {@code index}.
+     *
+     * @param index the entry to write
+     * @param typeIdx the owner's canonical type index for the function
+     * @param funcId the function id, in the owner's index space
+     * @param funcPtr the function's native address, or 0
+     * @param ownerId the owner's id, or 0
+     */
+    private void writeEntry(int index, int typeIdx, int funcId, long funcPtr, long ownerId) {
+        long base = entryBase(index);
+        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, typeIdx);
+        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, funcId);
+        buffer.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, funcPtr);
+        buffer.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_OWNER_ID_OFFSET, ownerId);
+    }
+
+    private long ownerId(int index) {
+        return buffer.get(
+                ValueLayout.JAVA_LONG, entryBase(index) + CtxBuffer.ENTRY_OWNER_ID_OFFSET);
+    }
+
+    /** Resolves entries written with no owner, which only a host does, against {@code instance}. */
     void resolvePendingRefs(Instance instance) {
         if (isExternRef) {
             return;
         }
         int sz = size();
         for (int i = 0; i < sz; i++) {
-            long base = entryBase(i);
-            int funcId = buffer.get(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET);
-            long funcPtr =
-                    buffer.get(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET);
-            if (funcId != REF_NULL_VALUE && funcPtr == 0L) {
+            int funcId =
+                    buffer.get(ValueLayout.JAVA_INT, entryBase(i) + CtxBuffer.ENTRY_FUNC_ID_OFFSET);
+            if (funcId != REF_NULL_VALUE && ownerId(i) == 0L && recordedOwner(i) == null) {
                 resolveFromInstance(i, funcId, instance);
             }
         }
     }
 
-    private void writeOpaqueEntry(int index, int value) {
-        long base = entryBase(index);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, 0);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, value);
-        buffer.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, 0L);
-    }
-
-    private void writeResolvedEntry(int index, int funcId, MemorySegment ft, MemorySegment fta) {
-        long base = entryBase(index);
-        long funcPtr = ft.get(ValueLayout.JAVA_LONG, (long) funcId * 8);
-        int typeIdx = fta.get(ValueLayout.JAVA_INT, (long) funcId * 4);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, typeIdx);
-        buffer.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, funcId);
-        buffer.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, funcPtr);
+    /**
+     * Writes {@code funcId} with the native address, type index and id of
+     * {@code owner}'s function.
+     *
+     * @param index the entry to write
+     * @param funcId the function id, in {@code owner}'s index space
+     * @param owner the open native machine that defines the function
+     */
+    private void writeResolvedEntry(int index, int funcId, NativeMachine owner) {
+        long funcPtr = owner.getFuncTable().get(ValueLayout.JAVA_LONG, (long) funcId * 8);
+        if (funcPtr == 0L) {
+            // Not compiled, so only the owner's runner can report it
+            writeUnresolvedEntry(index, funcId, owner.instance());
+            return;
+        }
+        registerWriter(owner);
+        int typeIdx = owner.getFuncTypesArray().get(ValueLayout.JAVA_INT, (long) funcId * 4);
+        writeEntry(index, typeIdx, funcId, funcPtr, owner.ownerId());
+        setOwner(index, null);
     }
 
     /**
-     * Try to resolve funcId → funcPtr+typeIdx using the instance's NativeMachine.
-     * For externref tables, stores the value as-is without function resolution.
-     * Returns true if resolved, false if not (instance is null or not NativeMachine).
+     * Writes {@code funcId} as a function of {@code instance}. An open native
+     * instance gives the entry its address and id. Otherwise the entry keeps
+     * its owner here and is called through the runner.
+     *
+     * @param index the entry to write
+     * @param funcId the function id, in {@code instance}'s index space
+     * @param instance the instance that defines the function, or {@code null}
      */
-    private boolean resolveFromInstance(int index, int funcId, Instance instance) {
+    private void resolveFromInstance(int index, int funcId, Instance instance) {
         if (isExternRef) {
-            writeOpaqueEntry(index, funcId);
-            return true;
+            writeEntry(index, 0, funcId, 0L, 0L);
+        } else if (instance != null
+                && instance.getMachine() instanceof NativeMachine nm
+                && !nm.isClosed()) {
+            writeResolvedEntry(index, funcId, nm);
+        } else {
+            writeUnresolvedEntry(index, funcId, instance);
         }
-        if (instance != null && instance.getMachine() instanceof NativeMachine nm) {
-            writeResolvedEntry(index, funcId, nm.getFuncTable(), nm.getFuncTypesArray());
-            return true;
+    }
+
+    /**
+     * Returns the owner recorded for entry {@code index}.
+     *
+     * @param index the entry
+     * @return the recorded owner, or {@code null}
+     */
+    private Instance recordedOwner(int index) {
+        return index < owners.length ? owners[index] : null;
+    }
+
+    /**
+     * Records the owner of entry {@code index}, growing {@link #owners} as
+     * needed.
+     *
+     * @param index the entry
+     * @param owner the owning instance, or {@code null}
+     */
+    private void setOwner(int index, Instance owner) {
+        if (index >= owners.length) {
+            if (owner == null) {
+                return;
+            }
+            ensureOwners(index + 1);
         }
-        return false;
+        owners[index] = owner;
+    }
+
+    private void ensureOwners(int length) {
+        if (length > owners.length) {
+            owners = Arrays.copyOf(owners, Math.max(length, Math.max(size(), owners.length * 2)));
+        }
+    }
+
+    /** Keeps {@code writer}, whose id entries of this table may now hold. */
+    void registerWriter(NativeMachine writer) {
+        if (lastWriter == writer) {
+            return;
+        }
+        synchronized (this) {
+            for (NativeMachine w : writers) {
+                if (w == writer) {
+                    lastWriter = writer;
+                    return;
+                }
+            }
+            if (writers.length >= pruneAt) {
+                pruneWriters();
+                pruneAt = Math.max(8, writers.length * 2);
+            }
+            NativeMachine[] grown = Arrays.copyOf(writers, writers.length + 1);
+            grown[writers.length] = writer;
+            writers = grown;
+            lastWriter = writer;
+        }
+    }
+
+    // Drops closed writers that no entry refers to any more
+    private void pruneWriters() {
+        NativeMachine[] current = writers;
+        boolean[] keep = new boolean[current.length];
+        boolean anyClosed = false;
+        for (int w = 0; w < current.length; w++) {
+            keep[w] = !current[w].isClosed();
+            anyClosed |= !keep[w];
+        }
+        if (!anyClosed) {
+            return;
+        }
+        int sz = size();
+        for (int i = 0; i < sz; i++) {
+            long id = ownerId(i);
+            if (id != 0L) {
+                for (int w = 0; w < current.length; w++) {
+                    if (current[w].ownerId() == id) {
+                        keep[w] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        NativeMachine[] kept = new NativeMachine[current.length];
+        int count = 0;
+        for (int w = 0; w < current.length; w++) {
+            if (keep[w]) {
+                kept[count++] = current[w];
+            }
+        }
+        writers = Arrays.copyOf(kept, count);
+        lastWriter = null;
+    }
+
+    /** Returns the machine, possibly closed, with owner id {@code id}. */
+    private NativeMachine writer(long id) {
+        for (NativeMachine w : writers) {
+            if (w.ownerId() == id) {
+                return w;
+            }
+        }
+        throw new WasmEngineException("table entry owner " + id + " is not registered");
+    }
+
+    /** Returns how many machines the table keeps for its entries. */
+    int writerCount() {
+        return writers.length;
+    }
+
+    /** Writes {@code funcId}, a function of {@code instance}, to entries [from, to). */
+    void fill(int from, int to, int funcId, Instance instance) {
+        for (int i = from; i < to; i++) {
+            if (funcId == REF_NULL_VALUE) {
+                writeNullEntry(i);
+            } else {
+                resolveFromInstance(i, funcId, instance);
+            }
+        }
+    }
+
+    /** Copies {@code count} entries and their owners from {@code src}, which may be this table. */
+    void copyFrom(NativeTable src, int srcIndex, int dstIndex, int count) {
+        MemorySegment.copy(
+                src.buffer,
+                src.entryBase(srcIndex),
+                buffer,
+                entryBase(dstIndex),
+                (long) count * CtxBuffer.TABLE_ENTRY_SIZE);
+        if (src != this) {
+            long lastId = 0L;
+            for (int i = dstIndex; i < dstIndex + count; i++) {
+                long id = ownerId(i);
+                if (id != 0L && id != lastId) {
+                    registerWriter(src.writer(id));
+                    lastId = id;
+                }
+            }
+        }
+        int fromSrc = Math.max(0, Math.min(count, src.owners.length - srcIndex));
+        if (fromSrc > 0) {
+            ensureOwners(dstIndex + fromSrc);
+            // Read src.owners after the resize, as src may be this table
+            System.arraycopy(src.owners, srcIndex, owners, dstIndex, fromSrc);
+        }
+        int clearTo = Math.min(dstIndex + count, owners.length);
+        if (dstIndex + fromSrc < clearTo) {
+            Arrays.fill(owners, dstIndex + fromSrc, clearTo, null);
+        }
     }
 
     /** Get the native address of the table buffer, for passing to native code. */
@@ -195,11 +393,7 @@ public final class NativeTable extends TableInstance {
         if (index < 0 || index >= size()) {
             throw new UninstantiableException("out of bounds table access");
         }
-        if (value == REF_NULL_VALUE) {
-            writeNullEntry(index);
-        } else if (!resolveFromInstance(index, value, instance)) {
-            writeUnresolvedEntry(index, value);
-        }
+        fill(index, index + 1, value, instance);
     }
 
     @Override
@@ -210,24 +404,28 @@ public final class NativeTable extends TableInstance {
         if (delta < 0 || newSize > max || newSize > capacity) {
             return -1;
         }
-        // Fill new slots
-        for (int i = oldSize; i < newSize; i++) {
-            if (value == REF_NULL_VALUE) {
-                writeNullEntry(i);
-            } else if (!resolveFromInstance(i, value, instance)) {
-                writeUnresolvedEntry(i, value);
-            }
-        }
+        fill(oldSize, newSize, value, instance);
         // Update size
         buffer.set(ValueLayout.JAVA_INT, CtxBuffer.TABLE_SIZE_OFFSET, newSize);
         limits().grow(delta);
         return oldSize;
     }
 
+    /**
+     * Returns the instance whose function entry {@code index} holds, even if it
+     * has since been closed.
+     *
+     * @param index the entry
+     * @return the owning instance, or {@code null} for a null entry or one
+     *     written with no owner
+     */
     @Override
     public Instance instance(int index) {
-        // Single-module assumption — all entries belong to the same instance
-        return null;
+        if (index < 0 || index >= size() || isExternRef || ref(index) == REF_NULL_VALUE) {
+            return null;
+        }
+        long id = ownerId(index);
+        return id != 0L ? writer(id).instance() : recordedOwner(index);
     }
 
     @Override
