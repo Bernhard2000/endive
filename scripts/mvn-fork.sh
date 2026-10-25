@@ -19,14 +19,38 @@ ROOT=$(cd -- "${SCRIPT_DIR}/.." && pwd)
 FORK_M2="${ENDIVE_FORK_M2:-${HOME}/.m2/repository-endive-fork}"
 SHARED_M2="${HOME}/.m2/repository"
 
-for arg in "$@"; do
-  case "${arg}" in
-    -Dmaven.repo.local=*)
-      echo "mvn-fork.sh: do not pass -Dmaven.repo.local; set ENDIVE_FORK_M2 instead" >&2
-      exit 2
-      ;;
-  esac
-done
+reject_repo_override() {
+  echo "mvn-fork.sh: do not set maven.repo.local ($1); set ENDIVE_FORK_M2 instead" >&2
+  exit 2
+}
+
+# Maven also takes a property as the argument after -D or --define, and Maven 3.9+ prepends
+# MAVEN_ARGS to the command line, so check every spelling that could replace the repository.
+check_args() {
+  local previous=""
+  for arg in "$@"; do
+    case "${previous}" in
+      -D|--define)
+        case "${arg}" in
+          maven.repo.local|maven.repo.local=*) reject_repo_override "${previous} ${arg}" ;;
+        esac
+        ;;
+    esac
+    case "${arg}" in
+      -Dmaven.repo.local|-Dmaven.repo.local=*|--define=maven.repo.local|--define=maven.repo.local=*)
+        reject_repo_override "${arg}"
+        ;;
+    esac
+    previous="${arg}"
+  done
+}
+
+check_args "$@"
+# shellcheck disable=SC2086 # MAVEN_ARGS is split by Maven too
+check_args ${MAVEN_ARGS:-}
+case " ${MAVEN_OPTS:-} " in
+  *" -Dmaven.repo.local"*) reject_repo_override "MAVEN_OPTS" ;;
+esac
 
 if [ "$(realpath -m "${FORK_M2}")" = "$(realpath -m "${SHARED_M2}")" ]; then
   echo "mvn-fork.sh: ENDIVE_FORK_M2 must not be the shared ${SHARED_M2}" >&2

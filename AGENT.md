@@ -1,5 +1,10 @@
 # Working with this repository
 
+> **This fork:** it installs as `run.endive:*:999-SNAPSHOT`, like the Endive the thesis benchmarks
+> resolve from `~/.m2/repository`. Run every Maven command below through `scripts/mvn-fork.sh`
+> (same arguments as `./mvnw`), which keeps fork artifacts in `~/.m2/repository-endive-fork`
+> (`ENDIVE_FORK_M2`), e.g. `scripts/mvn-fork.sh install -pl runtime -am -DskipTests`.
+
 Endive is a WebAssembly runtime written in Java. This document captures practical knowledge for working in the codebase.
 
 ## Prerequisites
