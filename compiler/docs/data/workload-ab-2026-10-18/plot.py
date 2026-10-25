@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Figures for workload-ab-2026-10-18.md, from results/<workload>/results.<metric>.json and
 bisect-rustvm.txt. Writes plots/*.png and plots/*.svg next to this script."""
-import json, random, re, statistics
+import re, statistics
 from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+
+from abstats import load_runs, paired_delta
 
 HERE = Path(__file__).parent
 R = HERE / "results"
@@ -54,23 +56,13 @@ plt.rcParams.update({
 })
 
 
-def boot(vals, n=10000, seed=42):
-    rng = random.Random(seed)
-    out = sorted(statistics.median(rng.choices(vals, k=len(vals))) for _ in range(n))
-    return out[int(0.025 * n)], out[int(0.975 * n)]
-
-
 def runs(w, metric):
     f = R / w / f"results.{metric}.json"
-    d = json.loads((f if f.exists() else RX / w / f"results.{metric}.json").read_text())["runs_ns"]
-    return d["up"], d["fork"]
+    return load_runs(f if f.exists() else RX / w / f"results.{metric}.json")
 
 
 def delta(w, metric):
-    a, b = runs(w, metric)
-    ratios = [y / x for x, y in zip(a, b)]
-    lo, hi = boot(ratios)
-    return (statistics.median(ratios) - 1) * 100, (lo - 1) * 100, (hi - 1) * 100
+    return paired_delta(*runs(w, metric))
 
 
 def verdict_color(lo, hi):

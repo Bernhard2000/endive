@@ -248,7 +248,9 @@ SPLIT_LIMITS=8 OUT_DIR=$B/splits ./run_corpus_split_matrix.sh prepare binjgb i80
 $B/campaign.sh 12 '^awfy-(lua|js)-unsplit-'   # second session; the first ran `campaign.sh 12` on the
                                                # table before the unsplit rows were added, with the
                                                # split AWFY cells named awfy-<lang>-<bench> (renamed after)
-python3 summarize.py > results/SUMMARY.md; python3 table.py   # in the data directory
+python3 summarize.py > results/SUMMARY.md; python3 table.py   # in the data directory; on this
+                                               # archive (round 1 outputs only) add --partial-outputs
+python3 -m unittest test_abstats              # reducer negative controls, in the data directory
 $B/bisect_arm.sh <commit>
 python3 compiler/docs/data/workload-ab-2026-10-18/plot.py   # figures
 ```
