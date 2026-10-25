@@ -1,0 +1,150 @@
+# Second-pass results, 2026-10-25 (OpenJDK 21.0.12.1, Maven 3.10.0, isolated Maven repositories)
+# trees: fork=907750cf  upstream=bce75ae6  merged=git merge-tree HEAD upstream/main -> tree b77f0eae
+
+## Audit runner (run-probes.sh), fork and merged; Probe/CancellationProbe/CrossInstanceProbe on upstream
+### fork
+Loop parameter / ref.eq (expected by Wasm semantics: 1):
+loop_ref_eq interpreter=[1] compiler=[0]
+DirectoryCache option matrix:
+unsigned=false branchless=false OK
+unsigned=true branchless=false java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+unsigned=false branchless=true java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+unsigned=true branchless=true java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+runtime defaults java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+Interruption (all workers should stop):
+ordinary_loop interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+ordinary_loop compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_direct interpreter alive_after_interrupt=true outcome=running
+tail_direct compiler alive_after_interrupt=true outcome=running
+tail_indirect interpreter alive_after_interrupt=true outcome=running
+tail_indirect compiler alive_after_interrupt=true outcome=running
+tail_ref interpreter alive_after_interrupt=true outcome=running
+tail_ref compiler alive_after_interrupt=true outcome=running
+Cross-instance indirect calls (expected: 42 for ordinary and tail):
+interpreter ordinary [42]
+interpreter tail WasmEngineException: Indirect tail-call to a function of another instance is not supported
+compiler ordinary [42]
+compiler tail WasmEngineException: Indirect tail-call to a different Machine implementation is not supported
+Benchmark reducer negative controls:
+Different JSON results normalize equal: True
+Different timing-shaped results normalize equal: True
+3 upstream / 1 fork samples accepted as row: (3, 0.0001, 9e-05, -9.999999999999998, -9.999999999999998, -9.999999999999998, 'yes')
+Missing fork output accepted as: yes (1)
+Existing result arrays checked: 111 ; invalid lengths/nonpositive samples: 0
+Existing archived guest output files: 74
+Wrapper split -D argument guard (fake Maven; no installation):
+maven.repo.local=/tmp/another-repository
+### merged
+Loop parameter / ref.eq (expected by Wasm semantics: 1):
+loop_ref_eq interpreter=[1] compiler=[0]
+DirectoryCache option matrix:
+unsigned=false branchless=false OK
+unsigned=true branchless=false java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+unsigned=false branchless=true java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+unsigned=true branchless=true java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+runtime defaults java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+Interruption (all workers should stop):
+ordinary_loop interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+ordinary_loop compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_direct interpreter alive_after_interrupt=true outcome=running
+tail_direct compiler alive_after_interrupt=true outcome=running
+tail_indirect interpreter alive_after_interrupt=true outcome=running
+tail_indirect compiler alive_after_interrupt=true outcome=running
+tail_ref interpreter alive_after_interrupt=true outcome=running
+tail_ref compiler alive_after_interrupt=true outcome=running
+Cross-instance indirect calls (expected: 42 for ordinary and tail):
+interpreter ordinary [42]
+interpreter tail WasmEngineException: Indirect tail-call to a function of another instance is not supported
+compiler ordinary [42]
+compiler tail WasmEngineException: Indirect tail-call to a different Machine implementation is not supported
+Benchmark reducer negative controls:
+Different JSON results normalize equal: True
+Different timing-shaped results normalize equal: True
+3 upstream / 1 fork samples accepted as row: (3, 0.0001, 9e-05, -9.999999999999998, -9.999999999999998, -9.999999999999998, 'yes')
+Missing fork output accepted as: yes (1)
+Existing result arrays checked: 111 ; invalid lengths/nonpositive samples: 0
+Existing archived guest output files: 74
+Wrapper split -D argument guard (fake Maven; no installation):
+maven.repo.local=/tmp/another-repository
+### upstream
+loop_ref_eq interpreter=[1] compiler=[1]
+ordinary_loop interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+ordinary_loop compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_direct interpreter alive_after_interrupt=true outcome=running
+tail_direct compiler alive_after_interrupt=true outcome=running
+tail_indirect interpreter alive_after_interrupt=true outcome=running
+tail_indirect compiler alive_after_interrupt=true outcome=running
+tail_ref interpreter alive_after_interrupt=true outcome=running
+tail_ref compiler alive_after_interrupt=true outcome=running
+interpreter ordinary [42]
+interpreter tail WasmEngineException: Indirect tail-call to a function of another instance is not supported
+compiler ordinary [42]
+compiler tail WasmEngineException: Indirect tail-call to a different Machine implementation is not supported
+
+## TableOwnerProbe
+## fork
+caller=interp definer=interp result=-1 (expected 42) ownerRecorded=false
+caller=interp definer=aot result=-1 (expected 42) ownerRecorded=false
+caller=aot definer=interp result=-1 (expected 42) ownerRecorded=false
+caller=aot definer=aot result=-1 (expected 42) ownerRecorded=false
+## upstream
+caller=interp definer=interp result=42 (expected 42) ownerRecorded=true
+caller=interp definer=aot result=42 (expected 42) ownerRecorded=true
+caller=aot definer=interp result=42 (expected 42) ownerRecorded=true
+caller=aot definer=aot result=42 (expected 42) ownerRecorded=true
+## merged
+caller=interp definer=interp result=42 (expected 42) ownerRecorded=true
+caller=interp definer=aot result=42 (expected 42) ownerRecorded=true
+caller=aot definer=interp result=42 (expected 42) ownerRecorded=true
+caller=aot definer=aot result=42 (expected 42) ownerRecorded=true
+
+## ManyParamsMixedProbe
+## fork
+caller=interp callee=interp indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=interp callee=aot indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=aot callee=interp indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=aot callee=aot indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+## merged
+caller=interp callee=interp indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=interp callee=aot indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=aot callee=interp indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=aot callee=aot indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+
+## FuseDiff fuse.wasm (numeric fusion + narrowing)
+## fork
+exports=1952 checks=286448 mismatches=0
+## merged
+exports=1952 checks=286448 mismatches=0
+
+## FuseDiff gc.wasm (reference fusion merge shapes; i_loop is the F01 control)
+## fork
+MISMATCH i_loop ucf=false bb=false in=[0] interp=1 compiler=0
+exports=12 checks=768 mismatches=64
+## merged
+MISMATCH i_loop ucf=false bb=false in=[0] interp=1 compiler=0
+exports=12 checks=768 mismatches=64
+
+## ParseOnly none_*.wasm (validator; every module validates under wasm-tools)
+### fork
+none_none_none.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]] - type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_s_none.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_none_s.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_nulls_typed.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_call_none.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+### upstream
+none_none_none.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]] - type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_s_none.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_none_s.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_nulls_typed.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+none_call_none.wasm: InvalidException: type mismatch: instruction requires [refnull[-19]] but stack has [refnull[-15]]
+
+## Maven test totals, merged tree (per execution)
+[ERROR] Tests run: 3, Failures: 0, Errors: 3, Skipped: 0
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 253, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 34121, Failures: 0, Errors: 0, Skipped: 64
+[INFO] Tests run: 57, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 98, Failures: 0, Errors: 0, Skipped: 0
+## Maven dircache, upstream tree
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0

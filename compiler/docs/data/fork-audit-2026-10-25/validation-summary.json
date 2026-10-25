@@ -1,0 +1,375 @@
+{
+  "runs": [
+    {
+      "command": "mvn -o -Dmaven.repo.local=/tmp/endive-audit-20261025/m2 -pl compiler -am test",
+      "outcome": "SUCCESS",
+      "log": "/tmp/endive-audit-20261025/compiler-reactor-isolated.log",
+      "log_sha256": "e5552bf3e5a7e0c8ae37238d4c1baf823a0d54e2049c7a6b80b77aa5df9dbf4f",
+      "tests": [
+        {
+          "module": "wasm",
+          "execution": "default-test",
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasm",
+          "execution": "test-module-path",
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "runtime",
+          "execution": "default-test",
+          "tests": 98,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "runtime",
+          "execution": "test-module-path",
+          "tests": 98,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler",
+          "execution": "default-test",
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler",
+          "execution": "test-module-path",
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "command": "mvn -Dmaven.repo.local=/tmp/endive-audit-20261025/m2 -pl compiler-tests,machine-tests,dircache -am install",
+      "outcome": "FAILURE",
+      "log": "/tmp/endive-audit-20261025/integration-reactor-online.log",
+      "log_sha256": "1cba4098ff8905dd0839824a88d9bbfae161bf97658e5b56426eb377db452c32",
+      "tests": [
+        {
+          "module": "wasm",
+          "execution": "default-test",
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasm",
+          "execution": "test-module-path",
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "runtime",
+          "execution": "default-test",
+          "tests": 98,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "runtime",
+          "execution": "test-module-path",
+          "tests": 98,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "annotations-processor",
+          "execution": "default-test",
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "annotations-processor",
+          "execution": "test-module-path",
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler",
+          "execution": "default-test",
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler",
+          "execution": "test-module-path",
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "redline-api-experimental",
+          "execution": "default-test",
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "redline-api-experimental",
+          "execution": "test-module-path",
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasi",
+          "execution": "default-test",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasi",
+          "execution": "test-module-path",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wabt",
+          "execution": "default-test",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wabt",
+          "execution": "test-module-path",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasm-tools",
+          "execution": "default-test",
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasm-tools",
+          "execution": "test-module-path",
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler-tests",
+          "execution": "default-test",
+          "tests": 34121,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 64
+        },
+        {
+          "module": "compiler-tests",
+          "execution": "test-module-path",
+          "tests": 34121,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 64
+        },
+        {
+          "module": "compiler-tests",
+          "execution": "mem-copy-workaround-forced",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "dircache-experimental",
+          "execution": "default-test",
+          "tests": 3,
+          "failures": 0,
+          "errors": 3,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "command": "mvn -o -Dmaven.repo.local=/tmp/endive-audit-20261025/m2 -pl machine-tests -am test",
+      "outcome": "SUCCESS",
+      "log": "/tmp/endive-audit-20261025/machine-reactor.log",
+      "log_sha256": "6a0e145c818788a00dc44f8d122abcf9ccdff23a67ab45c3af3684879bdf3712",
+      "tests": [
+        {
+          "module": "wasm",
+          "execution": "default-test",
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasm",
+          "execution": "test-module-path",
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "runtime",
+          "execution": "default-test",
+          "tests": 98,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "runtime",
+          "execution": "test-module-path",
+          "tests": 98,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "annotations-processor",
+          "execution": "default-test",
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "annotations-processor",
+          "execution": "test-module-path",
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler",
+          "execution": "default-test",
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "compiler",
+          "execution": "test-module-path",
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "redline-api-experimental",
+          "execution": "default-test",
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "redline-api-experimental",
+          "execution": "test-module-path",
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasi",
+          "execution": "default-test",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "wasi",
+          "execution": "test-module-path",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "machine-tests",
+          "execution": "default-test",
+          "tests": 249,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "module": "machine-tests",
+          "execution": "test-module-path",
+          "tests": 249,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "command": "mvn -o -Dmaven.repo.local=/tmp/endive-audit-20261025/m2 -pl dircache -Dendive.compiler.unsignedCompareFusion=false surefire:test",
+      "outcome": "SUCCESS",
+      "log": "/tmp/endive-audit-20261025/dircache-fusion-disabled.log",
+      "log_sha256": "e0a2c976ab003623bef9aba0f705f515d39c7975de2346192928bd39bbbc6a27",
+      "tests": [
+        {
+          "module": "dircache-experimental",
+          "execution": "default-cli",
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    }
+  ],
+  "setup_failures": [
+    {
+      "log": "/tmp/endive-audit-20261025/compiler-reactor.log",
+      "reason": "Read-only Maven cache lock boundary; reran using a copied repository in /tmp."
+    },
+    {
+      "log": "/tmp/endive-audit-20261025/integration-reactor.log",
+      "reason": "Missing junit-vintage-engine dependency in offline cache; reran with network dependency resolution."
+    }
+  ],
+  "scope": "Counts are per Maven execution, not counts of unique tests across repeated runs. Disabled-fusion cache run is a diagnostic control."
+}

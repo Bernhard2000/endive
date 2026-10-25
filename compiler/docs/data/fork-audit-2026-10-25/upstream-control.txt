@@ -1,0 +1,2 @@
+Pinned upstream compiler 1580f5349ae0ce9a771fa42ee8397ba6d2553685; current checkout parser/runtime and ASM 9.10.1.
+loop_ref_eq interpreter=[1] compiler=[1]

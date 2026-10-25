@@ -1,0 +1,40 @@
+Loop parameter / ref.eq (expected by Wasm semantics: 1):
+loop_ref_eq interpreter=[1] compiler=[0]
+
+DirectoryCache option matrix:
+unsigned=false branchless=false OK
+unsigned=true branchless=false java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+unsigned=false branchless=true java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+unsigned=true branchless=true java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+runtime defaults java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+
+Interruption (all workers should stop):
+ordinary_loop interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+ordinary_loop compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_direct interpreter alive_after_interrupt=true outcome=running
+tail_direct compiler alive_after_interrupt=true outcome=running
+tail_indirect interpreter alive_after_interrupt=true outcome=running
+tail_indirect compiler alive_after_interrupt=true outcome=running
+tail_ref interpreter alive_after_interrupt=true outcome=running
+tail_ref compiler alive_after_interrupt=true outcome=running
+
+Cross-instance indirect calls (expected: 42 for ordinary and tail):
+interpreter ordinary [42]
+interpreter tail WasmEngineException: Indirect tail-call to a function of another instance is not supported
+compiler ordinary [42]
+compiler tail WasmEngineException: Indirect tail-call to a different Machine implementation is not supported
+
+Benchmark reducer negative controls:
+Different JSON results normalize equal: True
+Different timing-shaped results normalize equal: True
+3 upstream / 1 fork samples accepted as row: (3, 0.0001, 9e-05, -9.999999999999998, -9.999999999999998, -9.999999999999998, 'yes')
+Missing fork output accepted as: yes (1)
+Existing result arrays checked: 111 ; invalid lengths/nonpositive samples: 0
+Existing archived guest output files: 74
+
+Wrapper split -D argument guard (fake Maven; no installation):
+-f
+/home/bernhard/Dokumente/MasterThesis/Endive/fork/endive/pom.xml
+-Dmaven.repo.local=/tmp/endive-audit-20261025/final-probes-reviewed/fake-m2
+-D
+maven.repo.local=/tmp/another-repository

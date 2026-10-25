@@ -1,0 +1,132 @@
+{
+  "pages": 21,
+  "bookmarks": 20,
+  "link_annotations": 43,
+  "finding_pages": {
+    "F01": 6,
+    "F02": 7,
+    "F03": 8,
+    "F04": 9,
+    "F05": 10,
+    "F06": 11,
+    "F07": 12,
+    "F08": 13,
+    "F09": 14,
+    "F10": 15,
+    "F11": 16,
+    "F12": 17
+  },
+  "out_of_bounds_characters": [],
+  "replacement_glyphs": [],
+  "page_checks": [
+    {
+      "page": 1,
+      "characters": 625,
+      "has_footer": true
+    },
+    {
+      "page": 2,
+      "characters": 2034,
+      "has_footer": true
+    },
+    {
+      "page": 3,
+      "characters": 2341,
+      "has_footer": true
+    },
+    {
+      "page": 4,
+      "characters": 2350,
+      "has_footer": true
+    },
+    {
+      "page": 5,
+      "characters": 2565,
+      "has_footer": true
+    },
+    {
+      "page": 6,
+      "characters": 2854,
+      "has_footer": true
+    },
+    {
+      "page": 7,
+      "characters": 2431,
+      "has_footer": true
+    },
+    {
+      "page": 8,
+      "characters": 2162,
+      "has_footer": true
+    },
+    {
+      "page": 9,
+      "characters": 1847,
+      "has_footer": true
+    },
+    {
+      "page": 10,
+      "characters": 1985,
+      "has_footer": true
+    },
+    {
+      "page": 11,
+      "characters": 1728,
+      "has_footer": true
+    },
+    {
+      "page": 12,
+      "characters": 1545,
+      "has_footer": true
+    },
+    {
+      "page": 13,
+      "characters": 2194,
+      "has_footer": true
+    },
+    {
+      "page": 14,
+      "characters": 1655,
+      "has_footer": true
+    },
+    {
+      "page": 15,
+      "characters": 1648,
+      "has_footer": true
+    },
+    {
+      "page": 16,
+      "characters": 1858,
+      "has_footer": true
+    },
+    {
+      "page": 17,
+      "characters": 1367,
+      "has_footer": true
+    },
+    {
+      "page": 18,
+      "characters": 2132,
+      "has_footer": true
+    },
+    {
+      "page": 19,
+      "characters": 1529,
+      "has_footer": true
+    },
+    {
+      "page": 20,
+      "characters": 1864,
+      "has_footer": true
+    },
+    {
+      "page": 21,
+      "characters": 2285,
+      "has_footer": true
+    }
+  ],
+  "pdf_sha256": "32e29acaf211739d2a3df8c01bc5e549465d85359db55d3db364f5963a76ccde",
+  "visual_review": "All 21 latest rendered pages inspected in contact sheets; cover, register, F01 and reproduction page also inspected at reading resolution.",
+  "original_markdown_body_sha256": "8717715df5c331aaa62e889c20b19b3184f354033971c96736ebf2f56c0b1280",
+  "original_body_preserved": true
+}

@@ -1,0 +1,72 @@
+# Probe results on the fixed branch (HEAD 5f7b6030, based on upstream bce75ae6), 2026-10-25
+
+## run-probes.sh (first-pass runner; its reducer probe targets the replaced summarize.py)
+Loop parameter / ref.eq (expected by Wasm semantics: 1):
+loop_ref_eq interpreter=[1] compiler=[1]
+DirectoryCache option matrix:
+unsigned=false branchless=false OK
+unsigned=true branchless=false OK
+unsigned=false branchless=true OK
+unsigned=true branchless=true OK
+runtime defaults OK
+Interruption (all workers should stop):
+ordinary_loop interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+ordinary_loop compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_direct interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+tail_direct compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_indirect interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+tail_indirect compiler alive_after_interrupt=false outcome=WasmInterruptedException
+tail_ref interpreter alive_after_interrupt=false outcome=WasmInterruptedException
+tail_ref compiler alive_after_interrupt=false outcome=WasmInterruptedException
+Cross-instance indirect calls (expected: 42 for ordinary and tail):
+interpreter ordinary [42]
+interpreter tail WasmEngineException: Indirect tail-call to a function of another instance is not supported
+compiler ordinary [42]
+compiler tail WasmEngineException: Indirect tail-call to a function of another instance is not supported
+Benchmark reducer negative controls:
+
+## mvn-fork.sh -D maven.repo.local=/tmp/another-repository
+mvn-fork.sh: do not set maven.repo.local (-D maven.repo.local=/tmp/another-repository); set ENDIVE_FORK_M2 instead (exit 2)
+
+## workload-ab-2026-10-18: python3 -m unittest test_abstats
+Ran 9 tests ... OK
+
+## upstream-recheck/run-recheck.sh
+Table initialiser owner (expected: result=42 ownerRecorded=true):
+caller=interp definer=interp result=42 (expected 42) ownerRecorded=true
+caller=interp definer=aot result=42 (expected 42) ownerRecorded=true
+caller=aot definer=interp result=42 (expected 42) ownerRecorded=true
+caller=aot definer=aot result=42 (expected 42) ownerRecorded=true
+
+Boxed-ABI call_indirect across instances (expected 42 / 0 / 1):
+caller=interp callee=interp indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=interp callee=aot indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=aot callee=interp indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+caller=aot callee=aot indirect_252=42 extern(host)=0 extern(null)=1   (expected 42 / 0 / 1)
+
+Validator, (ref null none) where eqref is expected (expected: valid):
+none_call_none.wasm: valid
+none_none_none.wasm: valid
+none_none_s.wasm: valid
+none_nulls_typed.wasm: valid
+none_s_none.wasm: valid
+
+Fusion differential, numeric (expected: mismatches=0):
+exports=1952 checks=286448 mismatches=0
+Fusion differential, references (only i_loop, the F01 shape, is known to mismatch):
+exports=12 checks=768 mismatches=0
+
+## Maven, strict build (Error Prone, Checkstyle, Spotless), per execution
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 265, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 34123, Failures: 0, Errors: 0, Skipped: 64
+[INFO] Tests run: 36, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 61, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 62246, Failures: 0, Errors: 0, Skipped: 83
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 98, Failures: 0, Errors: 0, Skipped: 0

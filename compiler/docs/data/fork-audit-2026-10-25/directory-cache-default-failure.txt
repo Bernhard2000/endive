@@ -1,0 +1,52 @@
+[INFO] Running run.endive.experimental.dircache.DirectoryCacheTest
+[ERROR] Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.265 s <<< FAILURE! -- in run.endive.experimental.dircache.DirectoryCacheTest
+[ERROR] run.endive.experimental.dircache.DirectoryCacheTest.shouldCacheCompiledResultInMemFS -- Time elapsed: 0.176 s <<< ERROR!
+java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+	at run.endive.experimental.dircache.DirectoryCache.toFilePath(DirectoryCache.java:122)
+	at run.endive.experimental.dircache.DirectoryCache.get(DirectoryCache.java:43)
+	at run.endive.experimental.dircache.DirectoryCacheTest$CacheWithHitCounter.get(DirectoryCacheTest.java:36)
+	at run.endive.compiler.MachineFactoryCompiler$Builder.compile(MachineFactoryCompiler.java:160)
+	at run.endive.experimental.dircache.DirectoryCacheTest.shouldCacheCompiledResultInMemFS(DirectoryCacheTest.java:94)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[ERROR] run.endive.experimental.dircache.DirectoryCacheTest.testConcurrentAccessNativeFS(Path) -- Time elapsed: 0.045 s <<< ERROR!
+java.util.concurrent.CompletionException: java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:315)
+	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:320)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1807)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+	at run.endive.experimental.dircache.DirectoryCache.toFilePath(DirectoryCache.java:122)
+	at run.endive.experimental.dircache.DirectoryCacheTest$NotFailingDirCache.get(DirectoryCacheTest.java:56)
+	at run.endive.experimental.dircache.DirectoryCacheTest$CacheWithHitCounter.get(DirectoryCacheTest.java:36)
+	at run.endive.compiler.MachineFactoryCompiler$Builder.compile(MachineFactoryCompiler.java:160)
+	at run.endive.experimental.dircache.DirectoryCacheTest.lambda$testConcurrentAccessNativeFS$0(DirectoryCacheTest.java:165)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	... 3 more
+
+[ERROR] run.endive.experimental.dircache.DirectoryCacheTest.shouldCacheCompiledResultNativeFS(Path) -- Time elapsed: 0.026 s <<< ERROR!
+java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+	at run.endive.experimental.dircache.DirectoryCache.toFilePath(DirectoryCache.java:122)
+	at run.endive.experimental.dircache.DirectoryCache.get(DirectoryCache.java:43)
+	at run.endive.experimental.dircache.DirectoryCacheTest$CacheWithHitCounter.get(DirectoryCacheTest.java:36)
+	at run.endive.compiler.MachineFactoryCompiler$Builder.compile(MachineFactoryCompiler.java:160)
+	at run.endive.experimental.dircache.DirectoryCacheTest.shouldCacheCompiledResultNativeFS(DirectoryCacheTest.java:121)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   DirectoryCacheTest.shouldCacheCompiledResultInMemFS:94 » IllegalArgument Digest must match ^[A-Za-z0-9+_\-/]+=$
+[ERROR]   DirectoryCacheTest.shouldCacheCompiledResultNativeFS:121 » IllegalArgument Digest must match ^[A-Za-z0-9+_\-/]+=$
+[ERROR]   DirectoryCacheTest.testConcurrentAccessNativeFS(Path) » Completion java.lang.IllegalArgumentException: Digest must match ^[A-Za-z0-9+_\-/]+=$
+[INFO] 
+[ERROR] Tests run: 3, Failures: 0, Errors: 3, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------

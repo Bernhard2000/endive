@@ -1,0 +1,11 @@
+(module
+  (type $t (func))
+  (table 1 funcref)
+  (elem (i32.const 0) func $indirect)
+  (elem declare func $byref)
+  (func (export "ordinary_loop") (loop $again br $again))
+  (func $direct (export "tail_direct") return_call $direct)
+  (func $indirect (export "tail_indirect") (type $t)
+    i32.const 0 return_call_indirect (type $t))
+  (func $byref (export "tail_ref") (type $t)
+    ref.func $byref return_call_ref $t))
