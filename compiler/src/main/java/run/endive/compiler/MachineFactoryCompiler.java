@@ -7,11 +7,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -30,6 +35,13 @@ import run.endive.wasm.WasmModule;
  * Compiles WASM function bodies to JVM byte code that can be used as a machine factory for {@link Instance}'s.
  */
 public final class MachineFactoryCompiler {
+
+    /**
+     * The algorithm part of the keys this compiler passes to a {@link Cache}. Bump the version
+     * whenever the generated code or the runtime methods it calls change, so that entries written
+     * by an older compiler are no longer found.
+     */
+    static final String CACHE_KEY_ALGORITHM = "endive-codegen-v1";
 
     private static final String INTERPRETED_FUNCTIONS = "interpretedFunctions";
 
@@ -95,6 +107,11 @@ public final class MachineFactoryCompiler {
         private final WasmModule module;
         private final run.endive.compiler.internal.Compiler.Builder compilerBuilder;
         private Cache cache;
+        // the settings that change the generated code, which the cache key covers
+        private String className;
+        private Integer maxFunctionsPerClass;
+        private InterpreterFallback interpreterFallback;
+        private Set<Integer> interpretedFunctions;
         private boolean unsignedCompareFusion =
                 run.endive.compiler.internal.Compiler.runtimeUnsignedCompareFusion();
         private boolean branchlessBooleans =
@@ -106,28 +123,33 @@ public final class MachineFactoryCompiler {
         }
 
         public Builder withClassName(String className) {
+            this.className = className;
             compilerBuilder.withClassName(className);
             return this;
         }
 
         public Builder withMaxFunctionsPerClass(int maxFunctionsPerClass) {
+            this.maxFunctionsPerClass = maxFunctionsPerClass;
             compilerBuilder.withMaxFunctionsPerClass(maxFunctionsPerClass);
             return this;
         }
 
         public Builder withInterpreterFallback(InterpreterFallback interpreterFallback) {
+            this.interpreterFallback = interpreterFallback;
             compilerBuilder.withInterpreterFallback(interpreterFallback);
             return this;
         }
 
         public Builder withInterpretedFunctions(Set<Integer> interpretedFunctions) {
+            this.interpretedFunctions = interpretedFunctions;
             compilerBuilder.withInterpretedFunctions(interpretedFunctions);
             return this;
         }
 
         /**
          * Sets the {@link MethodPrefixer} used to name the compiled methods. Defaults to
-         * {@link MethodPrefixer#defaultPrefixer()}.
+         * {@link MethodPrefixer#defaultPrefixer()}. The cache key does not cover it: with a
+         * {@link #withCache cache}, use a prefixer that names methods the same way on every run.
          */
         public Builder withMethodPrefixer(MethodPrefixer methodPrefixer) {
             compilerBuilder.withMethodPrefixer(methodPrefixer);
@@ -150,6 +172,13 @@ public final class MachineFactoryCompiler {
             return this;
         }
 
+        /**
+         * Loads and stores the compiled classes in {@code cache}. The key is {@value
+         * #CACHE_KEY_ALGORITHM}{@code :} followed by the padded Base64 SHA-256 of the module digest
+         * and the code generation settings, so it is valid for any {@link Cache} that accepts
+         * {@code algo:digest} keys, and differs for every compiler version and setting that
+         * changes the generated code.
+         */
         public Builder withCache(Cache cache) {
             this.cache = cache;
             return this;
@@ -174,11 +203,7 @@ public final class MachineFactoryCompiler {
 
                 // Can we load the byte codes from the cache?
                 var useCache = cache != null && module.digest() != null;
-                // the options change the generated code, so they are part of the key
-                var cacheKey =
-                        module.digest()
-                                + (unsignedCompareFusion ? "+ucf" : "")
-                                + (branchlessBooleans ? "+bb" : "");
+                var cacheKey = useCache ? cacheKey() : null;
                 if (useCache) {
                     byte[] cachedData = cache.get(cacheKey);
                     if (cachedData != null) {
@@ -215,6 +240,31 @@ public final class MachineFactoryCompiler {
             }
             var stripped = module.stripped(InterpretableFunctions.of(module, interpreted));
             return new MachineFactory(stripped, factory);
+        }
+
+        String cacheKey() {
+            var settings =
+                    String.join(
+                            "\n",
+                            "module=" + module.digest(),
+                            "unsignedCompareFusion=" + unsignedCompareFusion,
+                            "branchlessBooleans=" + branchlessBooleans,
+                            "className=" + className,
+                            "maxFunctionsPerClass=" + maxFunctionsPerClass,
+                            "interpreterFallback=" + interpreterFallback,
+                            "interpretedFunctions="
+                                    + (interpretedFunctions == null
+                                            ? null
+                                            : new TreeSet<>(interpretedFunctions)));
+            try {
+                var sha256 = MessageDigest.getInstance("SHA-256");
+                var hash = sha256.digest(settings.getBytes(StandardCharsets.UTF_8));
+                return CACHE_KEY_ALGORITHM + ":" + Base64.getEncoder().encodeToString(hash);
+            } catch (NoSuchAlgorithmException e) {
+                // every Java platform implements SHA-256
+                throw new IllegalStateException(e);
+            }
+        }
         }
     }
 

@@ -133,6 +133,33 @@ public class DirectoryCacheTest {
     }
 
     @Test
+    public void shouldCacheEveryCompilerOptionCombination(@TempDir Path cacheDir) {
+        var module =
+                Parser.parse(
+                        DirectoryCacheTest.class.getResourceAsStream(
+                                "/compiled/count_vowels.rs.wasm"));
+        var cache = new CacheWithHitCounter(new DirectoryCache(cacheDir));
+        int expectedHits = 0;
+        for (boolean unsigned : new boolean[] {false, true}) {
+            for (boolean branchless : new boolean[] {false, true}) {
+                for (int round = 0; round < 2; round++) {
+                    var factory =
+                            MachineFactoryCompiler.builder(module)
+                                    .withCache(cache)
+                                    .withUnsignedCompareFusion(unsigned)
+                                    .withBranchlessBooleans(branchless)
+                                    .compile();
+                    exerciseCountVowels(
+                            Instance.builder(module).withMachineFactory(factory).build());
+                    // the first round of each combination compiles, the second loads it
+                    expectedHits += round;
+                    assertEquals(expectedHits, cache.hits.get(), unsigned + "/" + branchless);
+                }
+            }
+        }
+    }
+
+    @Test
     public void testConcurrentAccessNativeFS(@TempDir Path cacheDir) throws IOException {
         var module =
                 Parser.parse(
