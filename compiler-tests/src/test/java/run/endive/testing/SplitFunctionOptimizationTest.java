@@ -90,6 +90,36 @@ public class SplitFunctionOptimizationTest {
     }
 
     @Test
+    public void halfDenseTableKeepsTableSwitchForSpeed() {
+        // rustvm-base's exec_op: 160 entries, keys 0-9 and 100-159. lookupswitch would save 84
+        // bytes but makes HotSpot's interpreter binary-search every dispatch
+        int[] targets = new int[160];
+        java.util.Arrays.fill(targets, 2);
+        for (int i = 0; i < 160; i++) {
+            if (i < 10 || i >= 100) {
+                targets[i] = i % 2;
+            }
+        }
+        var module = dispatch(targets);
+        assertDispatch(module, targets);
+        assertEquals(List.of("table:160"), switches(module));
+    }
+
+    @Test
+    public void tableSwitchCostsAtMostTheSpeedBudget() {
+        // 1000 entries, 300 keys: tableswitch would still dispatch faster, but costs 1604 bytes
+        // more, beyond the budget, so the size saving wins
+        int[] targets = new int[1000];
+        java.util.Arrays.fill(targets, 2);
+        for (int i = 0; i < 300; i++) {
+            targets[i * 3] = i % 2;
+        }
+        var module = dispatch(targets);
+        assertDispatch(module, targets);
+        assertEquals(List.of("lookup:300"), switches(module));
+    }
+
+    @Test
     public void emptyUniformAndDenseTables() {
         for (int[] targets : new int[][] {new int[0], {2, 2, 2}, {0, 0, 0}, {0, 1, 0, 1}}) {
             var module = dispatch(targets);

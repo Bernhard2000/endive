@@ -5,12 +5,21 @@ import java.util.Map;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.commons.InstructionAdapter;
 
-/** Chooses a compact JVM encoding without changing a Wasm br_table's default semantics. */
+/**
+ * Chooses a JVM encoding for a Wasm br_table without changing its default semantics: the
+ * smaller one, unless {@code tableswitch} is the faster one at a bounded cost in bytes.
+ */
 final class SwitchEmitter {
 
     // Additional bounds checks have no established benefit for already small dispatch methods.
     // Reserve changing the default target for tables that alone approach the usual JIT limit.
     private static final int GUARDED_LOOKUP_MIN_TABLE_BYTES = 8000;
+
+    // The most bytes a switch keeps tableswitch for when it is the faster encoding. A sparse
+    // table can save far more than this as lookupswitch, which keeps a method under a JVM
+    // limit; a near-dense one saves little and dispatches slower. rustvm-base's interpreted
+    // dispatcher (16.6 kB, 160 entries, 70 keys) ran 12.6 % slower to save 84 bytes.
+    static final int MAX_BYTES_FOR_SPEED = 512;
 
     private SwitchEmitter() {}
 
@@ -43,7 +52,12 @@ final class SwitchEmitter {
                 }
             }
         }
-        if (tableBytes <= lookupBytes) {
+        if (tableBytes <= lookupBytes
+                || (tableIsFaster(
+                                targets.length,
+                                targets.length - omitted,
+                                lookupDefault != defaultLabel)
+                        && tableBytes - lookupBytes <= MAX_BYTES_FOR_SPEED)) {
             asm.tableswitch(0, targets.length - 1, defaultLabel, targets);
             return;
         }
@@ -75,5 +89,17 @@ final class SwitchEmitter {
             asm.pop();
             asm.goTo(defaultLabel);
         }
+    }
+
+    /**
+     * javac's choice between the encodings ({@code Gen.visitSwitch}): space in table entries plus
+     * three times the time in compares, where a tableswitch is one bounds check and a
+     * lookupswitch a compare per key (HotSpot's interpreter searches it, which is what runs a
+     * method over 8000 bytes). The guarded lookup adds its two bounds checks.
+     */
+    static boolean tableIsFaster(int entries, int keys, boolean guarded) {
+        long tableCost = 4L + entries + 3L * 3;
+        long lookupCost = 3L + 2L * keys + 3L * (keys + (guarded ? 2 : 0));
+        return tableCost <= lookupCost;
     }
 }
