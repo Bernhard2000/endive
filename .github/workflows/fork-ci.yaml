@@ -1,0 +1,58 @@
+name: Fork CI
+
+# The upstream CI runs on pushes to main only, and lets every matrix job fail without failing
+# the run (continue-on-error). This workflow is the fork's gate: it runs on the integration and
+# topic branches, and any failing job fails the run.
+on:
+  push:
+    branches: [ fuse-branch-conditions, 'fix/**', 'perf/**', 'pr/**' ]
+  workflow_dispatch:
+
+concurrency:
+  group: fork-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  java:
+    name: Java ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        # 11 and 17 run with the JIT bug workaround and without unsigned compare fusion,
+        # 21 and 25 with the fusion on by default
+        version: [11, 17, 21, 25]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Checkout testsuite
+        uses: actions/checkout@v7
+        with:
+          repository: WebAssembly/testsuite
+          path: testsuite
+          # The ref needs to stay in sync with the default value in test-gen-plugin
+          ref: 88e97b0f742f4c3ee01fea683da130f344dd7b02
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '${{ matrix.version }}'
+          cache: maven
+      # the compiler and its spec suite, the shared machine tests and the directory cache, with
+      # every module they depend on (parser, runtime, ...) and that module's own tests
+      - name: Test Java
+        run: ./mvnw -B install -pl compiler-tests,machine-tests,dircache -am
+        env:
+          MAVEN_OPTS: "-ea"
+
+  benchmark-reducers:
+    name: Benchmark reducer checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Negative controls
+        working-directory: compiler/docs/data/workload-ab-2026-10-18
+        run: python3 -m unittest -v test_abstats
