@@ -27,7 +27,8 @@ plus ASM 9.10.1. The fork's compiler jar is the one the thesis report
 - **AWFY on the unsplit interpreters improves in all 11 cells**: Lua −4.8 to −6.4 %, QuickJS
   −5.7 to −10.4 %. So the gain does not depend on splitting.
 - **Guest output is identical** across both arms and all 24 samples of every cell, with
-  timing numbers masked.
+  timing numbers masked. That check ran in the bench directory; this data directory keeps round 1
+  of each arm, so only 2 of the 24 outputs per cell can be rechecked from it (see Limitations).
 - **Runtime compilation is slower**: +2 to +5 % (10–90 ms) on most modules, significant in 23 of
   37 cells. This is the cold-JVM cost described in
   [compile-time-regression.md](compile-time-regression.md); the incremental passes reduced it but

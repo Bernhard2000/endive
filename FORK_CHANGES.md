@@ -1,5 +1,13 @@
 # Endive fork changes and benefits
 
+**Current state, 2026-10-25.** `fuse-branch-conditions` is based on upstream `main` `bce75ae6`
+([upstream-sync-2026-10-25.md](compiler/docs/upstream-sync-2026-10-25.md), which also maps the
+commit ids below, all from before the sync, to the rebased ones). The fork audit of that day
+([FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md)) found two fork regressions (a `ref.eq`
+fusion wrong result through loop parameters, and cache keys that broke `DirectoryCache`) and
+several inherited defects; section 11 lists the fixes. The overview table and sections 1–10 are
+otherwise as of the dates below, and sections marked historical are superseded.
+
 Snapshot: 2026-10-02, updated 2026-10-17 for the fusion extensions (`5a02a7dd`) and
 2026-10-18 for the improvement plan ([FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md),
 section 10 below), branch `fuse-branch-conditions`. This document covers the fork-specific
@@ -20,14 +28,14 @@ this branch's implementation. The history inventory uses local Git refs.
 | Fusion extensions | Constant-operand, unsigned `i64`, Go `i64`-boolean, and reference null-test conditions | Together with the original fusion: 2.0–4.0 % less function bytecode and 70–88 % fewer comparison helper calls than upstream. The extensions alone add 0.1–0.5 % bytecode and remove 15–57 % of the remaining helper calls | Current branch, `5a02a7dd`; upstream PR branch `pr/fuse-branch-conditions` |
 | Large-parameter ABI repair | Preserves locals, numeric arguments, references, and indirect-call targets across boxed calls | Fixes verification failures, invalid descriptors, and silent wrong results | Current branch, `b4d973e1` |
 | Strict-build repair | Justifies the compilation-local use of enum ordinals | Restores the normal Error Prone build | Current branch, `854e77ca` |
-| Compact branch-table dispatch | Chooses a smaller JVM switch encoding and handles default-only tables | Reduces large method sizes and dispatch overhead in the measured synthetic case | Current optimization changes |
+| Compact branch-table dispatch | Chooses a smaller JVM switch encoding unless `tableswitch` is faster at ≤ 512 extra bytes (2026-10-25), and handles default-only tables | Reduces large method sizes and dispatch overhead in the measured synthetic case | Current optimization changes |
 | Wide multivalue return repair | Packs results inline when a packing helper would exceed the JVM parameter limit | Compiles valid wide result tuples | Current optimization changes |
 | Splitter fixtures and diagnostics | Exercises actual tuple/mailbox outputs and records reproducible local evidence | Detects ABI regressions and supports measured optimization decisions | Current optimization changes |
 | Signed and unambiguous block types | Decodes `s33` and distinguishes empty, value-type, and type-index forms | Correctly accepts valid multivalue modules and rejects malformed encodings | Included through upstream `4892e774` |
 | Android-compatible block-type corpus | Uses the compatible three-argument stream write API | Allows the regression corpus to run on older Android versions | Included through upstream `4892e774` |
 | Shared LEB128 reader | Consolidates three integer decoding loops | Simpler format validation and maintenance | Separate branch, `59392150` |
 | Narrowing peephole, inline trivial helpers | `i64` work wrapped back to `i32` done in `i32`; one-instruction helpers emitted inline or as JDK intrinsics | Go −4.6 % bytecode, 16,615 → 585 extend helper calls | Current branch, `17542744` |
-| Sound reference types, `ref.eq` fusion | `select_t` and scope exits typed soundly; `ref.eq` as `if_acmpeq` when one side cannot be `i31ref` | Correct static types; fewer `refEq` calls in GC code | Current branch, `50a7c320` |
+| Sound reference types, `ref.eq` fusion | `select_t`, scope exits and (since 2026-10-25) loop parameters typed soundly; `ref.eq` as `if_acmpeq` when one side cannot be `i31ref` | Correct static types; fewer `refEq` calls in GC code | Current branch, `50a7c320`; loop fix in section 11 |
 | Opt-in unsigned `i32` fusion, branchless booleans | `Integer.compareUnsigned` + jump (on where the JVM allows), call-free value booleans (off) | Unsigned helper calls −70 to −99 %; 2× on a large generated method | Current branch, `9e613f66` |
 | Incremental analyzer passes | Narrowing and fusion run while the instruction list is built | Halves the cold-JVM compile overhead | Current branch, `fa661588` |
 | `-Dendive.memCopyWorkaround` NPE fix | The workaround class honours the property; `gt_u`/`le_u` covered too | No NPE on Java 18+ with the property | Merged from `fix/memcopy-workaround-property` |
@@ -171,6 +179,13 @@ The whole run is 12.6 % slower than upstream; forcing `tableswitch` removes the 
 Bisected to this change; see [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md).
 The rule needs a speed-aware threshold before it is offered upstream.
 
+**Policy since 2026-10-25.** A table keeps `tableswitch` when javac's time/space rule prefers it
+and the lookup would save at most 512 bytes; otherwise the smaller encoding wins as before. On
+CPython, `_PyUnicode_ToNumeric_3281` stays at 47,793 bytes (47,789 with the current analyzer); the
+module grows by 0.09 %, no method crosses 8000 bytes, and the fallbacks stay at two. rustvm's
+`exec_op` gets the `tableswitch` of the bisection's forced-`tableswitch` build back. Timings were
+not rerun.
+
 **Relevance to function splitting.** Smaller dispatch code can reduce the size of parents and
 helpers, provide headroom for other instructions, and reduce pressure to split further. The
 Endive size oracle and compiled artifacts should be rebuilt before retuning the Binaryen size
@@ -270,7 +285,11 @@ The final compiler excludes this prototype. Its prospective benefit is smaller b
 but a runtime or allocation benefit needs evidence from actual split helper bodies and JVM
 inlining behavior before implementation is justified.
 
-### Reference-condition fusion — null tests implemented, `ref.eq` deferred
+### Reference-condition fusion — null tests implemented, `ref.eq` deferred (historical, 2026-10-17)
+
+*Superseded:* `ref.eq` fusion was implemented in `50a7c320` (section 10, item 3.3) after sound
+`select_t` and scope-exit typing; the remaining unsound case, loop parameters, was fixed on
+2026-10-25 (section 11).
 
 [ref-condition-fusion-plan.md](compiler/docs/ref-condition-fusion-plan.md) proposed direct null
 branches for `ref.is_null`, `br_on_null`, and `br_on_non_null`, followed by carefully gated
@@ -279,7 +298,10 @@ plan: a generic `DUP` opcode plus ordinary `BranchCondition`s). `ref.eq` remains
 `i31ref` equality is value-based, and the analyzer currently types `select`/`select_t` results
 by their second operand, so static types cannot yet prove an operand non-i31.
 
-## 9. Validation and practical limits
+## 9. Validation and practical limits (2026-10-02 snapshot)
+
+*Historical:* the counts below are those of the 2026-10-02 snapshot. Current validation is in
+section 11.
 
 The final optimization compiler passed **41 compiler unit tests and 28 compiler-tests tests**
 on both the classpath and module path, plus **1,051 selected specification cases**. The
@@ -320,8 +342,30 @@ Implemented from [FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md); details p
 | 3.5 | `BenchmarkLargeMethod` | [large-method-benchmark.md](compiler/docs/large-method-benchmark.md) |
 | 3.6 | Runtime-compile regression: cold-JVM cost of the post-passes, halved | [compile-time-regression.md](compiler/docs/compile-time-regression.md) |
 | 3.7 | C2 refuses 97 % of helper calls near 8000 bytes upstream | [inlining-at-8000-bytes.md](compiler/docs/inlining-at-8000-bytes.md) |
-| — | Fork against upstream on 37 real workload cells: faster in 29 (median −6.7 %), none slower, outputs identical; compile +2–5 % (unsplit QuickJS +14–22 %). Synthetic `rustvm-base`: +12.6 % from the compact switch encoding | [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md) |
+| — | Fork against upstream on 37 real workload cells: faster in 29 (median −6.7 %), none slower, outputs identical; compile +2–5 % (unsplit QuickJS +14–22 %). Synthetic `rustvm-base`: +12.6 % from the compact switch encoding, addressed by the 2026-10-25 switch policy (not remeasured) | [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md) |
 
 All runtime numbers in these notes are laptop measurements; the thesis cites fork speed only
 from the fixed-runner campaign.
 
+## 11. Audit fixes, 2026-10-25
+
+From [FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md), on the branch rebased onto upstream
+`bce75ae6`, which itself closes F13 (table-initialiser entries ran in the importing instance).
+
+| finding | fix | commit |
+| --- | --- | --- |
+| F01, fork | Loop parameters get their declared types on entry, so a struct on first entry and an `i31ref` on the back edge no longer let `ref.eq` fuse into `if_acmpeq` | `Compiler: type loop parameters by the loop's declared types` |
+| F02, fork | Cache key `endive-codegen-v1:` + padded Base64 SHA-256 of module digest and code generation settings; `DirectoryCache` works under the defaults again | `Compiler: derive a valid, versioned cache key …` |
+| F03, inherited | Interruption polled on every tail call (compiled `setTailCall*`, interpreter `RETURN_CALL`) | `Poll for interruption on every tail call` |
+| F04, inherited | Compiled cross-instance `return_call_indirect` names the real reason; support itself still open | `Compiler: name the real reason a cross-instance tail call is rejected` |
+| F05, fork | `tableswitch` kept where faster at ≤ 512 extra bytes (section 4) | `Compiler: keep tableswitch where it is faster and costs few bytes` |
+| F06, F07, fork | Workload A/B reducers validate cells and compare outputs strictly; estimates unchanged | `Docs: check workload A/B cells before reducing them` |
+| F08, fork | The archive keeps round 1 outputs only: the summary now says "2 of 24" and the workload notes say where the full check ran | this section's commit |
+| F09, inherited | Blocking `Fork CI` workflow on the integration and topic branches | `CI: add a blocking fork workflow …` |
+| F10, fork | `mvn-fork.sh` rejects every repository override spelling; `AGENT.md` points at it | `Build: reject every spelling …` |
+| F12, fork | This status header, historical labels, section 11 | this section's commit |
+| F14, inherited | Validator accepts `(ref null none)` where `eqref`, `structref`, `arrayref`, `i31ref` is expected | `Validator: accept none wherever …` |
+
+Not changed: F11 (refactoring, kept apart from these semantic fixes) and cross-instance tail calls
+themselves (F04). F01, F03, F04, F14 and the upstream-side part of F09 are upstream-relevant;
+F03 and F14 are inherited fixes worth offering upstream.
