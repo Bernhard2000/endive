@@ -17,14 +17,21 @@ import run.endive.wasm.types.ValType;
 /**
  * Checks {@code ref.eq} fusion. It may only become {@code if_acmpeq} when one operand's static
  * type excludes {@code i31ref}, which {@code Shaded.refEq} compares by value. The fixture's
- * {@code select_t} and block/if merge exports type an operand that can hold an {@code i31ref}
- * narrower on one path; they must not fuse.
+ * {@code select_t}, block/if merge and loop parameter exports type an operand that can hold an
+ * {@code i31ref} narrower on one path; they must not fuse.
  */
 public class RefEqConditionTest {
 
     private static final String[] FUSED = {"s_eq_if", "eq_s_if_eqz", "s_s_br_if", "s_eq_select"};
     private static final String[] NOT_FUSED = {
-        "eq_eq_if", "eq_eq_select", "select_t_eq_if", "block_merge_eq_if", "if_merge_eq_if"
+        "eq_eq_if",
+        "eq_eq_select",
+        "select_t_eq_if",
+        "block_merge_eq_if",
+        "if_merge_eq_if",
+        "loop_param_eq_if",
+        "loop_param_eq_br_if",
+        "nested_loop_param_eq_if"
     };
 
     private static WasmModule module() {
@@ -64,6 +71,10 @@ public class RefEqConditionTest {
         assertArrayEquals(new long[] {1}, compiled.export("select_t_eq_if").apply(1, 1));
         assertArrayEquals(new long[] {1}, compiled.export("block_merge_eq_if").apply(1, 1));
         assertArrayEquals(new long[] {1}, compiled.export("if_merge_eq_if").apply(1, 1));
+        // the loop's first entry carries a struct, the back edge an i31ref equal to the operand
+        assertArrayEquals(new long[] {1}, compiled.export("loop_param_eq_if").apply(1, 2));
+        assertArrayEquals(new long[] {1}, compiled.export("loop_param_eq_br_if").apply(1, 2));
+        assertArrayEquals(new long[] {1}, compiled.export("nested_loop_param_eq_if").apply(1, 2));
     }
 
     private static List<CompilerInstruction> instructions(WasmModule module, String name) {

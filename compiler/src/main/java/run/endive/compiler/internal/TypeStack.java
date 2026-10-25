@@ -76,6 +76,22 @@ final class TypeStack {
     }
 
     /**
+     * Enters a loop. Its parameters get the loop's declared parameter types: later iterations
+     * enter through the loop's label with any subtype of them, so the types the first entry left
+     * on the stack are no proof about the values the loop body sees.
+     */
+    public void enterLoopScope(Instruction scope, FunctionType scopeType) {
+        enterScope(scope, scopeType);
+        var params = scopeType.params();
+        for (int i = 0; i < params.size(); i++) {
+            types().pop();
+        }
+        for (ValType type : params) {
+            types().push(type);
+        }
+    }
+
+    /**
      * Leaves a scope. Its results get the scope's declared result types: values can also arrive
      * by branches to the scope's label, so the types the fallthrough path left on the stack can
      * be narrower than what the scope may produce.

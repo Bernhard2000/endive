@@ -310,8 +310,10 @@ final class WasmAnalyzer {
                     result.add(new CompilerInstruction(CompilerOpCode.TRAP));
                     break;
                 case BLOCK:
-                case LOOP:
                     stack.enterScope(ins.scope(), blockType(ins));
+                    break;
+                case LOOP:
+                    stack.enterLoopScope(ins.scope(), blockType(ins));
                     break;
                 case RETURN:
                     exitBlockDepth = ins.depth();
