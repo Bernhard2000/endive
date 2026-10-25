@@ -114,7 +114,7 @@ public final class Shaded {
         Instance refInstance = table.instance(funcTableIdx);
         if (refInstance != null && refInstance != instance) {
             throw new WasmEngineException(
-                    "Indirect tail-call to a different Machine implementation is not supported");
+                    "Indirect tail-call to a function of another instance is not supported");
         }
         int actualTypeIdx = instance.functionType(funcId);
         if (actualTypeIdx != typeId
@@ -138,7 +138,7 @@ public final class Shaded {
         Instance refInstance = table.instance(funcTableIdx);
         if (refInstance != null && refInstance != instance) {
             throw new WasmEngineException(
-                    "Indirect tail-call to a different Machine implementation is not supported");
+                    "Indirect tail-call to a function of another instance is not supported");
         }
         int actualTypeIdx = instance.functionType(funcId);
         if (actualTypeIdx != typeId

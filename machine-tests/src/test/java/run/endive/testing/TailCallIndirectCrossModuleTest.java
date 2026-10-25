@@ -63,6 +63,10 @@ public class TailCallIndirectCrossModuleTest {
     public void returnCallIndirectIsRejected(
             Function<Instance.Builder, Instance.Builder> machineInject) {
         var instance = instance(machineInject);
-        assertThrows(WasmEngineException.class, () -> instance.export("tail").apply());
+        var e = assertThrows(WasmEngineException.class, () -> instance.export("tail").apply());
+        // the instance, not the Machine implementation, decides: both engines say so alike
+        assertEquals(
+                "Indirect tail-call to a function of another instance is not supported",
+                e.getMessage());
     }
 }
