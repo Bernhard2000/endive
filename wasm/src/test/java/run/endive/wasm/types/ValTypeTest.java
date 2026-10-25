@@ -1,6 +1,8 @@
 package run.endive.wasm.types;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import run.endive.corpus.CorpusResources;
@@ -35,6 +37,39 @@ public class ValTypeTest {
             ValType roundTrip = ValType.builder().fromId(id).build();
             assertEquals(vt, roundTrip);
         }
+    }
+
+    @Test
+    public void noneIsTheBottomOfTheAnyHierarchy() {
+        int none = ValType.TypeIdxCode.NONE.code();
+        for (var top :
+                new ValType.TypeIdxCode[] {
+                    ValType.TypeIdxCode.ANY,
+                    ValType.TypeIdxCode.EQ,
+                    ValType.TypeIdxCode.I31,
+                    ValType.TypeIdxCode.STRUCT,
+                    ValType.TypeIdxCode.ARRAY,
+                    ValType.TypeIdxCode.NONE
+                }) {
+            assertTrue(ValType.heapTypeSubtype(none, top.code(), null), top.name());
+        }
+        for (var other :
+                new ValType.TypeIdxCode[] {
+                    ValType.TypeIdxCode.FUNC,
+                    ValType.TypeIdxCode.NOFUNC,
+                    ValType.TypeIdxCode.EXTERN,
+                    ValType.TypeIdxCode.NOEXTERN,
+                    ValType.TypeIdxCode.EXN,
+                    ValType.TypeIdxCode.NOEXN
+                }) {
+            assertFalse(ValType.heapTypeSubtype(none, other.code(), null), other.name());
+        }
+    }
+
+    @Test
+    public void refNullNoneValidatesWhereAnAbstractAnySubtypeIsExpected() {
+        var module = Parser.parse(CorpusResources.getResource("compiled/ref_null_none.wat.wasm"));
+        assertEquals(4, module.exportSection().exportCount());
     }
 
     @Test
