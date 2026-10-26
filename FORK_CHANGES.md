@@ -188,14 +188,16 @@ Bisected to this change (pre-sync `82f39301`, now `0fe9b7f3`); see
 [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md).
 
 ![rustvm-base time against upstream at each bisected commit (pre-sync ids)](compiler/docs/data/workload-ab-2026-10-18/plots/rustvm-bisect.png)
-The rule needs a speed-aware threshold before it is offered upstream.
+The rule needed a speed-aware threshold before it could be offered upstream; see the policy below.
 
 **Policy since 2026-10-25.** A table keeps `tableswitch` when javac's time/space rule prefers it
 and the lookup would save at most 512 bytes; otherwise the smaller encoding wins as before. On
 CPython, `_PyUnicode_ToNumeric_3281` stays at 47,793 bytes (47,789 with the current analyzer); the
 module grows by 0.09 %, no method crosses 8000 bytes, and the fallbacks stay at two. rustvm's
-`exec_op` gets the `tableswitch` of the bisection's forced-`tableswitch` build back. Timings were
-not rerun.
+`exec_op` gets the `tableswitch` of the bisection's forced-`tableswitch` build back.
+Remeasured 2026-10-26 (`c5219baf` against upstream `bce75ae6`, 12 rounds, Java 21): `rustvm-base`
++1.6 % [−2.0, +3.3], `z80-base` +0.8 % [−0.6, +3.4], neither significant, against +12.6 %
+[+9.9, +14.8] before ([data/switch-policy-2026-10-26/](compiler/docs/data/switch-policy-2026-10-26/)).
 
 **Relevance to function splitting.** Smaller dispatch code can reduce the size of parents and
 helpers, provide headroom for other instructions, and reduce pressure to split further. The
@@ -354,7 +356,7 @@ Implemented from [FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md); details p
 | 3.5 | `BenchmarkLargeMethod` | [large-method-benchmark.md](compiler/docs/large-method-benchmark.md) |
 | 3.6 | Runtime-compile regression: cold-JVM cost of the post-passes, halved | [compile-time-regression.md](compiler/docs/compile-time-regression.md) |
 | 3.7 | C2 refuses 97 % of helper calls near 8000 bytes upstream | [inlining-at-8000-bytes.md](compiler/docs/inlining-at-8000-bytes.md) |
-| — | Fork against upstream on 37 real workload cells: faster in 29 (median −6.7 %), none slower, outputs identical; compile +2–5 % (unsplit QuickJS +14–22 %). Synthetic `rustvm-base`: +12.6 % from the compact switch encoding, addressed by the 2026-10-25 switch policy (not remeasured) | [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md) |
+| — | Fork against upstream on 37 real workload cells: faster in 29 (median −6.7 %), none slower, outputs identical; compile +2–5 % (unsplit QuickJS +14–22 %). Synthetic `rustvm-base`: +12.6 % from the compact switch encoding, removed by the 2026-10-25 switch policy (+1.6 % [−2.0, +3.3] on 2026-10-26) | [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md) |
 
 ![Steady-state change per workload cell, fork 44f68a6f against upstream 1580f534, with 95 % CIs](compiler/docs/data/workload-ab-2026-10-18/plots/steady-forest.png)
 
@@ -375,7 +377,7 @@ evidence), on the branch rebased onto upstream `bce75ae6`, which itself closes F
 | F02, fork | Cache key `endive-codegen-v1:` + padded Base64 SHA-256 of module digest and code generation settings; `DirectoryCache` works under the defaults again | `61eaad20` |
 | F03, inherited | Interruption polled on every tail call (compiled `setTailCall*`, interpreter `RETURN_CALL`) | `55c485c7` |
 | F04, inherited | Compiled cross-instance `return_call_indirect` names the real reason; support itself still open | `03c8d491` |
-| F05, fork | `tableswitch` kept where faster at ≤ 512 extra bytes (section 4); not remeasured | `744036e2` |
+| F05, fork | `tableswitch` kept where faster at ≤ 512 extra bytes (section 4); remeasured 2026-10-26: `rustvm-base` +1.6 % [−2.0, +3.3], was +12.6 % | `744036e2` |
 | F06, F07, fork | Workload A/B reducers validate cells and compare outputs strictly; all 37 estimates unchanged | `23b9ae08` |
 | F08, fork | Disclosed, not recoverable: the archive keeps round 1 outputs only; the summary says "2 of 24" and the workload notes say where the full check ran | `5f7b6030` |
 | F09, inherited | Blocking `Fork CI` workflow (Java 11/17/21/25) on the integration and topic branches; no live run yet | `af5de0d3` |
@@ -393,5 +395,13 @@ inherited fixes worth offering upstream.
 `-pl compiler-tests,machine-tests,dircache -am`: compiler unit 66, compiler specification suite
 34,123 (64 skips), `machine-tests` 265, runtime 98, `DirectoryCacheTest` 4; no failures or errors.
 Before F11, the same build with `runtime-tests` also ran the interpreter specification suite,
-62,246 (83 skips), without failures. Java 21 only; Java 11/17/25 are left to the new CI workflow,
-which has not run yet.
+62,246 (83 skips), without failures.
+
+**Java 17 and 27 (2026-10-26).** The same `-pl compiler-tests,machine-tests,dircache -am` build
+on `c5219baf` passes on Temurin 17.0.21 and 27.0.1 with the same counts, and on 17.0.21 also with
+unsigned compare fusion forced on. OpenJDK's JDK-8376400 reproducer still fails on 17.0.21 (no
+17u backport), so the Java 17 defaults stay. A workload A/B on both JDKs (six cells, ten rounds)
+has the fork faster than upstream in every cell: −5.1 to −10.8 % on Java 17 with the workaround
+on, −4.3 to −14.6 % on Java 27; the workaround itself costs −0.8 to +1.4 %. Details in
+[jdk17-jdk27-validation-2026-10-26.md](compiler/docs/jdk17-jdk27-validation-2026-10-26.md).
+Java 11 and 25 are left to the `Fork CI` workflow, which has not run yet.

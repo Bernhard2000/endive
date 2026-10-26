@@ -1,0 +1,13 @@
+Preliminary tests complete
+--- z80 benchmark done ---
+repeats=40000
+instructions=35960000
+cycles=348840000
+print_checksum=96432256
+Preliminary tests complete
+--- z80 benchmark done ---
+repeats=40000
+instructions=35960000
+cycles=348840000
+print_checksum=96432256
+{"label":"up21","bytes":126885,"parse_ms":121.927,"machine_compile_ms":227.080,"compile_ms":349.007,"first_exec_ms":10935.250,"last_exec_ms":10883.939,"warmup_penalty_ms":0.000,"exec_ms_median":10935.250,"exec_ms_min":10883.939,"instantiate_ms":[7.312176, 0.331307],"start_ms":[10909.475591, 10883.278339],"memory_backend":"bytebuffer","rss_hwm_kb":123816,"all_exec_ms":[10935.249775, 10883.938619]}

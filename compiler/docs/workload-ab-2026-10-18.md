@@ -213,6 +213,13 @@ method. Possible fixes, to be measured before choosing one:
 `perf/switch-encoding` (the upstream candidate for this change) is affected in the same way.
 Do not open it as an upstream PR before this is resolved.
 
+**Resolved (2026-10-25/26).** `744036e2` takes the first route: `tableswitch` stays where javac's
+time/space rule prefers it and costs at most 512 bytes more, which gives `exec_op` its
+`tableswitch` back. Remeasured on `c5219baf` against upstream `bce75ae6` with this protocol
+(12 rounds, Java 21): `rustvm-base` +1.6 % [−2.0, +3.3], `z80-base` +0.8 % [−0.6, +3.4], neither
+significant ([data/switch-policy-2026-10-26/](data/switch-policy-2026-10-26/)).
+`perf/switch-encoding-v2` carries the same policy.
+
 ## Limitations
 
 - One laptop, one session, `ondemand` with boost, desktop running. Paired interleaving cancels

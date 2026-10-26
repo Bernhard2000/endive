@@ -1,0 +1,64 @@
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 575823us
+Richards: iterations=1 runtime: 580759us
+Richards: iterations=1 runtime: 409357us
+Richards: iterations=1 runtime: 399465us
+Richards: iterations=1 runtime: 395290us
+Richards: iterations=5 average: 472139us total: 2360695us
+
+Total Runtime: 2360695us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 517899us
+Richards: iterations=1 runtime: 404009us
+Richards: iterations=1 runtime: 408458us
+Richards: iterations=1 runtime: 407349us
+Richards: iterations=1 runtime: 404738us
+Richards: iterations=5 average: 428491us total: 2142454us
+
+Total Runtime: 2142454us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 449036us
+Richards: iterations=1 runtime: 397547us
+Richards: iterations=1 runtime: 403116us
+Richards: iterations=1 runtime: 399714us
+Richards: iterations=1 runtime: 403994us
+Richards: iterations=5 average: 410681us total: 2053406us
+
+Total Runtime: 2053406us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 394120us
+Richards: iterations=1 runtime: 396582us
+Richards: iterations=1 runtime: 390794us
+Richards: iterations=1 runtime: 387940us
+Richards: iterations=1 runtime: 385584us
+Richards: iterations=5 average: 391004us total: 1955021us
+
+Total Runtime: 1955021us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 390920us
+Richards: iterations=1 runtime: 396297us
+Richards: iterations=1 runtime: 385894us
+Richards: iterations=1 runtime: 385797us
+Richards: iterations=1 runtime: 383645us
+Richards: iterations=5 average: 388510us total: 1942552us
+
+Total Runtime: 1942552us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 392285us
+Richards: iterations=1 runtime: 388467us
+Richards: iterations=1 runtime: 401064us
+Richards: iterations=1 runtime: 426954us
+Richards: iterations=1 runtime: 405385us
+Richards: iterations=5 average: 402831us total: 2014155us
+
+Total Runtime: 2014155us
+Starting Richards benchmark ...
+Richards: iterations=1 runtime: 393500us
+Richards: iterations=1 runtime: 391961us
+Richards: iterations=1 runtime: 395494us
+Richards: iterations=1 runtime: 386501us
+Richards: iterations=1 runtime: 386128us
+Richards: iterations=5 average: 390717us total: 1953585us
+
+Total Runtime: 1953585us
+{"label":"fork17noWA","bytes":518059,"parse_ms":219.191,"machine_compile_ms":523.853,"compile_ms":743.044,"first_exec_ms":2453.609,"last_exec_ms":1964.049,"warmup_penalty_ms":680.524,"exec_ms_median":1969.824,"exec_ms_min":1954.970,"instantiate_ms":[10.466791, 1.119748, 0.796118, 0.582191, 0.503124, 0.730086, 0.521798],"start_ms":[2423.503974, 2165.085226, 2070.602625, 1968.922552, 1954.117777, 2024.359727, 1963.104852],"memory_backend":"bytebuffer","rss_hwm_kb":591088,"all_exec_ms":[2453.609413, 2166.562749, 2071.759351, 1969.824145, 1954.97016, 2025.442888, 1964.049114]}

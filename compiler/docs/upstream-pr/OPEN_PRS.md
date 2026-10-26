@@ -1,8 +1,11 @@
 # Upstream PR package (fork plan §2 and §4)
 
-Status 2026-10-18. Every branch below is pushed to the fork (`origin`,
-`github.com/Bernhard2000/endive`), based on upstream main `1580f534`, and was built and tested
-locally as listed. **None is opened yet.** The Bytecode Alliance
+Status 2026-10-26. The branches to open are the **`-v2` branches** (and three new ones from the
+fork audit), all **local only, not pushed**, each based on upstream main `bce75ae6` (fetched
+again 2026-10-26; unchanged since 23 October). They are the 2026-10-18 branches, which stay on
+the fork (`origin`, `github.com/Bernhard2000/endive`, based on `1580f534`) as the record,
+cherry-picked onto the new base without conflicts, with every `Co-Authored-By: Claude …` trailer
+replaced by `Assisted-by: Claude Code`. **None is opened yet.** The Bytecode Alliance
 [AI Tool Use Policy](https://github.com/bytecodealliance/governance/blob/main/AI_TOOL_POLICY.md)
 says automated agents must not act in project spaces without human approval, and contributors
 must read and review all generated code and text before asking for review. So the author
@@ -11,23 +14,14 @@ words.
 
 ## Before opening any of them
 
-1. **Commit trailers.** The policy forbids listing tools as co-authors. Every commit on these
-   branches still carries a `Co-Authored-By: Claude …` trailer. Replace it (optionally) with
-   `Assisted-by: Claude Code`, on a fresh branch so the pushed one stays as a record:
-
-   ```sh
-   b=fix/many-params-abi            # repeat per branch
-   git switch -c "$b-v2" "$b"
-   git rebase upstream/main --exec \
-     'git commit --amend --no-edit -m "$(git log -1 --format=%B | sed -E "s/^Co-Authored-By: Claude[^<]*<noreply@anthropic.com>$/Assisted-by: Claude Code/")"'
-   git push -u origin "$b-v2"
-   ```
-
-   (The agent that prepared this package was not allowed to rewrite the history itself.)
-2. `git fetch upstream main` and rebase if main moved; rerun the checks listed per PR
-   (`compiler/docs/upstream-pr/TODO.md`, "Environment notes", for the local traps).
-3. Open from the fork: `gh pr create --repo bytecodealliance/endive --base main --head
-   Bernhard2000:<branch> --title "…" --body-file <file>`.
+1. **Review the branch** (`git log -p upstream/main..<branch>`) and the draft below; rewrite the
+   text in your own words.
+2. `git fetch upstream main`; if main moved, rebase (`git rebase upstream/main <branch>`) and
+   rerun the checks listed per PR (`compiler/docs/upstream-pr/TODO.md`, "Environment notes",
+   for the local traps; `../prv2-checks/run.sh` next to this checkout runs them all).
+3. Push and open from the fork: `git push -u origin <branch>`, then `gh pr create --repo
+   bytecodealliance/endive --base main --head Bernhard2000:<branch> --title "…" --body-file
+   <file>`.
 
 ## Order
 
@@ -46,7 +40,7 @@ words.
 
 ---
 
-## 2.1 `fix/many-params-abi` — "Compiler: fix the boxed-argument ABI for functions with many parameters"
+## 2.1 `fix/many-params-abi-v2` — "Compiler: fix the boxed-argument ABI for functions with many parameters"
 
 **Summary.** Functions whose parameters do not fit a JVM descriptor receive them boxed in a
 `long[]`. That path had five connected bugs:
@@ -78,7 +72,7 @@ template is updated for the new `Object[]` parameter and shifted slots.
 template and gitignored; a stale local copy hides template changes (fixed separately in
 `fix/build-sharp-edges`).
 
-## 2.2 + 2.3 `fix/memcopy-workaround-property` — "Fix -Dendive.memCopyWorkaround=true on Java 18+, and cover i32.gt_u/le_u"
+## 2.2 + 2.3 `fix/memcopy-workaround-property-v2` — "Fix -Dendive.memCopyWorkaround=true on Java 18+, and cover i32.gt_u/le_u"
 
 **Summary.** `Shaded` enables the C2 workaround (JDK-8376400) when
 `-Dendive.memCopyWorkaround=true` is set, on any Java version, and generated code then calls
@@ -97,18 +91,20 @@ for these two opcodes; the change is by analogy, and can be dropped if you prefe
 the property set, in its own surefire execution (the setting is read once per JVM). Without the
 fix it fails with the NPE.
 
-## 2.4 `pr/fuse-branch-conditions`
+## 2.4 `pr/fuse-branch-conditions-v2`
 
 Use [PR_DESCRIPTION.md](PR_DESCRIPTION.md), with these updates:
 
-- add the JDK 11 result above to "Tests" (TODO item 7: Java 11 now checked locally);
-- the "AI assistance" section must not mention `Co-Authored-By` trailers (see "Before opening");
+- the "Tests" section already lists the JDK 11 and 17 results; update the counts if the branch
+  is rebased again;
+- the "AI assistance" section must match the trailers (`Assisted-by: Claude Code` on the v2
+  branch);
 - optional evidence for reviewers: [inlining-at-8000-bytes.md](../inlining-at-8000-bytes.md)
   counts C2 refusing 97 % of the helper calls (`size > DesiredMethodLimit`) in a 7.8 kB
   generated method upstream; and `BenchmarkLargeMethod` (fork, `7ef91208`) is a JMH case
   upstream's Perf CI could use (TODO item 8). Both are fork-side and not in the branch.
 
-## 4 `fix/build-sharp-edges` — "Build: three sharp edges"
+## 4 `fix/build-sharp-edges-v2` — "Build: three sharp edges"
 
 1. **wasm-tools download keyed on its version.** `inlay-maven-plugin` skips fetching whenever
    the output file exists and `wkg.lock` has an entry, without a digest check, so a
@@ -123,7 +119,7 @@ Use [PR_DESCRIPTION.md](PR_DESCRIPTION.md), with these updates:
 3. **Spotless formatting of `android-tests/device-tests/build.gradle.kts`.** The current ktfmt
    adds a trailing comma on every build of main, leaving the tree dirty.
 
-## 2.5 `fix/wide-multivalue-return` — "Compiler: pack wide multivalue results inline"
+## 2.5 `fix/wide-multivalue-return-v2` — "Compiler: pack wide multivalue results inline"
 
 **Summary.** A function returning several values calls a generated `value_xxx` method that
 takes every result as a parameter. For tuples wider than 255 JVM slots (one `i32` and 128
@@ -137,12 +133,16 @@ the widest that still uses the helper), a mixed `i32`/`f32`/`f64`/`i64` tuple wi
 and a wide tuple with an `externref` whose identity must survive. All three fail on main with
 `bad parameter count 256/257/258`.
 
-## 2.6 `perf/switch-encoding` — "Compiler: choose a compact switch encoding for br_table"
+## 2.6 `perf/switch-encoding-v2` — "Compiler: choose a compact switch encoding for br_table"
 
-> **On hold (2026-10-18).** The size-first choice makes the synthetic `rustvm-base` 12.6 % slower: a sparse
-> 160-entry table becomes a `lookupswitch` in a method HotSpot interprets, so each dispatch is a
-> binary search. Add a speed-aware threshold and re-measure before opening this PR
-> ([workload-ab-2026-10-18.md](../workload-ab-2026-10-18.md)).
+> **No longer on hold (2026-10-26).** On 2026-10-18 the size-first choice made the synthetic
+> `rustvm-base` 12.6 % slower: a 160-entry table became a `lookupswitch` in a method HotSpot
+> interprets, so each dispatch was a binary search. `perf/switch-encoding-v2` keeps the
+> `tableswitch` where javac's time/space rule prefers it and it costs at most 512 bytes more.
+> Remeasured on the fork with the same policy (12 rounds, Java 21): `rustvm-base` +1.6 %
+> [−2.0, +3.3], `z80-base` +0.8 % [−0.6, +3.4], neither significant
+> ([data](../data/switch-policy-2026-10-26/)); CPython's `_PyUnicode_ToNumeric` keeps its
+> saving (47,789 bytes).
 
 **Summary.** `br_table` always became a `tableswitch` (4 bytes per entry). Large sparse tables
 (thousands of entries for one common target, typical of interpreters and of function splitting)
@@ -151,7 +151,9 @@ for tables of at least 8000 bytes, a `lookupswitch` whose default is the most fr
 guarded by an unsigned bounds check that sends out-of-range selectors (including negative ints,
 which are large unsigned values in Wasm) to the Wasm default; the `tableswitch`; or a pop and
 jump when every entry is the default (also the valid empty `br_table`, where `tableswitch` would
-have `high < low`).
+have `high < low`). Smaller is not always faster: HotSpot's interpreter, which runs every
+method over 8000 bytes, searches a `lookupswitch` key by key, so the `tableswitch` is kept when
+javac's time/space rule prefers it and it costs at most 512 bytes more.
 
 **Out-of-range semantics.** Wasm selects the default for any selector `>= n` as an unsigned
 value. `tableswitch` and a `lookupswitch` keyed on `0..n-1` both map every other int (negative
@@ -168,11 +170,51 @@ compiler, laptop; please treat as exploratory and rerun).
 `MIN_VALUE`/`MAX_VALUE` against the interpreter, empty/uniform/dense tables, and that a
 backward `br_table` still checks interruption.
 
-## 2.7 `pr/leb128-spec-reader`
+## 2.7 `pr/leb128-spec-reader-v2`
 
 Only if maintainers want it: one `readLeb128(buffer, bits, signed)` instead of three loops; no
 behaviour change claimed, no performance claim. Rebased copy of `fix/leb128-spec-reader`
 (cherry-pick was clean). Removes public helpers that have no in-tree callers.
+
+## 2.8 `fix/tail-call-interruption` — "Poll for interruption on every tail call"
+
+From the fork audit of 2026-10-25 (F03); the defect is upstream's.
+
+**Summary.** Ordinary calls and backward branches check the thread's interrupt flag, but a cycle
+of tail calls runs neither: the compiled trampoline loops over pending tail calls, and the
+interpreter resets its frame for a self tail call, both without a check. Interrupting a thread
+stuck in such a cycle did not stop it, in either engine, for direct, indirect and `call_ref`
+tail calls. The check now runs in the compiled `setTailCall*` helpers, which every compiled tail
+call goes through, and at the start of the interpreter's `RETURN_CALL`, which the indirect and
+`call_ref` forms delegate to.
+
+**Tests.** `TailCallInterruptionTest` (machine-tests, new fixture `tail_call_cycles.wat`):
+direct, mutual, indirect and `call_ref` cycles in both engines are interrupted (8 failures
+without the fix), and a million-step finite tail recursion still completes.
+
+## 2.9 `fix/cross-instance-tail-call-message` — "Compiler: name the real reason a cross-instance tail call is rejected"
+
+From the audit (F04); small, could be folded into 2.8 or an issue.
+
+**Summary.** A compiled `return_call_indirect` whose table entry belongs to another instance
+fails with "different Machine implementation", even when both instances use the compiler. The
+check is on the instance, as in the interpreter, so it now uses the interpreter's message, and
+`TailCallIndirectCrossModuleTest` asserts it for both engines. Supporting the call itself would
+need a trampoline that switches instance; worth an issue rather than this PR.
+
+## 2.10 `fix/validator-ref-null-none` — "Validator: accept none wherever a type of the any hierarchy is expected"
+
+From the audit (F14); the defect is upstream's.
+
+**Summary.** `heapTypeSubtype` answered `none <: T` by asking whether `any <: T`, which holds
+only for `T = any`. A `(ref null none)` was therefore rejected where `eqref`, `structref`,
+`arrayref` or `i31ref` is expected, although `none` is the bottom of the whole `any` hierarchy.
+Binaryen types every null of that hierarchy as `(ref null none)`, so valid GC modules from
+Binaryen-based toolchains failed to load.
+
+**Tests.** `ValTypeTest` checks the subtype matrix, including that `none` stays outside the
+`func`, `extern` and `exn` hierarchies; `RefNullNoneTest` (machine-tests, new fixture
+`ref_null_none.wat`) runs the null in all four positions in both engines.
 
 ---
 
@@ -202,3 +244,9 @@ To post as an issue (or a comment on the fusion PR) **before** proposing code:
 - The analyzer typing fixes from `50a7c320` (`select_t` result type, declared types at scope
   exits) are bug fixes on their own (the cast source hint after `select_t` is wrong on main) and
   could go upstream before `ref.eq` fusion.
+- Cross-instance `return_call_indirect` in the compiler (audit F04): 2.9 only fixes the message.
+  Supporting the call needs a trampoline that switches instance; better raised as an issue
+  first.
+- Upstream CI (audit F09): the `ci.yaml` matrix job has `continue-on-error: true`, so a failing
+  leg does not fail the run. Worth an issue asking whether that is intended; the fork's own
+  `Fork CI` workflow (`af5de0d3`) is fork-only and not proposed.

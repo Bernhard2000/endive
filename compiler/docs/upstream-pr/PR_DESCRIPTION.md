@@ -1,6 +1,7 @@
 <!--
-Draft body for the upstream pull request from branch `pr/fuse-branch-conditions`
-(upstream/main 1580f534 + e4105edf + 3ba75b28). Paste everything below the line.
+Draft body for the upstream pull request from branch `pr/fuse-branch-conditions-v2`
+(upstream/main bce75ae6 + c912093c + e8074daf; the pushed `pr/fuse-branch-conditions` on
+1580f534 is the record). Paste everything below the line.
 Title suggestion: "Compiler: fuse conditions into the branches and selects that consume them"
 Before opening, work through TODO.md in this directory.
 -->

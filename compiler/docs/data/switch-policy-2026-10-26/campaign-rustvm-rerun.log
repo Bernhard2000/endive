@@ -1,0 +1,26 @@
+l1_protocol: within-round order=permuted seed=20261026
+[15:47:02] rustvm-base r1 fork21 steady 6564.304 first 6564.304 compile 568.765
+[15:47:16] rustvm-base r1 up21 steady 6627.202 first 6590.194 compile 934.743
+[15:47:31] rustvm-base r2 up21 steady 6823.305 first 6823.305 compile 703.405
+[15:47:45] rustvm-base r2 fork21 steady 6673.54 first 6673.54 compile 676.468
+[15:47:59] rustvm-base r3 up21 steady 6523.012 first 6523.012 compile 661.38
+[15:48:13] rustvm-base r3 fork21 steady 6625.381 first 6625.381 compile 892.22
+[15:48:28] rustvm-base r4 up21 steady 6908.673 first 6908.673 compile 651.794
+[15:48:42] rustvm-base r4 fork21 steady 6476.296 first 6476.296 compile 683.235
+[15:48:55] rustvm-base r5 fork21 steady 6417.679 first 6417.679 compile 783.082
+[15:49:09] rustvm-base r5 up21 steady 6316.923 first 6316.923 compile 602.977
+[15:49:22] rustvm-base r6 fork21 steady 6332.121 first 6273.719 compile 519.691
+[15:49:36] rustvm-base r6 up21 steady 6447.604 first 6347.183 compile 681.122
+[15:49:50] rustvm-base r7 fork21 steady 6845.785 first 6845.785 compile 600.118
+[15:50:04] rustvm-base r7 up21 steady 6660.645 first 6660.645 compile 839.196
+[15:50:19] rustvm-base r8 up21 steady 6926.205 first 6926.205 compile 602.882
+[15:50:34] rustvm-base r8 fork21 steady 7509.637 first 7359.47 compile 563.279
+[15:50:49] rustvm-base r9 fork21 steady 7264.168 first 7264.168 compile 668.298
+[15:51:03] rustvm-base r9 up21 steady 6826.555 first 6826.555 compile 629.39
+[15:51:17] rustvm-base r10 up21 steady 6620.874 first 6620.874 compile 649.417
+[15:51:32] rustvm-base r10 fork21 steady 6868.315 first 6757.741 compile 576.632
+[15:51:46] rustvm-base r11 fork21 steady 6559.872 first 6559.872 compile 861.822
+[15:52:00] rustvm-base r11 up21 steady 6733.609 first 6733.609 compile 616.798
+[15:52:14] rustvm-base r12 up21 steady 6651.122 first 6651.122 compile 559.632
+[15:52:29] rustvm-base r12 fork21 steady 6816.609 first 6757.872 compile 508.325
+CAMPAIGN-DONE

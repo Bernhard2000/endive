@@ -808,7 +808,7 @@ then one commit per fix was added. Nothing was pushed. Probe output on the resul
 | F02 | Fixed | `61eaad20` | Key `endive-codegen-v1:` + padded Base64 SHA-256 of module digest and code generation settings | Option matrix all OK; `DirectoryCacheTest` 4/4 under defaults incl. all four option combinations; `CacheKeyTest` |
 | F03 | Fixed | `55c485c7` | Interrupt poll in compiled `setTailCall*` and interpreter `RETURN_CALL` | All six tail workers stop; `TailCallInterruptionTest` (8 cycles, both engines; 8 failures without the fix) plus a 10⁶-step finite tail recursion |
 | F04 | Message fixed; support open | `03c8d491` | Compiled rejection names the instance, as the interpreter does | `TailCallIndirectCrossModuleTest` asserts the message in both engines |
-| F05 | Fixed (not remeasured) | `744036e2` | `tableswitch` kept where javac's rule prefers it and it costs ≤ 512 bytes | rustvm `exec_op` back to `tableswitch`; CPython `_PyUnicode_ToNumeric` keeps 47,789 bytes, module +0.09 %, no method crosses 8000 bytes, fallbacks still 2; two new `SplitFunctionOptimizationTest` cases. No timing campaign |
+| F05 | Fixed, remeasured | `744036e2` | `tableswitch` kept where javac's rule prefers it and it costs ≤ 512 bytes | rustvm `exec_op` back to `tableswitch`; CPython `_PyUnicode_ToNumeric` keeps 47,789 bytes, module +0.09 %, no method crosses 8000 bytes, fallbacks still 2; two new `SplitFunctionOptimizationTest` cases. Remeasured 2026-10-26: `rustvm-base` +1.6 % [−2.0, +3.3] (was +12.6 %), `z80-base` +0.8 % [−0.6, +3.4], both not significant ([data](compiler/docs/data/switch-policy-2026-10-26/)) |
 | F06, F07 | Fixed | `23b9ae08` | Shared `abstats.py` validates cells; strict output comparison; `summarize.py` exits non-zero on failure | `test_abstats` (9 negative controls); all 37 archived estimates unchanged |
 | F08 | Disclosed | `5f7b6030` | Summary says the archive keeps 2 of 24 outputs per cell; `--partial-outputs` reports "2 of 24" | Lost outputs cannot be recovered |
 | F09 | Fixed in the fork | `af5de0d3` | Blocking `Fork CI` workflow on integration and topic branches, Java 11/17/21/25 | YAML only; no live run yet, and making it required is a repository setting |
@@ -828,3 +828,8 @@ other fixes concern fork-only code.
 F11 afterwards, same strict build with `-pl compiler-tests,machine-tests,dircache -am`: compiler
 unit 66, compiler specification suite 34,123 (64 skips), `machine-tests` 265, runtime 98,
 `DirectoryCacheTest` 4; no failures or errors. Java 21 only.
+
+On 2026-10-26 the same build on `c5219baf` also passed on Temurin 17.0.21 and 27.0.1 with the
+same counts; OpenJDK's JDK-8376400 reproducer still fails on 17.0.21, so the Java 17 defaults
+stay ([jdk17-jdk27-validation-2026-10-26.md](compiler/docs/jdk17-jdk27-validation-2026-10-26.md)).
+Java 11 and 25 remain for the CI workflow.

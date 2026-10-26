@@ -1,0 +1,25 @@
+cat: wabt-up.cp: Datei oder Verzeichnis nicht gefunden
+fork27 r1 rc=0 failures=0
+fork17noWA r1 rc=0 failures=0
+up27 r1 rc=1 	... 1 more
+up17 r1 rc=1 	... 1 more
+fork17 r1 rc=0 failures=0
+fork17 r2 rc=0 failures=0
+up27 r2 rc=1 	... 1 more
+fork17noWA r2 rc=0 failures=0
+up17 r2 rc=1 	... 1 more
+fork27 r2 rc=0 failures=0
+fork17noWA r3 rc=0 failures=0
+fork17 r3 rc=0 failures=0
+up17 r3 rc=1 	... 1 more
+up27 r3 rc=1 	... 1 more
+fork27 r3 rc=0 failures=0
+W2W-DONE
+--- rerun up arms
+up27 r1 rc=0 failures=0
+up17 r1 rc=0 failures=0
+up27 r2 rc=0 failures=0
+up17 r2 rc=0 failures=0
+up17 r3 rc=0 failures=0
+up27 r3 rc=0 failures=0
+W2W-DONE

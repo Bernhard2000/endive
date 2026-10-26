@@ -1,13 +1,17 @@
 # Upstream PR: what is left to do
 
-PR branch: `pr/fuse-branch-conditions` (local only, not pushed), based on
-`upstream/main` = `1580f534` (fetched 2026-10-17 from `https://github.com/bytecodealliance/endive`,
-remote `upstream`).
+PR branch: **`pr/fuse-branch-conditions-v2`** (local only, not pushed), based on
+`upstream/main` = `bce75ae6` (fetched again 2026-10-26 from
+`https://github.com/bytecodealliance/endive`, remote `upstream`; unchanged since 23 October). It
+is `pr/fuse-branch-conditions` (on `1580f534`, pushed 2026-10-18, kept as the record) cherry-picked
+onto that base without conflicts, with `Assisted-by: Claude Code` in place of the
+`Co-Authored-By` trailers. Upstream's commits between the two bases touch nothing under
+`compiler/`, so the static measurements below still hold.
 
-| commit | content |
-| --- | --- |
-| `e4105edf` | Fork `f5225324` + `854e77ca` squashed: the original fusion with the `EnumOrdinal` suppression, so the commit builds under `-Werror` |
-| `3ba75b28` | Fork `5a02a7dd`: the extensions |
+| commit | was | content |
+| --- | --- | --- |
+| `c912093c` | `e4105edf` | Fork `f5225324` + `854e77ca` squashed: the original fusion with the `EnumOrdinal` suppression, so the commit builds under `-Werror` |
+| `e8074daf` | `3ba75b28` | Fork `5a02a7dd`: the extensions |
 
 Both commits contain only `compiler/src`, `compiler/src/test` and `wasm-corpus` changes. None
 of the fork's thesis docs (`compiler/docs/*`, `FORK_CHANGES.md`), the ABI fix or the

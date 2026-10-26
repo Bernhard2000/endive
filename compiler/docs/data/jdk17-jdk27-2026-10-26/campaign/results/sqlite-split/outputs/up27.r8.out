@@ -1,0 +1,5 @@
+sqlite 3.53.3 rows*reps_checksum=33609
+sqlite 3.53.3 rows*reps_checksum=33609
+sqlite 3.53.3 rows*reps_checksum=33609
+sqlite 3.53.3 rows*reps_checksum=33609
+{"label":"up27","bytes":1316182,"parse_ms":487.607,"machine_compile_ms":1052.540,"compile_ms":1540.148,"first_exec_ms":2583.145,"last_exec_ms":1884.719,"warmup_penalty_ms":666.862,"exec_ms_median":1916.283,"exec_ms_min":1884.719,"instantiate_ms":[10.017784, 1.299442, 0.923694, 1.39537],"start_ms":[2554.57009, 2136.252968, 1915.037132, 1882.974422],"memory_backend":"bytebuffer","rss_hwm_kb":772692,"all_exec_ms":[2583.145298, 2137.880178, 1916.282885, 1884.719019]}

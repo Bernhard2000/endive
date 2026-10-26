@@ -1,0 +1,52 @@
+jdk-test 17.0.7 [default] FAIL
+jdk-test 17.0.7 [jtreg-run1-flags-XX:-TieredCompilation -XX:-UseOnStackReplacement -XX:-BackgroundCompilation -XX:+UnlockDiagnosticVMOptions -XX:-OptimizeUnstableIf] FAIL
+jdk-test 17.0.21 [default] FAIL
+jdk-test 17.0.21 [jtreg-run1-flags-XX:-TieredCompilation -XX:-UseOnStackReplacement -XX:-BackgroundCompilation -XX:+UnlockDiagnosticVMOptions -XX:-OptimizeUnstableIf] FAIL
+jdk-test 21.0.12.1 [default] pass
+jdk-test 21.0.12.1 [jtreg-run1-flags-XX:-TieredCompilation -XX:-UseOnStackReplacement -XX:-BackgroundCompilation -XX:+UnlockDiagnosticVMOptions -XX:-OptimizeUnstableIf] FAIL
+jdk-test 25.0.4.1 [default] pass
+jdk-test 25.0.4.1 [jtreg-run1-flags-XX:-TieredCompilation -XX:-UseOnStackReplacement -XX:-BackgroundCompilation -XX:+UnlockDiagnosticVMOptions -XX:-OptimizeUnstableIf] FAIL
+jdk-test 27.0.1 [default] pass
+jdk-test 27.0.1 [jtreg-run1-flags-XX:-TieredCompilation -XX:-UseOnStackReplacement -XX:-BackgroundCompilation -XX:+UnlockDiagnosticVMOptions -XX:-OptimizeUnstableIf] pass
+wasm-repro 17.0.7 [default] test1: PASS test2: PASS 
+wasm-repro 17.0.7 [-Dendive.memCopyWorkaround=false] test1: PASS test2: PASS 
+wasm-repro 17.0.7 [-Dendive.memCopyWorkaround=false -Dendive.compiler.unsignedCompareFusion=true] test1: PASS test2: PASS 
+wasm-repro 17.0.7 [-Dendive.compiler.unsignedCompareFusion=true] test1: PASS test2: PASS 
+helper-repro 17.0.7 mode=0 pass
+helper-repro 17.0.7 mode=1 pass
+helper-repro 17.0.7 mode=2 pass
+helper-repro 17.0.7 mode=3 pass
+shape-repro 17.0.7 shape=0 pass
+shape-repro 17.0.7 shape=1 pass
+shape-repro 17.0.7 shape=2 pass
+shape-repro 17.0.7 shape=3 pass
+shape-repro 17.0.7 shape=4 pass
+shape-repro 17.0.7 shape=5 pass
+wasm-repro 17.0.21 [default] test1: PASS test2: PASS 
+wasm-repro 17.0.21 [-Dendive.memCopyWorkaround=false] test1: PASS test2: PASS 
+wasm-repro 17.0.21 [-Dendive.memCopyWorkaround=false -Dendive.compiler.unsignedCompareFusion=true] test1: PASS test2: PASS 
+wasm-repro 17.0.21 [-Dendive.compiler.unsignedCompareFusion=true] test1: PASS test2: PASS 
+helper-repro 17.0.21 mode=0 pass
+helper-repro 17.0.21 mode=1 pass
+helper-repro 17.0.21 mode=2 pass
+helper-repro 17.0.21 mode=3 pass
+shape-repro 17.0.21 shape=0 pass
+shape-repro 17.0.21 shape=1 pass
+shape-repro 17.0.21 shape=2 pass
+shape-repro 17.0.21 shape=3 pass
+shape-repro 17.0.21 shape=4 pass
+shape-repro 17.0.21 shape=5 pass
+wasm-repro 27.0.1 [default] test1: PASS test2: PASS 
+wasm-repro 27.0.1 [-Dendive.memCopyWorkaround=false] test1: PASS test2: PASS 
+wasm-repro 27.0.1 [-Dendive.memCopyWorkaround=false -Dendive.compiler.unsignedCompareFusion=true] test1: PASS test2: PASS 
+wasm-repro 27.0.1 [-Dendive.compiler.unsignedCompareFusion=true] test1: PASS test2: PASS 
+helper-repro 27.0.1 mode=0 pass
+helper-repro 27.0.1 mode=1 pass
+helper-repro 27.0.1 mode=2 pass
+helper-repro 27.0.1 mode=3 pass
+shape-repro 27.0.1 shape=0 pass
+shape-repro 27.0.1 shape=1 pass
+shape-repro 27.0.1 shape=2 pass
+shape-repro 27.0.1 shape=3 pass
+shape-repro 27.0.1 shape=4 pass
+shape-repro 27.0.1 shape=5 pass
