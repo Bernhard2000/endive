@@ -1,7 +1,7 @@
 # Endive fork audit — 25 October 2026
 
 <!-- DESIGN:BEGIN front -->
-![Audit overview: 12 findings, with three P1, seven P2 and two P3 priorities](compiler/docs/data/fork-audit-2026-10-25/presentation/figures/audit-overview.png)
+![Fix status of the 14 audit findings: 12 fixed, synced or cleaned up, F04 partly, F08 disclosed](compiler/docs/data/fork-audit-2026-10-25/presentation/figures/fix-status.png)
 
 **[Read the designed PDF](output/pdf/Endive_Fork_Audit_2026-10-25.pdf)** ·
 [Reproducers and evidence](compiler/docs/data/fork-audit-2026-10-25/) ·
@@ -813,7 +813,7 @@ then one commit per fix was added. Nothing was pushed. Probe output on the resul
 | F08 | Disclosed | `5f7b6030` | Summary says the archive keeps 2 of 24 outputs per cell; `--partial-outputs` reports "2 of 24" | Lost outputs cannot be recovered |
 | F09 | Fixed in the fork | `af5de0d3` | Blocking `Fork CI` workflow on integration and topic branches, Java 11/17/21/25 | YAML only; no live run yet, and making it required is a repository setting |
 | F10 | Fixed | `3219c546` | Wrapper rejects joined/split `-D`, `--define` forms, `MAVEN_ARGS`, `MAVEN_OPTS`; `AGENT.md` points at it | Fake-Maven probe: seven spellings rejected, normal arguments forwarded |
-| F11 | Refactored | `Compiler: build Wasm value arrays in one place`, `Compiler: name the numeric comparisons once`, `Compiler: reject scope exits the type stack cannot account for` | `ValueArrays` replaces eight spill/boxing copies and the two CallResult/Object[] conversions; `BranchCondition.isNumericComparison` replaces `NarrowingPeephole`'s string-built set; `exitScope` throws on an unknown scope or too few results, and the function's `END` now exits the function scope | Bytecode gate: 537 module × option rows (compiled corpus, `fuse.wasm`, `gc.wasm`, rustvm, CPython) hash identical before/after; old and new conversion loops emit identical instructions for ref, `v128` and mixed tuples; `BranchConditionTest` table checks, `TypeStackTest` |
+| F11 | Refactored | `c6aaaac2`, `24e05619`, `8b4becfd` | `ValueArrays` replaces eight spill/boxing copies and the two CallResult/Object[] conversions; `BranchCondition.isNumericComparison` replaces `NarrowingPeephole`'s string-built set; `exitScope` throws on an unknown scope or too few results, and the function's `END` now exits the function scope | Bytecode gate: 537 module × option rows (compiled corpus, `fuse.wasm`, `gc.wasm`, rustvm, CPython) hash identical before/after; old and new conversion loops emit identical instructions for ref, `v128` and mixed tuples; `BranchConditionTest` table checks, `TypeStackTest` |
 | F12 | Fixed | `5f7b6030` | Current-status header, historical labels and fix table in `FORK_CHANGES.md` | — |
 | F13 | Fixed by the sync | upstream `1cd6d40d` | Table-initialiser entries owned by the defining instance | Table-owner probe 42 in all four pairings; upstream's 4 `MachinesTest` cases |
 | F14 | Fixed | `a85542e0` | `none` accepted for `any`, `eq`, `i31`, `struct`, `array` | Five modules validate; `ValTypeTest` subtype matrix; `RefNullNoneTest` runs them in both engines |

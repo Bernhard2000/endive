@@ -1,132 +1,171 @@
 {
-  "pages": 21,
-  "bookmarks": 20,
-  "link_annotations": 43,
+  "pages": 28,
+  "bookmarks": 23,
+  "link_annotations": 54,
   "finding_pages": {
-    "F01": 6,
-    "F02": 7,
-    "F03": 8,
-    "F04": 9,
-    "F05": 10,
-    "F06": 11,
-    "F07": 12,
-    "F08": 13,
-    "F09": 14,
-    "F10": 15,
-    "F11": 16,
-    "F12": 17
+    "F01": 7,
+    "F02": 9,
+    "F03": 10,
+    "F04": 11,
+    "F05": 14,
+    "F06": 15,
+    "F07": 16,
+    "F08": 17,
+    "F09": 18,
+    "F10": 19,
+    "F11": 20,
+    "F12": 21,
+    "F13": 12,
+    "F14": 13
   },
   "out_of_bounds_characters": [],
   "replacement_glyphs": [],
   "page_checks": [
     {
       "page": 1,
-      "characters": 625,
+      "characters": 734,
       "has_footer": true
     },
     {
       "page": 2,
-      "characters": 2034,
+      "characters": 2983,
       "has_footer": true
     },
     {
       "page": 3,
-      "characters": 2341,
+      "characters": 3063,
       "has_footer": true
     },
     {
       "page": 4,
-      "characters": 2350,
+      "characters": 2367,
       "has_footer": true
     },
     {
       "page": 5,
-      "characters": 2565,
+      "characters": 2587,
       "has_footer": true
     },
     {
       "page": 6,
-      "characters": 2854,
+      "characters": 1524,
       "has_footer": true
     },
     {
       "page": 7,
-      "characters": 2431,
+      "characters": 2928,
       "has_footer": true
     },
     {
       "page": 8,
-      "characters": 2162,
+      "characters": 903,
       "has_footer": true
     },
     {
       "page": 9,
-      "characters": 1847,
+      "characters": 2690,
       "has_footer": true
     },
     {
       "page": 10,
-      "characters": 1985,
+      "characters": 2426,
       "has_footer": true
     },
     {
       "page": 11,
-      "characters": 1728,
+      "characters": 2789,
       "has_footer": true
     },
     {
       "page": 12,
-      "characters": 1545,
+      "characters": 2878,
       "has_footer": true
     },
     {
       "page": 13,
-      "characters": 2194,
+      "characters": 2472,
       "has_footer": true
     },
     {
       "page": 14,
-      "characters": 1655,
+      "characters": 2057,
       "has_footer": true
     },
     {
       "page": 15,
-      "characters": 1648,
+      "characters": 1783,
       "has_footer": true
     },
     {
       "page": 16,
-      "characters": 1858,
+      "characters": 1600,
       "has_footer": true
     },
     {
       "page": 17,
-      "characters": 1367,
+      "characters": 2253,
       "has_footer": true
     },
     {
       "page": 18,
-      "characters": 2132,
+      "characters": 2008,
       "has_footer": true
     },
     {
       "page": 19,
-      "characters": 1529,
+      "characters": 1703,
       "has_footer": true
     },
     {
       "page": 20,
-      "characters": 1864,
+      "characters": 1938,
       "has_footer": true
     },
     {
       "page": 21,
-      "characters": 2285,
+      "characters": 1422,
+      "has_footer": true
+    },
+    {
+      "page": 22,
+      "characters": 2471,
+      "has_footer": true
+    },
+    {
+      "page": 23,
+      "characters": 2152,
+      "has_footer": true
+    },
+    {
+      "page": 24,
+      "characters": 1552,
+      "has_footer": true
+    },
+    {
+      "page": 25,
+      "characters": 2344,
+      "has_footer": true
+    },
+    {
+      "page": 26,
+      "characters": 2914,
+      "has_footer": true
+    },
+    {
+      "page": 27,
+      "characters": 2415,
+      "has_footer": true
+    },
+    {
+      "page": 28,
+      "characters": 2434,
       "has_footer": true
     }
   ],
-  "pdf_sha256": "32e29acaf211739d2a3df8c01bc5e549465d85359db55d3db364f5963a76ccde",
-  "visual_review": "All 21 latest rendered pages inspected in contact sheets; cover, register, F01 and reproduction page also inspected at reading resolution.",
+  "pdf_sha256": "99e4be1c46ee16be9af1ce9862d117c4a19d1a2583321b851430843946554be0",
+  "visual_review": "All 28 rendered pages inspected in contact sheets after the 26 October rebuild; cover, register, change sequence and fix status also checked page by page.",
+  "markdown_body_sha256": "02e15aaf4b977d05f89d0b2175802d5425e1ef68c03343f61371f1f744f6fd4e",
   "original_markdown_body_sha256": "8717715df5c331aaa62e889c20b19b3184f354033971c96736ebf2f56c0b1280",
-  "original_body_preserved": true
+  "original_body_preserved": false,
+  "note": "The report body grew after the first pass (second pass F13/F14, fix status in section 9); the PDF follows the current body."
 }

@@ -26,6 +26,7 @@ here was timed.
 | `method-sizes-upstream-vs-pr.txt` | `method_sizes.py` output for `out-up out-pr1 out-pr` |
 | `method-sizes-fork-head-vs-extension.txt` | `method_sizes.py` output for `out-head out-new` |
 | `helper-calls-upstream-vs-pr.txt` | `helper_calls.sh` output per module and revision |
+| `plot.py` | `python3 plot.py` draws `plots/fusion-static.{png,svg}` from the two `*-upstream-vs-pr.txt` files (matplotlib) |
 | `bytecode-before.txt`, `bytecode-after.txt` | `FusionShowTest` output on `82f39301` and `5a02a7dd` |
 
 ## Reproduce

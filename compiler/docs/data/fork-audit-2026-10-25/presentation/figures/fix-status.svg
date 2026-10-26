@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="1000" height="300" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="1000" height="300"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-300)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="1000" height="300" rx="14" ry="14" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(9%,21%,18%); fill-rule: evenodd;"/>
+			<text x="30" y="266" style="font-family: Roboto; font-size: 16.900000000000002px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,532) scale(1,-1)">ENDIVE FORK AUDIT / FIX STATUS</text>
+			<text x="710.861376953125" y="266" style="font-family: Roboto; font-size: 14.3px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,532) scale(1,-1)">25 OCTOBER 2026, F11 ON 26 OCTOBER</text>
+			<rect x="30" y="222" width="34" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="30" y="168" style="font-family: Liberation Serif; font-size: 57.2px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,336) scale(1,-1)">12</text>
+			<text x="32" y="146" style="font-family: Roboto; font-size: 13.0px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,292) scale(1,-1)">FIXED, SYNCED OR CLEANED UP</text>
+			<rect x="330" y="222" width="34" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(98%,69%,9%); fill-rule: evenodd;"/>
+			<text x="330" y="168" style="font-family: Liberation Serif; font-size: 57.2px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,336) scale(1,-1)">1</text>
+			<text x="332" y="146" style="font-family: Roboto; font-size: 13.0px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,292) scale(1,-1)">PARTLY: F04 GIVES THE REAL REASON</text>
+			<rect x="630" y="222" width="34" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,51%,35%); fill-rule: evenodd;"/>
+			<text x="630" y="168" style="font-family: Liberation Serif; font-size: 57.2px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,336) scale(1,-1)">1</text>
+			<text x="632" y="146" style="font-family: Roboto; font-size: 13.0px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,292) scale(1,-1)">DISCLOSED: F08 OUTPUTS ARE LOST</text>
+			<text x="910.4259765625" y="168" style="font-family: Liberation Serif; font-size: 28.6px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,336) scale(1,-1)">of 14</text>
+			<rect x="30.0" y="54" width="61.57142857142857" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="30.0" y="118" width="61.57142857142857" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="47.55846819196428" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F01</text>
+			<text x="54.58278459821428" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P1</text>
+			<text x="49.733429129464284" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="97.57142857142857" y="54" width="61.57142857142857" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="97.57142857142857" y="118" width="61.57142857142857" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="115.12989676339286" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F02</text>
+			<text x="122.15421316964286" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P1</text>
+			<text x="117.30485770089287" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="165.14285714285714" y="54" width="61.571428571428584" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="165.14285714285714" y="118" width="61.571428571428584" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="182.7013253348214" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F03</text>
+			<text x="189.72564174107143" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P1</text>
+			<text x="184.8762862723214" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="232.71428571428572" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="232.71428571428572" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(98%,69%,9%); fill-rule: evenodd;"/>
+			<text x="250.27275390625" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F04</text>
+			<text x="257.2970703125" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="250.805068359375" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">partly</text>
+			<rect x="300.2857142857143" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="300.2857142857143" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="317.84418247767854" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F05</text>
+			<text x="324.86849888392857" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="320.0191434151786" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="367.85714285714283" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="367.85714285714283" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="385.4156110491071" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F06</text>
+			<text x="392.4399274553571" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="387.59057198660713" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="435.42857142857144" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="435.42857142857144" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="452.9870396205357" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F07</text>
+			<text x="460.01135602678573" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="455.16200055803574" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="503.0" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="503.0" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,51%,35%); fill-rule: evenodd;"/>
+			<text x="520.5584681919644" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F08</text>
+			<text x="527.5827845982143" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="512.4674916294643" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">disclosed</text>
+			<rect x="570.5714285714286" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="570.5714285714286" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="588.1298967633929" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F09</text>
+			<text x="595.1542131696428" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="590.3048577008929" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="638.1428571428571" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="638.1428571428571" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="655.7013253348215" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F10</text>
+			<text x="662.7256417410714" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="657.8762862723214" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="705.7142857142857" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="705.7142857142857" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="723.27275390625" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F11</text>
+			<text x="730.2970703125" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P3</text>
+			<text x="718.9784375" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">cleanup</text>
+			<rect x="773.2857142857142" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="773.2857142857142" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="790.8441824776786" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F12</text>
+			<text x="797.8684988839285" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P3</text>
+			<text x="793.0191434151785" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<rect x="840.8571428571429" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="840.8571428571429" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="858.4156110491073" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F13</text>
+			<text x="865.4399274553572" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P1</text>
+			<text x="853.5858063616072" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">via sync</text>
+			<rect x="908.4285714285714" y="54" width="61.571428571428555" height="70" rx="6" ry="6" style="stroke: none; stroke-linecap: butt; stroke-width: 0; fill: rgb(6%,14%,12%); fill-rule: evenodd;"/>
+			<rect x="908.4285714285714" y="118" width="61.571428571428555" height="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(4%,63%,4%); fill-rule: evenodd;"/>
+			<text x="925.9870396205358" y="92" style="font-family: Roboto; font-size: 15.600000000000001px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,184) scale(1,-1)">F14</text>
+			<text x="933.0113560267857" y="76" style="font-family: Roboto; font-size: 10.4px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,152) scale(1,-1)">P2</text>
+			<text x="928.1620005580357" y="60" style="font-family: Roboto; font-size: 9.879999999999999px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,120) scale(1,-1)">fixed</text>
+			<text x="30" y="22" style="font-family: Roboto; font-size: 12.35px;fill: rgb(66%,79%,71%); stroke:none;" transform="translate(0,44) scale(1,-1)">F05 not remeasured  /  F09 workflow has not run yet  /  F13 closed by upstream 1cd6d40d through the sync  /  F11 leaves generated bytecode identical</text>
+		</g>
+	</g>
+</svg>

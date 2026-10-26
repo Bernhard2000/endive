@@ -284,6 +284,8 @@ commit 2 `3ba75b28` (this change), all built from `pr/fuse-branch-conditions`.
 | `code.wasm` | 23,338 | 22,789 | 22,684 | −2.80 % | 0 |
 | `ref_conditions.wat.wasm` (fixture) | 2,060 | 2,027 | 1,704 | −17.28 % | 0 |
 
+![Bytecode and comparison helper calls removed per module, split into the original fusion and this change](data/branch-condition-fusion-2026-10-17/plots/fusion-static.png)
+
 Comparison/null-test helper `invokestatic`s. `Long.compareUnsigned`, a JDK method, is
 excluded and listed separately:
 

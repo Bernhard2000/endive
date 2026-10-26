@@ -31,17 +31,17 @@
     "tail-cancellation.wat.wasm": "47ac1be50e82a23b47ebd92c2ec60c83bf301f0dc52034a06296905938cd094d",
     "upstream-control.txt": "a2df36a76d2d9a9e9d54f4b07af0eeffec521c8b70b1d918ba0b4e7f0fcbb959",
     "validation-summary.json": "c6e7208f7bb9347a3eb628e07fa11776867d0b9068f464cc47284308d1a81862",
-    "presentation/README.md": "ada8e7d65c00272e8f858c454697004926049a68963ed83e439294631a33808a",
-    "presentation/build_report.py": "29ae1c0ac558013fa83ecc0c4ad94208213ce7f0db9575c8ab2629dcb4692e12",
-    "presentation/figures/audit-overview.png": "f62e2b1cbcdff84b96da221f0aac92552b18b88368bd4220b1e76420eaadcda0",
-    "presentation/figures/audit-overview.svg": "4a426ee6c66c9cfce5f6a1b7f78750724d9b9d8ab92d247e1caca9227d868c9e",
+    "presentation/README.md": "11854cda1f0906d2c90cdf2add04f2aa0e8b52bcd291ee74a3e824e8bd7ff1db",
+    "presentation/build_report.py": "25d01f15a059f4787272ff3a10c4abeda5a5341b9c105ccd11d947726dc9b526",
     "presentation/figures/cache-key-contract.png": "a751382463ebfae14121c69ed39a8e0a7f44e75bfd64bdf893fa2c14441fbd11",
     "presentation/figures/cache-key-contract.svg": "cd75968f6d191aa5365d10131c936c6af5c0739350a1e71deb97d2cf3d8d9659",
     "presentation/figures/compiler-pipeline.png": "ea8d2e7fe0c1a77beb46daea245b28a9f2e94aa5d81d758e91ddfd188c226575",
     "presentation/figures/compiler-pipeline.svg": "acc1a03be55541cf141ab82bab32fed001aef4a8d5106471b49cc03f312df874",
+    "presentation/figures/fix-status.png": "82f0eea7255e424661d11ecf556a971c9e340f2f7ba1d438818494bc73187b03",
+    "presentation/figures/fix-status.svg": "571552334df488a46ba37afe3f87fc351bcdea5b90934db665942c9cb1f71aa9",
     "presentation/figures/loop-type-flow.png": "86be1d6ce3a38ba8003136f1f22b1b82bf52f9783e89bc2e2e8eb2a198d6f72e",
     "presentation/figures/loop-type-flow.svg": "55cfa7a9a9d0710de7e07e1462ef71bace00ab1b51821d027c87a6d09c77dbdd",
-    "presentation/layout-check.json": "4e7c04771e0e60b093d01244aa0357576fc245a4a8719d3093823008fd044fe7"
+    "presentation/layout-check.json": "041ac6393483e0f7b8d8bbdeca19e16dfbbd5d2917a98a56aeeb1296e7501216"
   },
   "source_sha256": {
     ".github/workflows/ci.yaml": "1e9352fad022f66d209c05e5d2795abf150a74e887ecdcb8e922d7cce282f600",
@@ -80,14 +80,14 @@
   "reproducer_outcome": "Expected defects observed. Successful diagnostic completion is not a passing product acceptance result.",
   "original_report_sha256": "8717715df5c331aaa62e889c20b19b3184f354033971c96736ebf2f56c0b1280",
   "presentation": {
-    "updated_at": "2026-10-25T20:53:06.712749+01:00",
+    "updated_at": "2026-10-26T15:27:44.794941+01:00",
     "output": "output/pdf/Endive_Fork_Audit_2026-10-25.pdf",
-    "pdf_sha256": "32e29acaf211739d2a3df8c01bc5e549465d85359db55d3db364f5963a76ccde",
-    "pages": 21,
-    "original_audit_text_preserved": true,
+    "pdf_sha256": "99e4be1c46ee16be9af1ce9862d117c4a19d1a2583321b851430843946554be0",
+    "pages": 28,
+    "original_audit_text_preserved": false,
     "original_body_sha256": "8717715df5c331aaa62e889c20b19b3184f354033971c96736ebf2f56c0b1280",
     "source": "compiler/docs/data/fork-audit-2026-10-25/presentation/build_report.py",
     "layout_check": "compiler/docs/data/fork-audit-2026-10-25/presentation/layout-check.json",
-    "changes": "Designed PDF, four vector/PNG figures, Markdown reading guide and presentation navigation. No audit findings, test outcomes or production sources changed."
+    "changes": "Rebuilt 26 October 2026 from the current report: fourteen findings, second-pass sections, fix status (section 9) with its figure, and a fix-status line on every finding page. The first-pass overview figure was replaced by the fix-status figure. No findings, test outcomes or production sources changed."
   }
 }

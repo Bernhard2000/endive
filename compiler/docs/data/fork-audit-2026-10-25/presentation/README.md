@@ -5,8 +5,11 @@ The [PDF edition](../../../../../output/pdf/Endive_Fork_Audit_2026-10-25.pdf) is
 reading, printing, and presenting: cover, executive briefing, findings register, one page per
 finding, validation, reproduction instructions, work packages, and a speaking outline.
 
-`build_report.py` creates the PDF and four matching Markdown figures. Vector SVG and high-resolution
-PNG versions of the figures are kept under `figures/`. It does not build Endive or rerun the audit.
+`build_report.py` creates the PDF from the current Markdown report (fourteen findings and the
+fix status of section 9) and four matching Markdown figures: the fix status, which heads the
+report, and the loop, cache-key and pipeline diagrams. Vector SVG and high-resolution PNG versions
+are kept under `figures/`. `build_report.py --fix-status` redraws only the fix-status figure. The
+builder does not build Endive or rerun the audit.
 
 Dependencies: Python 3, `reportlab`, `pypdf`, Poppler's `pdftoppm`, and the Roboto, Liberation Serif,
 and DejaVu Sans Mono TrueType fonts. The default font directory is `/usr/share/fonts/truetype`;
@@ -19,8 +22,8 @@ From the checkout root, with those dependencies available:
 python3 compiler/docs/data/fork-audit-2026-10-25/presentation/build_report.py
 ```
 
-Markdown additions are enclosed in `DESIGN` comment markers. Removing those marked additions
-reproduces the original audit text byte for byte. Rebuilding is idempotent for the Markdown content.
+Markdown additions are enclosed in `DESIGN` comment markers. Removing them gives the report text
+as written, which since the first pass has grown by the second pass (F13, F14) and the fix status. Rebuilding is idempotent for the Markdown content.
 The original report hash, current Markdown hash, rendered PDF hash, and presentation-asset hashes
 are recorded in the audit manifest. The PDF has its own bookmarks and retains the audit's explicit
 scope and validation limits. After a future rebuild, rerender and inspect the PDF, then refresh its

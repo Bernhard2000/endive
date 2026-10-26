@@ -1,45 +1,47 @@
 # Endive fork changes and benefits
 
-**Current state, 2026-10-25.** `fuse-branch-conditions` is based on upstream `main` `bce75ae6`
-([upstream-sync-2026-10-25.md](compiler/docs/upstream-sync-2026-10-25.md), which also maps the
-commit ids below, all from before the sync, to the rebased ones). The fork audit of that day
-([FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md)) found two fork regressions (a `ref.eq`
-fusion wrong result through loop parameters, and cache keys that broke `DirectoryCache`) and
-several inherited defects; section 11 lists the fixes. The overview table and sections 1–10 are
-otherwise as of the dates below, and sections marked historical are superseded.
+**Current state, 2026-10-26.** `fuse-branch-conditions` is based on upstream
+`main` `bce75ae6`, 23 October 2026 ([upstream-sync-2026-10-25.md](compiler/docs/upstream-sync-2026-10-25.md)).
+The fork audit of 25 October ([FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md)) found two
+fork regressions (a `ref.eq` fusion wrong result through loop parameters, and cache keys that
+broke `DirectoryCache`) and several inherited defects; section 11 lists the fixes and the
+validation of the result. Nothing after the sync is pushed: `origin/fuse-branch-conditions` still
+points at the pre-sync `44f68a6f`.
 
-Snapshot: 2026-10-02, updated 2026-10-17 for the fusion extensions (`5a02a7dd`) and
+**Commit ids.** The sync rebased every fork commit. This document names the commits on the
+current branch and gives the pre-sync id once in parentheses ("was …"), because notes, results
+and thesis records written before 25 October cite those; they stay reachable through the tag
+`archive/fuse-branch-conditions-pre-sync-2026-10-25`, and the sync note maps all of them.
+Measured statements keep the id that was measured.
+
+**Scope and dates.** First written 2026-10-02, updated 2026-10-17 for the fusion extensions,
 2026-10-18 for the improvement plan ([FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md),
-section 10 below), branch `fuse-branch-conditions`. This document covers the fork-specific
-work visible in this repository: the current compiler changes, earlier contributions accepted
-upstream, and work retained on separate branches or in plans.
-
-The current branch's committed starting point is `854e77ca`. Its common ancestor with the
-locally recorded `origin/main` is `6da1f0d1`; the recorded main tip is `0af6bbb5`. The active
-branch contains three subsequent fork commits (`f5225324`, `b4d973e1`, `854e77ca`) plus the
-split-function optimization changes summarized here. Later upstream changes are not part of
-this branch's implementation. The history inventory uses local Git refs.
+section 10) and 2026-10-25 for the audit (section 11). It covers the fork-specific work in this
+repository: the compiler changes on `fuse-branch-conditions`, earlier contributions accepted
+upstream, and work kept on separate branches or in plans. Sections 1–10 are as of their dates;
+sections marked historical are superseded.
 
 ## Overview
 
 | Change | What it does | Main benefit | Status |
 |---|---|---|---|
-| Numeric comparison/branch fusion | Emits native JVM comparisons directly at the consuming branch or select | Less bytecode and fewer helper calls | Current branch, `f5225324` |
-| Fusion extensions | Constant-operand, unsigned `i64`, Go `i64`-boolean, and reference null-test conditions | Together with the original fusion: 2.0–4.0 % less function bytecode and 70–88 % fewer comparison helper calls than upstream. The extensions alone add 0.1–0.5 % bytecode and remove 15–57 % of the remaining helper calls | Current branch, `5a02a7dd`; upstream PR branch `pr/fuse-branch-conditions` |
-| Large-parameter ABI repair | Preserves locals, numeric arguments, references, and indirect-call targets across boxed calls | Fixes verification failures, invalid descriptors, and silent wrong results | Current branch, `b4d973e1` |
-| Strict-build repair | Justifies the compilation-local use of enum ordinals | Restores the normal Error Prone build | Current branch, `854e77ca` |
-| Compact branch-table dispatch | Chooses a smaller JVM switch encoding unless `tableswitch` is faster at ≤ 512 extra bytes (2026-10-25), and handles default-only tables | Reduces large method sizes and dispatch overhead in the measured synthetic case | Current optimization changes |
-| Wide multivalue return repair | Packs results inline when a packing helper would exceed the JVM parameter limit | Compiles valid wide result tuples | Current optimization changes |
-| Splitter fixtures and diagnostics | Exercises actual tuple/mailbox outputs and records reproducible local evidence | Detects ABI regressions and supports measured optimization decisions | Current optimization changes |
+| Numeric comparison/branch fusion | Emits native JVM comparisons directly at the consuming branch or select | Less bytecode and fewer helper calls | Current branch, `444198a8` (was `f5225324`) |
+| Fusion extensions | Constant-operand, unsigned `i64`, Go `i64`-boolean, and reference null-test conditions | Together with the original fusion: 2.0–4.0 % less function bytecode and 70–88 % fewer comparison helper calls than upstream on the five large modules. The extensions alone add 0.1–0.5 % bytecode and remove 15–57 % of the remaining helper calls | Current branch, `39f47cb9` (was `5a02a7dd`); upstream PR branch `pr/fuse-branch-conditions` |
+| Large-parameter ABI repair | Preserves locals, numeric arguments, references, and indirect-call targets across boxed calls | Fixes verification failures, invalid descriptors, and silent wrong results | Current branch, `9a8136b5` (was `b4d973e1`) |
+| Strict-build repair | Justifies the compilation-local use of enum ordinals | Restores the normal Error Prone build | Current branch, `3b29285b` (was `854e77ca`) |
+| Compact branch-table dispatch | Chooses a smaller JVM switch encoding unless `tableswitch` is faster at ≤ 512 extra bytes (2026-10-25), and handles default-only tables | Reduces large method sizes and dispatch overhead in the measured synthetic case | Current branch, `0fe9b7f3` (was `82f39301`); policy `744036e2` |
+| Wide multivalue return repair | Packs results inline when a packing helper would exceed the JVM parameter limit | Compiles valid wide result tuples | Current branch, `0fe9b7f3` |
+| Splitter fixtures and diagnostics | Exercises actual tuple/mailbox outputs and records reproducible local evidence | Detects ABI regressions and supports measured optimization decisions | Current branch, `0fe9b7f3` |
 | Signed and unambiguous block types | Decodes `s33` and distinguishes empty, value-type, and type-index forms | Correctly accepts valid multivalue modules and rejects malformed encodings | Included through upstream `4892e774` |
 | Android-compatible block-type corpus | Uses the compatible three-argument stream write API | Allows the regression corpus to run on older Android versions | Included through upstream `4892e774` |
 | Shared LEB128 reader | Consolidates three integer decoding loops | Simpler format validation and maintenance | Separate branch, `59392150` |
-| Narrowing peephole, inline trivial helpers | `i64` work wrapped back to `i32` done in `i32`; one-instruction helpers emitted inline or as JDK intrinsics | Go −4.6 % bytecode, 16,615 → 585 extend helper calls | Current branch, `17542744` |
-| Sound reference types, `ref.eq` fusion | `select_t`, scope exits and (since 2026-10-25) loop parameters typed soundly; `ref.eq` as `if_acmpeq` when one side cannot be `i31ref` | Correct static types; fewer `refEq` calls in GC code | Current branch, `50a7c320`; loop fix in section 11 |
-| Opt-in unsigned `i32` fusion, branchless booleans | `Integer.compareUnsigned` + jump (on where the JVM allows), call-free value booleans (off) | Unsigned helper calls −70 to −99 %; 2× on a large generated method | Current branch, `9e613f66` |
-| Incremental analyzer passes | Narrowing and fusion run while the instruction list is built | Halves the cold-JVM compile overhead | Current branch, `fa661588` |
-| `-Dendive.memCopyWorkaround` NPE fix | The workaround class honours the property; `gt_u`/`le_u` covered too | No NPE on Java 18+ with the property | Merged from `fix/memcopy-workaround-property` |
-| Build sharp edges | Versioned wasm-tools download, approval file rendered every run, Spotless fix | No stale-binary failures | Merged from `fix/build-sharp-edges` |
+| Narrowing peephole, inline trivial helpers | `i64` work wrapped back to `i32` done in `i32`; one-instruction helpers emitted inline or as JDK intrinsics | Go −4.6 % bytecode, 16,615 → 585 extend helper calls | Current branch, `4dcb4424` (was `17542744`) |
+| Sound reference types, `ref.eq` fusion | `select_t`, scope exits and (since 2026-10-25) loop parameters typed soundly; `ref.eq` as `if_acmpeq` when one side cannot be `i31ref` | Correct static types; fewer `refEq` calls in GC code | Current branch, `4537a111` (was `50a7c320`); loop fix `a7bc2db4` (section 11) |
+| Opt-in unsigned `i32` fusion, branchless booleans | `Integer.compareUnsigned` + jump (on where the JVM allows), call-free value booleans (off) | Unsigned helper calls −70 to −99 %; 2× on a large generated method | Current branch, `801eb72f` (was `9e613f66`) |
+| Incremental analyzer passes | Narrowing and fusion run while the instruction list is built | Halves the cold-JVM compile overhead | Current branch, `15cf06c2` (was `fa661588`) |
+| `-Dendive.memCopyWorkaround` NPE fix | The workaround class honours the property; `gt_u`/`le_u` covered too | No NPE on Java 18+ with the property | Merged from `fix/memcopy-workaround-property` (`5cba8930`) |
+| Build sharp edges | Versioned wasm-tools download, approval file rendered every run, Spotless fix | No stale-binary failures | Merged from `fix/build-sharp-edges` (`f2c7de7c`) |
+| Audit fixes, 2026-10-25 | Versioned cache keys, interruption on tail calls, validator accepts `none` for abstract GC types, blocking fork CI, sharper evidence tooling | `DirectoryCache` works under the defaults again; tail-call loops can be cancelled; valid GC modules accepted | Current branch, `a7bc2db4`..`8b4becfd`; section 11 |
 
 ## 1. Numeric comparison and branch fusion
 
@@ -54,14 +56,16 @@ comparisons, and chains of `i32.eqz` by reversing the branch sense. Floating-poi
 preserves the outcomes for NaN, including `ne`, and loop back edges retain interruption checks.
 Explicit labels prevent fusion across a control-flow entry point.
 
-Commit `5a02a7dd` extends the pass ([branch-condition-fusion-extensions.md](compiler/docs/branch-condition-fusion-extensions.md)):
+Commit `39f47cb9` (was `5a02a7dd`) extends the pass ([branch-condition-fusion-extensions.md](compiler/docs/branch-condition-fusion-extensions.md)):
 `i32` comparisons against 0, 1 or -1 become one-operand zero tests; unsigned `i32` comparisons
 against a power-of-two bound become a shift and a zero test; unsigned `i64` comparisons jump on
 `Long.compareUnsigned`; `i64.eqz (i64.extend_i32_u b)` (Go's boolean negation) is absorbed like
 `i32.eqz`; `ref.is_null`, `br_on_null`, and `br_on_non_null` become `ifnull`/`ifnonnull`; and
-`br_on_cast_fail` no longer inverts its cast result through extra branches. Unsigned `i32`
-comparisons with variable or other constant operands keep their helper and workaround paths,
-because fusing them needs the `MIN_VALUE` bias that triggers the JDK ≤ 17 C2 bug.
+`br_on_cast_fail` no longer inverts its cast result through extra branches. In this commit,
+unsigned `i32` comparisons with variable or other constant operands keep their helper and
+workaround paths, because fusing them needs the `MIN_VALUE` bias that C2 on Java 11 to 17
+miscompiles (JDK-8376400). `801eb72f` later fuses them through `Integer.compareUnsigned` as an
+option, on by default only in `MachineFactoryCompiler` on Java 18+ (section 10, item 3.4).
 
 **Benefits.** The generated method no longer contains the comparison helper call or the
 intermediate boolean at a fused site. A simple `i32` comparison/branch pair commonly saves
@@ -79,16 +83,19 @@ The existing differential and structural tests cover branch/select forms, stack 
 loop back edges, signed limits, zero, infinities, and NaN. See
 [branch-condition-fusion.md](compiler/docs/branch-condition-fusion.md) for the original design
 and [branch-condition-fusion-jit-audit.md](compiler/docs/branch-condition-fusion-jit-audit.md)
-for the historical JIT/workaround audit. A workload-wide speedup from fusion has not been
-established by the current validation campaign.
+for the historical JIT/workaround audit. The local workload A/B of the whole fork (section 10)
+is faster in 29 of 37 real cells; a fixed-runner speedup of fusion alone has not been established.
 
 **Measured size effect (static).** Against upstream main `1580f534`, the original fusion plus the
 extensions reduce total `func_*` bytecode by 3.66 % (.NET), 3.97 % (QuickJS), 3.94 % (Javy
 demo), 2.04 % (Go), 2.87 % (Rust), and 2.80 % (`code.wasm`). Methods above HotSpot's
 8000-byte `HugeMethodLimit` drop from 15 to 14 (.NET), 13 to 10 (QuickJS), 12 to 11 (Javy),
-and 13 to 12 (Go). Endive comparison and null-test helper calls drop by 70–88 % (the
-JDK `Long.compareUnsigned` calls that replace unsigned `i64` helpers are counted separately). Raw data:
+and 13 to 12 (Go). Endive comparison and null-test helper calls drop by 70–88 % on the five
+large modules and by 61 % on the small `code.wasm` (the JDK `Long.compareUnsigned` calls that
+replace unsigned `i64` helpers are counted separately). Raw data and `plot.py`:
 [data/branch-condition-fusion-2026-10-17/](compiler/docs/data/branch-condition-fusion-2026-10-17/).
+
+![Bytecode and comparison helper calls removed per module, split into the original fusion and the extensions](compiler/docs/data/branch-condition-fusion-2026-10-17/plots/fusion-static.png)
 
 **Measured runtime effect (local, exploratory).** Upstream main and the PR branch were timed on
 identical modules with the thesis harness: fresh JVM per sample, interleaved rounds, paired
@@ -103,8 +110,8 @@ results, not fixed-runner evidence.
 ## 2. Large-parameter ABI repair
 
 JVM descriptors have a parameter-slot limit; `i64` and `f64` use two slots. Endive passes
-ordinary parameters directly, but switches wide signatures to arrays. Commit `b4d973e1`
-repairs several connected problems in this path:
+ordinary parameters directly, but switches wide signatures to arrays. Commit `9a8136b5`
+(was `b4d973e1`) repairs several connected problems in this path:
 
 | Previous failure | Implemented repair | Benefit |
 |---|---|---|
@@ -129,11 +136,12 @@ covers default locals, non-null GC/host references, slots 251–254, mixed-width
 chunked dispatch, and cross-module calls across interpreter, compiler, and selected fallback
 configurations. [many-params-abi-bugs.md](compiler/docs/many-params-abi-bugs.md) is the earlier
 pre-fix investigation; its 253-slot threshold and open-bug statements describe that revision.
-The separate `fix/many-params-abi` branch retains the corresponding patch as `9e257558`.
+The separate `fix/many-params-abi` branch carries a standalone version of the repair on
+upstream `1580f534` as `43786182` (the `9e257558` cited in older notes is no longer on any ref).
 
 ## 3. Strict-build repair
 
-Commit `854e77ca` adds a narrowly scoped `EnumOrdinal` suppression to `BranchCondition.id()`.
+Commit `3b29285b` (was `854e77ca`) adds a narrowly scoped `EnumOrdinal` suppression to `BranchCondition.id()`.
 The integer is an internal operand used and decoded within one compilation, so declaration
 order is intentional and is not a persisted external identifier.
 
@@ -176,7 +184,10 @@ not a general CPython or split-workload speedup.
 explicit keys. It now gets a `lookupswitch`, which saves 84 bytes, but HotSpot's interpreter
 executes it as a binary search.
 The whole run is 12.6 % slower than upstream; forcing `tableswitch` removes the slowdown.
-Bisected to this change; see [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md).
+Bisected to this change (pre-sync `82f39301`, now `0fe9b7f3`); see
+[workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md).
+
+![rustvm-base time against upstream at each bisected commit (pre-sync ids)](compiler/docs/data/workload-ab-2026-10-18/plots/rustvm-bisect.png)
 The rule needs a speed-aware threshold before it is offered upstream.
 
 **Policy since 2026-10-25.** A table keeps `tableswitch` when javac's time/space rule prefers it
@@ -213,8 +224,9 @@ reference tuples.
 
 ## 6. Splitter fixtures, benchmarks, and evidence
 
-The current work adds ten focused tests in
-[SplitFunctionOptimizationTest.java](compiler-tests/src/test/java/run/endive/testing/SplitFunctionOptimizationTest.java).
+`0fe9b7f3` adds ten focused tests in
+[SplitFunctionOptimizationTest.java](compiler-tests/src/test/java/run/endive/testing/SplitFunctionOptimizationTest.java),
+and the 2026-10-25 switch policy (`744036e2`) two more.
 They check switch encodings and selector bounds, interruption, tuple values and shared returns,
 fallback, host numeric normalization, GC results, exception paths, tail calls, and wide results.
 
@@ -287,21 +299,21 @@ inlining behavior before implementation is justified.
 
 ### Reference-condition fusion — null tests implemented, `ref.eq` deferred (historical, 2026-10-17)
 
-*Superseded:* `ref.eq` fusion was implemented in `50a7c320` (section 10, item 3.3) after sound
-`select_t` and scope-exit typing; the remaining unsound case, loop parameters, was fixed on
-2026-10-25 (section 11).
+*Superseded:* `ref.eq` fusion was implemented in `4537a111` (was `50a7c320`; section 10,
+item 3.3) after sound `select_t` and scope-exit typing; the remaining unsound case, loop
+parameters, was fixed on 2026-10-25 in `a7bc2db4` (section 11).
 
 [ref-condition-fusion-plan.md](compiler/docs/ref-condition-fusion-plan.md) proposed direct null
 branches for `ref.is_null`, `br_on_null`, and `br_on_non_null`, followed by carefully gated
-`ref.eq` fusion. The null tests are implemented in `5a02a7dd` (with a simpler design than the
+`ref.eq` fusion. The null tests are implemented in `39f47cb9` (with a simpler design than the
 plan: a generic `DUP` opcode plus ordinary `BranchCondition`s). `ref.eq` remains deferred:
 `i31ref` equality is value-based, and the analyzer currently types `select`/`select_t` results
 by their second operand, so static types cannot yet prove an operand non-i31.
 
 ## 9. Validation and practical limits (2026-10-02 snapshot)
 
-*Historical:* the counts below are those of the 2026-10-02 snapshot. Current validation is in
-section 11.
+*Historical:* the counts below are those of the 2026-10-02 snapshot. Current validation is at
+the end of section 11.
 
 The final optimization compiler passed **41 compiler unit tests and 28 compiler-tests tests**
 on both the classpath and module path, plus **1,051 selected specification cases**. The
@@ -344,29 +356,42 @@ Implemented from [FORK_IMPROVEMENT_PLAN.md](FORK_IMPROVEMENT_PLAN.md); details p
 | 3.7 | C2 refuses 97 % of helper calls near 8000 bytes upstream | [inlining-at-8000-bytes.md](compiler/docs/inlining-at-8000-bytes.md) |
 | — | Fork against upstream on 37 real workload cells: faster in 29 (median −6.7 %), none slower, outputs identical; compile +2–5 % (unsplit QuickJS +14–22 %). Synthetic `rustvm-base`: +12.6 % from the compact switch encoding, addressed by the 2026-10-25 switch policy (not remeasured) | [workload-ab-2026-10-18.md](compiler/docs/workload-ab-2026-10-18.md) |
 
+![Steady-state change per workload cell, fork 44f68a6f against upstream 1580f534, with 95 % CIs](compiler/docs/data/workload-ab-2026-10-18/plots/steady-forest.png)
+
 All runtime numbers in these notes are laptop measurements; the thesis cites fork speed only
 from the fixed-runner campaign.
 
 ## 11. Audit fixes, 2026-10-25
 
-From [FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md), on the branch rebased onto upstream
-`bce75ae6`, which itself closes F13 (table-initialiser entries ran in the importing instance).
+From [FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md) (section 9 there has the per-fix
+evidence), on the branch rebased onto upstream `bce75ae6`, which itself closes F13
+(table-initialiser entries ran in the importing instance; upstream `1cd6d40d`).
+
+![Fix status of the 14 audit findings: 12 fixed, synced or cleaned up, F04 partly, F08 disclosed](compiler/docs/data/fork-audit-2026-10-25/presentation/figures/fix-status.png)
 
 | finding | fix | commit |
 | --- | --- | --- |
-| F01, fork | Loop parameters get their declared types on entry, so a struct on first entry and an `i31ref` on the back edge no longer let `ref.eq` fuse into `if_acmpeq` | `Compiler: type loop parameters by the loop's declared types` |
-| F02, fork | Cache key `endive-codegen-v1:` + padded Base64 SHA-256 of module digest and code generation settings; `DirectoryCache` works under the defaults again | `Compiler: derive a valid, versioned cache key …` |
-| F03, inherited | Interruption polled on every tail call (compiled `setTailCall*`, interpreter `RETURN_CALL`) | `Poll for interruption on every tail call` |
-| F04, inherited | Compiled cross-instance `return_call_indirect` names the real reason; support itself still open | `Compiler: name the real reason a cross-instance tail call is rejected` |
-| F05, fork | `tableswitch` kept where faster at ≤ 512 extra bytes (section 4) | `Compiler: keep tableswitch where it is faster and costs few bytes` |
-| F06, F07, fork | Workload A/B reducers validate cells and compare outputs strictly; estimates unchanged | `Docs: check workload A/B cells before reducing them` |
-| F08, fork | The archive keeps round 1 outputs only: the summary now says "2 of 24" and the workload notes say where the full check ran | this section's commit |
-| F09, inherited | Blocking `Fork CI` workflow on the integration and topic branches | `CI: add a blocking fork workflow …` |
-| F10, fork | `mvn-fork.sh` rejects every repository override spelling; `AGENT.md` points at it | `Build: reject every spelling …` |
-| F11, mixed | Value-array boxing/spill helpers, one numeric-comparison set, explicit type-stack scope invariants; bytecode identical | `Compiler: build Wasm value arrays in one place` and the two commits after it |
-| F12, fork | This status header, historical labels, section 11 | this section's commit |
-| F14, inherited | Validator accepts `(ref null none)` where `eqref`, `structref`, `arrayref`, `i31ref` is expected | `Validator: accept none wherever …` |
+| F01, fork | Loop parameters get their declared types on entry, so a struct on first entry and an `i31ref` on the back edge no longer let `ref.eq` fuse into `if_acmpeq` | `a7bc2db4` |
+| F02, fork | Cache key `endive-codegen-v1:` + padded Base64 SHA-256 of module digest and code generation settings; `DirectoryCache` works under the defaults again | `61eaad20` |
+| F03, inherited | Interruption polled on every tail call (compiled `setTailCall*`, interpreter `RETURN_CALL`) | `55c485c7` |
+| F04, inherited | Compiled cross-instance `return_call_indirect` names the real reason; support itself still open | `03c8d491` |
+| F05, fork | `tableswitch` kept where faster at ≤ 512 extra bytes (section 4); not remeasured | `744036e2` |
+| F06, F07, fork | Workload A/B reducers validate cells and compare outputs strictly; all 37 estimates unchanged | `23b9ae08` |
+| F08, fork | Disclosed, not recoverable: the archive keeps round 1 outputs only; the summary says "2 of 24" and the workload notes say where the full check ran | `5f7b6030` |
+| F09, inherited | Blocking `Fork CI` workflow (Java 11/17/21/25) on the integration and topic branches; no live run yet | `af5de0d3` |
+| F10, fork | `mvn-fork.sh` rejects every repository override spelling; `AGENT.md` points at it | `3219c546` |
+| F11, mixed | Value-array boxing/spill helpers, one numeric-comparison set, explicit type-stack scope invariants; generated bytecode identical | `c6aaaac2`, `24e05619`, `8b4becfd` |
+| F12, fork | Status header, historical labels, this section | `5f7b6030`, `c5219baf` |
+| F14, inherited | Validator accepts `(ref null none)` where `eqref`, `structref`, `arrayref`, `i31ref` is expected | `a85542e0` |
 
 Not changed: cross-instance tail calls themselves (F04). F11's refactoring is kept in commits of
-its own after the semantic fixes, and leaves every generated class byte-identical. F01, F03, F04, F14 and the upstream-side part of F09 are upstream-relevant;
-F03 and F14 are inherited fixes worth offering upstream.
+its own after the semantic fixes; 537 module × option rows hash identical before and after.
+F01, F03, F04, F14 and the upstream-side part of F09 are upstream-relevant; F03 and F14 are
+inherited fixes worth offering upstream.
+
+**Validation.** Strict build (Error Prone, Checkstyle, Spotless) after F11, with
+`-pl compiler-tests,machine-tests,dircache -am`: compiler unit 66, compiler specification suite
+34,123 (64 skips), `machine-tests` 265, runtime 98, `DirectoryCacheTest` 4; no failures or errors.
+Before F11, the same build with `runtime-tests` also ran the interpreter specification suite,
+62,246 (83 skips), without failures. Java 21 only; Java 11/17/25 are left to the new CI workflow,
+which has not run yet.

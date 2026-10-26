@@ -92,8 +92,9 @@ def forest(ax, metric, show_labels=True, annotate=(), xlim=(-30, 30)):
         c = verdict_color(lo, hi)
         ax.plot([lo, hi], [y, y], color=c, lw=2, solid_capstyle="round", zorder=2)
         hollow = w in BIMODAL and metric == "steady"
+        # 1.2 px surface ring: at 2 px, short intervals looked like dashed lines
         ax.plot(d, y, "o", ms=7, mfc=SURFACE if hollow else c, mec=c if hollow else SURFACE,
-                mew=2, zorder=3)
+                mew=1.2, zorder=3)
         xmax = ax.get_xlim()[1]
         if hi > xmax:
             ax.annotate(f"CI to {hi:+.0f} % ▸", (xmax, y), xytext=(0, 7), textcoords="offset points",
@@ -113,17 +114,18 @@ def forest(ax, metric, show_labels=True, annotate=(), xlim=(-30, 30)):
     ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:+.0f} %"))
 
 
-def verdict_legend(fig, loc, bimodal=True):
-    h = [Line2D([], [], color=FASTER, lw=2, marker="o", ms=7, mec=SURFACE, mew=2,
+def verdict_legend(fig, loc, bimodal=True, used=(FASTER, SLOWER, NEUTRAL), anchor=(0.5, 0.0)):
+    h = [Line2D([], [], color=FASTER, lw=2, marker="o", ms=7, mec=SURFACE, mew=1.2,
                 label="fork faster (95 % CI below 0)"),
-         Line2D([], [], color=SLOWER, lw=2, marker="o", ms=7, mec=SURFACE, mew=2,
+         Line2D([], [], color=SLOWER, lw=2, marker="o", ms=7, mec=SURFACE, mew=1.2,
                 label="fork slower (95 % CI above 0)"),
-         Line2D([], [], color=NEUTRAL, lw=2, marker="o", ms=7, mec=SURFACE, mew=2,
+         Line2D([], [], color=NEUTRAL, lw=2, marker="o", ms=7, mec=SURFACE, mew=1.2,
                 label="no significant difference")]
+    h = [x for x in h if x.get_color() in used]   # only the verdicts that occur
     if bimodal:
         h.append(Line2D([], [], color=MUTED, lw=0, marker="o", ms=7, mfc=SURFACE, mec=MUTED,
                         mew=2, label="unstable cell (undetermined)"))
-    fig.legend(handles=h, loc="lower center", bbox_to_anchor=(0.5, 0.0), ncol=len(h),
+    fig.legend(handles=h, loc=loc or "lower center", bbox_to_anchor=anchor, ncol=len(h),
               frameon=False, fontsize=8, handlelength=2.6)
 
 
@@ -136,22 +138,23 @@ def save(fig, name):
 ANNOTATE = ("sqlite-split", "awfy-js-split-DeltaBlue")
 
 # 1. Forest plot of the steady-state change -------------------------------------------
-fig, ax = plt.subplots(figsize=(7.2, 11.5))
-forest(ax, "steady", annotate=ANNOTATE)
+fig, ax = plt.subplots(figsize=(7.2, 11))
+forest(ax, "steady", annotate=ANNOTATE, xlim=(-25, 15))
+used = {verdict_color(*delta(w, "steady")[1:]) for _, w in rows()[1]}
 ax.set_xlabel("steady-state time, fork vs upstream (paired median, 95 % bootstrap CI)")
 ax.set_title("Fork 44f68a6f against upstream 1580f534: steady state, 12 rounds per cell",
-             loc="left", x=-0.42)
-verdict_legend(fig, "lower left", bimodal=bool(BIMODAL))
+             loc="left", x=-0.42, pad=26)
+verdict_legend(ax, "lower left", bimodal=bool(BIMODAL), used=used, anchor=(-0.42, 1.0))
 save(fig, "steady-forest")
 
 # 2. Small multiples: steady, first execution, compile ---------------------------------
-fig, axes = plt.subplots(1, 3, figsize=(11, 11.5), sharey=True,
-                         gridspec_kw={"width_ratios": [1, 1, 0.9]})
+# One shared scale, so the three panels compare directly.
+fig, axes = plt.subplots(1, 3, figsize=(11, 11.5), sharey=True)
 for i, (ax, (metric, title)) in enumerate(zip(axes, METRICS)):
     forest(ax, metric, show_labels=(i == 0),
-           xlim=(-30, 30) if metric != "compile" else (-12, 30))
+           xlim=(-25, 30))
     ax.set_title(title, loc="left")
-    ax.set_xticks([-20, 0, 20] if metric != "compile" else [-10, 0, 10, 20])
+    ax.set_xticks([-20, 0, 20])
 axes[0].set_yticks([y for y, _ in rows()[1]])
 axes[0].set_yticklabels([label(w) for _, w in rows()[1]])
 for ax in axes:

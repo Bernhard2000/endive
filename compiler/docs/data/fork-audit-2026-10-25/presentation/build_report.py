@@ -84,8 +84,8 @@ register_fonts()
 
 
 def clean(text):
-    # ASCII dashes print consistently in prose, code, and metadata.
-    return text.translate(str.maketrans({c: "-" for c in "‐‑‒–—−"}))
+    # ASCII dashes print consistently in prose, code, and metadata; Roboto has no arrow glyph.
+    return text.translate(str.maketrans({**{c: "-" for c in "‐‑‒–—−"}, "→": "->"}))
 
 
 def plain(text):
@@ -162,6 +162,11 @@ STYLES = {
 }
 
 
+ROADMAP_H3 = ParagraphStyle("roadmap-h3", parent=STYLES["h3"], spaceBefore=5, spaceAfter=5)
+ROADMAP_BODY = ParagraphStyle("roadmap-body", parent=STYLES["body"], spaceAfter=5)
+ROADMAP_ACCEPTANCE = ParagraphStyle("roadmap-acceptance", parent=STYLES["acceptance"], spaceAfter=11)
+
+
 def para(text, kind="body"):
     return Paragraph(markup(text), STYLES[kind])
 
@@ -231,6 +236,8 @@ def table(rows, widths=None, font_size=8.5):
             widths = [CONTENT * .30, CONTENT * .70]
         elif len(rows[0]) == 4:
             widths = [CONTENT * .36, CONTENT * .15, CONTENT * .25, CONTENT * .24]
+        elif len(rows[0]) == 5 and rows[0][:3] == ["ID", "Status", "Commit"]:
+            widths = [CONTENT * .08, CONTENT * .13, CONTENT * .14, CONTENT * .32, CONTENT * .33]
         else:
             widths = [CONTENT / len(rows[0])] * len(rows[0])
     data = [
@@ -267,7 +274,8 @@ def blocks(text):
             while i < len(lines) and not lines[i].strip().startswith("```"):
                 code.append(lines[i]); i += 1
             if language != "mermaid":
-                result.append(CodePanel("\n".join(code), "REPRODUCTION COMMANDS" if language == "sh" else "OBSERVED OUTPUT"))
+                label = {"sh": "REPRODUCTION COMMANDS", "java": "SOURCE EXCERPT"}.get(language, "OBSERVED OUTPUT")
+                result.append(CodePanel("\n".join(code), label))
             i += 1
             continue
         if line.startswith("|"):
@@ -319,24 +327,46 @@ def arrow(d, x1, y1, x2, y2, color=MUTED, width=1.5):
         d.add(Polygon([x2, y2, x2-3.3, y2+6, x2+3.3, y2+6], fillColor=color, strokeColor=None))
 
 
-def overview():
-    d = Drawing(1000, 280)
-    rounded(d, 0, 0, 1000, 280, INK, radius=14)
-    dtext(d, 30, 246, "ENDIVE / ENGINEERING REVIEW", 13, "BodyBold", colors.HexColor("#A9CBB6"))
-    dtext(d, 970, 246, "25 OCTOBER 2026", 11, fill=WHITE, anchor="end")
-    for x, count, label, color in [
-        (30, "12", "TOTAL FINDINGS", WHITE), (290, "3", "P1 / HIGH PRIORITY", colors.HexColor("#F5B7B7")),
-        (530, "7", "P2 / SIGNIFICANT", colors.HexColor("#F0D7A6")),
-        (770, "2", "P3 / MAINTENANCE", colors.HexColor("#A9CBB6")),
-    ]:
-        dtext(d, x, 132, count, 66, "Display", color)
-        dtext(d, x+2, 103, label, 11, "BodyBold", color)
-    d.add(Line(30, 81, 970, 81, strokeColor=colors.HexColor("#49665B"), strokeWidth=1))
-    dtext(d, 30, 48, "REPAIR FIRST", 10, "BodyBold", colors.HexColor("#A9CBB6"))
-    dtext(d, 170, 48, "F01  Wrong result in a valid loop", 16, "Body", WHITE)
-    dtext(d, 550, 48, "F02  Default directory cache fails", 16, "Body", WHITE)
-    return d
+# Fix status after the third pass (FORK_AUDIT section 9). Status words carry the meaning; the
+# stripe colour only repeats it. Priority stays neutral text so it never reads as a status.
+FIXES = [("F01", "P1", "fixed"), ("F02", "P1", "fixed"), ("F03", "P1", "fixed"),
+         ("F04", "P2", "partly"), ("F05", "P2", "fixed"), ("F06", "P2", "fixed"),
+         ("F07", "P2", "fixed"), ("F08", "P2", "disclosed"), ("F09", "P2", "fixed"),
+         ("F10", "P2", "fixed"), ("F11", "P3", "cleanup"), ("F12", "P3", "fixed"),
+         ("F13", "P1", "via sync"), ("F14", "P2", "fixed")]
+STATUS = {"fixed": colors.HexColor("#0CA30C"), "via sync": colors.HexColor("#0CA30C"),
+          "cleanup": colors.HexColor("#0CA30C"), "partly": colors.HexColor("#FAB219"),
+          "disclosed": colors.HexColor("#EC835A")}
 
+
+def fix_status():
+    d = Drawing(1000, 300)
+    soft = colors.HexColor("#A9CBB6")
+    rounded(d, 0, 0, 1000, 300, INK, radius=14)
+    dtext(d, 30, 266, "ENDIVE FORK AUDIT / FIX STATUS", 13, "BodyBold", soft)
+    dtext(d, 970, 266, "25 OCTOBER 2026, F11 ON 26 OCTOBER", 11, fill=WHITE, anchor="end")
+    resolved = sum(s in ("fixed", "via sync", "cleanup") for _, _, s in FIXES)
+    for x, count, label, status in [
+        (30, str(resolved), "FIXED, SYNCED OR CLEANED UP", "fixed"),
+        (330, "1", "PARTLY: F04 GIVES THE REAL REASON", "partly"),
+        (630, "1", "DISCLOSED: F08 OUTPUTS ARE LOST", "disclosed"),
+    ]:
+        d.add(Rect(x, 222, 34, 6, fillColor=STATUS[status], strokeColor=None))
+        dtext(d, x, 168, count, 44, "Display", WHITE)
+        dtext(d, x+2, 146, label, 10, "BodyBold", soft)
+    dtext(d, 970, 168, f"of {len(FIXES)}", 22, "Display", soft, "end")
+    gap, left = 6, 30
+    w = (940 - gap * (len(FIXES) - 1)) / len(FIXES)
+    for i, (fid, priority, status) in enumerate(FIXES):
+        x = left + i * (w + gap)
+        rounded(d, x, 54, w, 70, colors.HexColor("#10241F"), radius=6)
+        d.add(Rect(x, 118, w, 6, fillColor=STATUS[status], strokeColor=None))
+        dtext(d, x + w/2, 92, fid, 12, "BodyBold", WHITE, "middle")
+        dtext(d, x + w/2, 76, priority, 8, "Body", soft, "middle")
+        dtext(d, x + w/2, 60, status, 7.6, "BodyBold", WHITE, "middle")
+    dtext(d, 30, 22, "F05 not remeasured  /  F09 workflow has not run yet  /  F13 closed by upstream "
+          "1cd6d40d through the sync  /  F11 leaves generated bytecode identical", 9.5, fill=soft)
+    return d
 
 def loop_diagram():
     d = Drawing(1000, 250)
@@ -476,6 +506,20 @@ def finding_visual(fid):
         dtext(d, 24, 76, "ref.eq deferred", 23, "Display", AMBER)
         dtext(d, 560, 76, "ref.eq implemented", 23, "Display", GREEN)
         dtext(d, 24, 27, "Label historical snapshots and keep one current implementation / validation status table.", 12.5, fill=MUTED)
+    elif fid == "F13":
+        dtext(d, 24, 127, "IMPORTED TABLE / SLOT FILLED BY AN INITIALISER", 13, "BodyBold", GREEN)
+        dtext(d, 24, 76, "fork, all four pairings", 18, "BodyBold")
+        dtext(d, 400, 76, "-1", 29, "Display", RED)
+        dtext(d, 540, 76, "upstream bce75ae6", 18, "BodyBold")
+        dtext(d, 950, 76, "42", 29, "Display", GREEN, "end")
+        dtext(d, 24, 28, "The importer runs its own function at that index. A conflict-free merge of upstream closes it.", 12.5, fill=MUTED)
+    elif fid == "F14":
+        dtext(d, 24, 127, "VALIDATOR / BOTTOM TYPE OF THE ANY HIERARCHY", 13, "BodyBold", GREEN)
+        dtext(d, 24, 78, "(ref null none) as anyref", 16, "Code")
+        dtext(d, 950, 78, "accepted", 20, "Display", GREEN, "end")
+        dtext(d, 24, 42, "(ref null none) as eqref", 16, "Code")
+        dtext(d, 950, 42, "rejected", 20, "Display", RED, "end")
+        dtext(d, 24, 12, "Same in fork and upstream: heapTypeSubtype asks any <: target instead of target <: any.", 10.5, fill=MUTED)
     return d
 
 
@@ -521,7 +565,7 @@ def enhance_markdown():
     start = text.index("\n") + 1
     front = addition("front", f"""
 
-![Audit overview: 12 findings, with three P1, seven P2 and two P3 priorities]({prefix}/audit-overview.png)
+![Fix status of the 14 audit findings: 12 fixed, synced or cleaned up, F04 partly, F08 disclosed]({prefix}/fix-status.png)
 
 **[Read the designed PDF](output/pdf/Endive_Fork_Audit_2026-10-25.pdf)** ·
 [Reproducers and evidence](compiler/docs/data/fork-audit-2026-10-25/) ·
@@ -574,15 +618,15 @@ class Cover(Flowable):
         c.setLineWidth(3)
         c.line(0, 445, 65, 445)
         note = Paragraph(
-            "A fork with useful compiler improvements,<br/>and two confirmed regressions to repair first.",
+            "A fork with useful compiler improvements.<br/>Two regressions found, both fixed the same day.",
             ParagraphStyle("cover-note", fontName="Display", fontSize=23, leading=28, textColor=INK),
         )
         note.wrap(CONTENT - 10, 100)
         note.drawOn(c, 0, 350)
         for x, count, label, sub, color in [
-            (0, "12", "FINDINGS", "3 P1 / 7 P2 / 2 P3", INK),
+            (0, "14", "FINDINGS", "4 P1 / 8 P2 / 2 P3", INK),
             (180, "02", "FORK REGRESSIONS", "Wrong result / cache failure", RED),
-            (360, "07", "WORK PACKAGES", "With acceptance criteria", GREEN),
+            (360, "12", "RESOLVED", "F04 partly / F08 disclosed", GREEN),
         ]:
             c.setFillColor(color)
             c.setFont("Display", 43)
@@ -603,8 +647,9 @@ class Cover(Flowable):
         c.drawString(0, 141, "907750cfddb1 / fuse-branch-conditions")
         c.setFont("Body", 9)
         c.setFillColor(MUTED)
-        c.drawString(0, 117, "Compared with locally available upstream 1580f5349ae0")
-        c.drawString(0, 70, "A report of findings and proposed changes. Production code is unchanged.")
+        c.drawString(0, 117, "Compared with upstream 1580f5349ae0; second pass against bce75ae6")
+        c.drawString(0, 99, "Fixes on fuse-branch-conditions after rebasing onto bce75ae6 (section 09)")
+        c.drawString(0, 70, "Findings describe the audited snapshot; the fix status records what changed since.")
         c.drawString(0, 52, "Designed edition of the 25 October audit. Evidence limits remain explicit.")
 
 
@@ -639,7 +684,7 @@ class AuditDoc(BaseDocTemplate):
         c.line(MARGIN, 35, WIDTH-MARGIN, 35)
         c.setFont("Body", 7)
         c.setFillColor(MUTED)
-        c.drawString(MARGIN, 21, "AUDIT SNAPSHOT  /  FINDINGS AND PROPOSED CHANGES")
+        c.drawString(MARGIN, 21, "AUDIT SNAPSHOT  /  FINDINGS, PROPOSED CHANGES AND FIX STATUS")
         c.setFont("BodyBold", 8)
         c.setFillColor(INK)
         c.drawRightString(WIDTH-MARGIN, 20, f"{doc.page:02d}" + (f" / {self.total:02d}" if self.total else ""))
@@ -660,7 +705,7 @@ def parse_report():
         for i, match in enumerate(matches):
             stop = matches[i+1].start() if i+1 < len(matches) else len(body)
             findings.append((match[1], match[2], match[3], body[match.end():stop].strip(), number))
-    assert len(findings) == 12
+    assert sorted(f[0] for f in findings) == [f"F{i:02}" for i in range(1, 15)], findings
     return sections, findings
 
 
@@ -693,7 +738,7 @@ def finding_register(rows):
         ("BACKGROUND", (0, 0), (-1, 0), GREEN), ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("ROWBACKGROUNDS", (0, 1), (-1, -1), [WHITE, PALE]),
         ("LEFTPADDING", (0, 0), (-1, -1), 9), ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-        ("TOPPADDING", (0, 0), (-1, -1), 8), ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 5), ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
     ]))
     return t
 
@@ -721,26 +766,42 @@ def change_cards(rows):
     return t
 
 
+def fix_rows(sections):
+    """Section 9 table: finding id -> (status, commit); rows like "F06, F07" cover several."""
+    result = {}
+    for row in markdown_rows(sections[9][1])[1:]:
+        for fid in re.findall(r"F\d\d", row[0]):
+            result[fid] = (row[1], row[2])
+    return result
+
+
 def story():
     sections, findings = parse_report()
+    fixes = fix_rows(sections)
+    assert sorted(fixes) == [f"F{i:02}" for i in range(1, 15)], sorted(fixes)
     result = [Cover(), PageBreak()]
 
     assessment, register = sections[1][1].split("### Findings at a glance", 1)
-    result += [PageHeading("01 / EXECUTIVE BRIEFING", "Useful work. Two repairs first.", "assessment")]
+    result += [PageHeading("01 / EXECUTIVE BRIEFING", "Useful work. Two regressions, both fixed.", "assessment")]
     result += blocks(assessment)
-    result += [Spacer(1, 10), scaled(overview()), Spacer(1, 16), para("Reading path", "h3")]
-    result += [para("**Decision:** assessment and finding register. **Implementation:** F01-F12 and the change sequence. "
-                    "**Presentation:** the existing-change overview, the two failure diagrams, and the final speaking outline.")]
-    result += [para("The audit snapshot and test outcomes are unchanged by this designed edition. No production repair or new benchmark is implied.", "small"), PageBreak()]
+    result += [Spacer(1, 6), para("Reading path", "h3")]
+    result += [para("**Decision:** assessment, finding register and fix status. **Implementation:** F01-F14, the change sequence "
+                    "and section 09. **Presentation:** the existing-change overview, the two failure diagrams, and the final speaking outline. "
+                    "Findings and probe results describe the audited snapshot; section 09 records the fixes and how each was verified."),
+               PageBreak()]
 
-    result += [PageHeading("02 / FINDINGS REGISTER", "Twelve findings, three priorities", "register")]
-    intro = register.split("| ID", 1)[0]
+    result += [PageHeading("02 / FINDINGS REGISTER", "Fourteen findings, three priorities", "register")]
+    intro, rest = register.split("| ID", 1)
+    after = re.sub(r"(?m)^\|.*\n?", "", rest.split("\n", 1)[1])
     result += blocks(intro)
-    result += [finding_register(markdown_rows(register)), Spacer(1, 13),
-               para("**Read the attribution column carefully.** New fork regressions, inherited runtime limitations, "
+    result += [finding_register(markdown_rows(register)), Spacer(1, 13)]
+    result += blocks(after)
+    result += [para("**Read the attribution column carefully.** New fork regressions, inherited runtime limitations, "
                     "historical performance evidence, and maintenance observations have different implications.", "small"), PageBreak()]
 
     context, changed = sections[2][1].split("### What is already changed in the fork", 1)
+    changed, drift = changed.split("### Upstream drift since the comparison commit (second pass)", 1)
+    drift, pipeline_text = drift.split("```mermaid", 1)
     result += [PageHeading("03 / SCOPE AND PROVENANCE", "A pinned, bounded audit", "scope")]
     metadata = (
         "**Audited revision:** `907750cfddb112c635d1af2e5375dbecc79de262`<br/>"
@@ -751,9 +812,10 @@ def story():
     result += blocks(context)
     result += [PageBreak(), PageHeading("04 / IMPLEMENTATION OVERVIEW", "What the fork already changes", "changes")]
     result += [change_cards(markdown_rows(changed)), Spacer(1, 12), scaled(pipeline_diagram()), Spacer(1, 12)]
-    non_table = re.sub(r"(?m)^\|.*\n?", "", changed)
-    non_table = re.sub(r"```mermaid.*?```", "", non_table, flags=re.S)
-    result += blocks(non_table)
+    result += blocks(re.sub(r"(?m)^\|.*\n?", "", changed))
+    result += blocks(pipeline_text.split("```", 1)[1])
+    result += [para("Upstream drift since the comparison commit (second pass)", "h3")]
+    result += blocks(drift)
     result += [PageBreak()]
 
     for fid, priority, title, body, category in findings:
@@ -763,7 +825,7 @@ def story():
                        "F04":"Inherited runtime limitation", "F05":"Fork policy / historical local evidence",
                        "F06":"Benchmark tooling", "F07":"Benchmark tooling", "F08":"Evidence packaging",
                        "F09":"Inherited CI configuration", "F10":"Fork build tooling", "F11":"Maintenance observation",
-                       "F12":"Fork documentation"}[fid]
+                       "F12":"Fork documentation", "F13":"Inherited; fixed upstream", "F14":"Inherited validator defect"}[fid]
         display_title = {
             "F01": "Unsound equality in reference loops",
             "F02": "Option keys break the directory cache",
@@ -777,19 +839,25 @@ def story():
             "F10": "The Maven guard misses valid syntax",
             "F11": "Repeated bookkeeping raises review cost",
             "F12": "The overview contradicts itself",
+            "F13": "Linked tables call the wrong function",
+            "F14": "Valid GC nulls fail validation",
         }[fid]
+        status, commit = fixes[fid]
         result.append(PageHeading(f"{fid} / {priority} / {category_name}", display_title, fid,
-                                  accent, attribution))
+                                  accent, f"{attribution}  /  Now: {status.lower()} ({plain(commit)}, section 09)"))
         # A common visual language makes every finding readable as a standalone review page.
         result += [scaled(finding_visual(fid)), Spacer(1, 12)]
         result += blocks(body)
         result += [PageBreak()]
 
     validation, reproduction = sections[6][1].split("### Reproduce the focused diagnostics", 1)
+    validation, second = validation.split("### Second-pass validation (upstream re-check)", 1)
     commands = re.search(r"```sh\n(.*?)```", validation, re.S).group(1)
     validation = re.sub(r"```sh.*?```", "", validation, flags=re.S)
     result += [PageHeading("05 / VALIDATION", "Passing suites, failing interactions", "validation")]
     result += blocks(validation)
+    result += [para("Second-pass validation (upstream re-check)", "h3")]
+    result += blocks(second)
     result += [PageBreak(), PageHeading("06 / REPRODUCTION", "From findings to a repeatable check", "reproduce")]
     result += [para("Historical audit commands", "h3"), CodePanel(commands, "EXECUTED DURING THE AUDIT")]
     result += blocks(reproduction)
@@ -800,27 +868,32 @@ def story():
     result += [para("Scratch paths in the executed commands identify the original audit run. To repeat it in another environment, "
                     "choose an isolated Maven repository and build the required dependencies first.", "small"), PageBreak()]
 
-    result += [PageHeading("07 / CHANGE SEQUENCE", "Seven reviewable work packages", "roadmap")]
+    result += [PageHeading("07 / CHANGE SEQUENCE", "Eight reviewable work packages", "roadmap")]
+    result += blocks(re.sub(r"(?m)^\|.*\n?", "", sections[7][1]))   # ordering notes lead the list
     road_rows = markdown_rows(sections[7][1])
     for row in road_rows[1:]:
         name, change, acceptance, closes = row
         package = name.split(" ")[0]
-        group = [para("**"+name+"**  /  "+closes, "h3"), para(change),
-                 para("**Acceptance:** "+acceptance, "acceptance")]
+        # Compact spacing keeps all eight packages on one page.
+        group = [Paragraph(markup("**"+name+"**  /  "+closes), ROADMAP_H3), Paragraph(markup(change), ROADMAP_BODY),
+                 Paragraph(markup("**Acceptance:** "+acceptance), ROADMAP_ACCEPTANCE)]
         result.append(KeepTogether(group))
-    result += blocks(re.sub(r"(?m)^\|.*\n?", "", sections[7][1]))
     result += [PageBreak(), PageHeading("08 / PRESENTATION OUTLINE", "Explain the contribution and its limits", "presentation")]
     result += blocks(sections[8][1])
     result += [Spacer(1, 15), scaled(pipeline_diagram()), Spacer(1, 15),
                para("**Discussion close:** agree on the acceptance gate for A/B before broadening the optimization work. "
                     "Keep correctness, representation limits, exact byte sizes, and performance evidence separate.", "proposal")]
+
+    result += [PageBreak(), PageHeading("09 / FIX STATUS", "Fixed the same day, one commit per finding", "fixes")]
+    result += [scaled(fix_status()), Spacer(1, 14)]
+    result += blocks(sections[9][1])
     return result
 
 
 def build():
     FIGURES.mkdir(parents=True, exist_ok=True)
     PDF.parent.mkdir(parents=True, exist_ok=True)
-    for name, factory in [("audit-overview", overview), ("loop-type-flow", loop_diagram),
+    for name, factory in [("fix-status", fix_status), ("loop-type-flow", loop_diagram),
                           ("cache-key-contract", cache_diagram), ("compiler-pipeline", pipeline_diagram)]:
         save_figure(name, factory())
     enhance_markdown()
@@ -832,11 +905,15 @@ def build():
     final = PdfReader(PDF)
     assert len(final.pages) == count
     text = "\n".join(page.extract_text() for page in final.pages)
-    for i in range(1, 13):
+    for i in range(1, 15):
         assert f"F{i:02}" in text
     print(json.dumps({"pdf": str(PDF), "pages": count, "bytes": PDF.stat().st_size,
                       "report_sha256": hashlib.sha256(REPORT.read_bytes()).hexdigest()}, indent=2))
 
 
 if __name__ == "__main__":
-    build()
+    import sys
+    if sys.argv[1:] == ["--fix-status"]:
+        save_figure("fix-status", fix_status())   # only this figure; no PDF, no Markdown change
+    else:
+        build()
