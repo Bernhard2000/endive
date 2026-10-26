@@ -37,6 +37,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
+import run.endive.compiler.internal.ValueArrays.RefEntry;
 import run.endive.runtime.OpCodeIdentifier;
 import run.endive.runtime.WasmException;
 import run.endive.wasm.WasmEngineException;
@@ -172,33 +173,18 @@ final class Emitters {
 
     private static void emitBoxResultOnStack(
             Context ctx, InstructionAdapter asm, List<ValType> types) {
-        int slotsNeeded = types.stream().mapToInt(CompilerUtil::slotCount).sum();
-        assertTempSlotInRange(ctx, slotsNeeded);
-        int slot = ctx.tempSlot() + slotsNeeded;
-        for (int i = types.size() - 1; i >= 0; i--) {
-            var type = types.get(i);
-            slot -= slotCount(type);
-            asm.store(slot, asmType(type));
+        spillToTemps(ctx, asm, types);
+        if (types.stream().anyMatch(ValType::isObjectRef)) {
+            ValueArrays.objectArray(asm, types, ctx.tempSlot());
+        } else {
+            ValueArrays.longArray(asm, types, ctx.tempSlot(), RefEntry.ZERO);
         }
+    }
 
-        boolean hasObjectRefs = types.stream().anyMatch(ValType::isObjectRef);
-        asm.iconst(types.size());
-        asm.newarray(hasObjectRefs ? OBJECT_TYPE : LONG_TYPE);
-        slot = ctx.tempSlot();
-        for (int i = 0; i < types.size(); i++) {
-            var type = types.get(i);
-            asm.dup();
-            asm.iconst(i);
-            asm.load(slot, asmType(type));
-            if (!type.isObjectRef()) {
-                emitJvmToLong(asm, type);
-                if (hasObjectRefs) {
-                    asm.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
-                }
-            }
-            asm.astore(hasObjectRefs ? OBJECT_TYPE : LONG_TYPE);
-            slot += slotCount(type);
-        }
+    /** Moves values from the operand stack into the temp slots, for {@link ValueArrays}. */
+    private static void spillToTemps(Context ctx, InstructionAdapter asm, List<ValType> types) {
+        assertTempSlotInRange(ctx, ValueArrays.slots(types));
+        ValueArrays.spill(asm, types, ctx.tempSlot());
     }
 
     public static void DROP(Context ctx, CompilerInstruction ins, InstructionAdapter asm) {
@@ -250,43 +236,14 @@ final class Emitters {
         emitPop(asm, type);
     }
 
+    /**
+     * Boxes values from the JVM operand stack into a long[], with 0 for Object refs.
+     * After this method, the stack has: [..., long[]]
+     */
     private static void emitBoxValuesOnStack(
             Context ctx, InstructionAdapter asm, List<ValType> types) {
-
-        // Store values from stack to locals in reverse order
-        int slotsNeeded = types.stream().mapToInt(CompilerUtil::slotCount).sum();
-        assertTempSlotInRange(ctx, slotsNeeded);
-        int slot = ctx.tempSlot() + slotsNeeded;
-        for (int i = types.size() - 1; i >= 0; i--) {
-            ValType valType = types.get(i);
-            slot -= slotCount(valType);
-            asm.store(slot, asmType(valType));
-        }
-
-        // Create the array
-        asm.iconst(types.size());
-        asm.newarray(LONG_TYPE);
-
-        // Load from locals and store in array
-        slot = ctx.tempSlot();
-        for (int i = 0; i < types.size(); i++) {
-            ValType valType = types.get(i);
-
-            if (valType.isObjectRef()) {
-                // Object refs can't be stored in long[] — store 0L as placeholder
-                asm.dup();
-                asm.iconst(i);
-                asm.lconst(0L);
-                asm.astore(LONG_TYPE);
-            } else {
-                asm.dup();
-                asm.iconst(i);
-                asm.load(slot, asmType(valType));
-                emitJvmToLong(asm, valType);
-                asm.astore(LONG_TYPE);
-            }
-            slot += slotCount(valType);
-        }
+        spillToTemps(ctx, asm, types);
+        ValueArrays.longArray(asm, types, ctx.tempSlot(), RefEntry.ZERO);
     }
 
     /**
@@ -298,63 +255,9 @@ final class Emitters {
      */
     private static void emitBoxValuesOnStackWithRefs(
             Context ctx, InstructionAdapter asm, List<ValType> types) {
-
-        boolean hasObjectRefs = types.stream().anyMatch(ValType::isObjectRef);
-
-        // Store values from stack to locals in reverse order
-        int slotsNeeded = types.stream().mapToInt(CompilerUtil::slotCount).sum();
-        assertTempSlotInRange(ctx, slotsNeeded);
-        int slot = ctx.tempSlot() + slotsNeeded;
-        for (int i = types.size() - 1; i >= 0; i--) {
-            ValType valType = types.get(i);
-            slot -= slotCount(valType);
-            asm.store(slot, asmType(valType));
-        }
-
-        // Create the long[] array
-        asm.iconst(types.size());
-        asm.newarray(LONG_TYPE);
-
-        // Load from locals and store in long[] (skip Object refs — store 0L)
-        slot = ctx.tempSlot();
-        for (int i = 0; i < types.size(); i++) {
-            ValType valType = types.get(i);
-
-            if (valType.isObjectRef()) {
-                // Object refs can't be stored in long[] — store 0L as placeholder
-                asm.dup();
-                asm.iconst(i);
-                asm.lconst(0L);
-                asm.astore(LONG_TYPE);
-            } else {
-                asm.dup();
-                asm.iconst(i);
-                asm.load(slot, asmType(valType));
-                emitJvmToLong(asm, valType);
-                asm.astore(LONG_TYPE);
-            }
-            slot += slotCount(valType);
-        }
-
-        // Create the Object[] array (or push null if no Object refs)
-        if (hasObjectRefs) {
-            asm.iconst(types.size());
-            asm.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-
-            slot = ctx.tempSlot();
-            for (int i = 0; i < types.size(); i++) {
-                ValType valType = types.get(i);
-                if (valType.isObjectRef()) {
-                    asm.dup();
-                    asm.iconst(i);
-                    asm.load(slot, asmType(valType));
-                    asm.astore(OBJECT_TYPE);
-                }
-                slot += slotCount(valType);
-            }
-        } else {
-            asm.aconst(null);
-        }
+        spillToTemps(ctx, asm, types);
+        ValueArrays.longArray(asm, types, ctx.tempSlot(), RefEntry.ZERO);
+        ValueArrays.refArrayOrNull(asm, types, ctx.tempSlot());
     }
 
     /**
@@ -365,54 +268,9 @@ final class Emitters {
      */
     private static void emitBoxFieldsForStruct(
             Context ctx, InstructionAdapter asm, List<ValType> types) {
-
-        // Store values from stack to locals in reverse order
-        int slotsNeeded = types.stream().mapToInt(CompilerUtil::slotCount).sum();
-        assertTempSlotInRange(ctx, slotsNeeded);
-        int slot = ctx.tempSlot() + slotsNeeded;
-        for (int i = types.size() - 1; i >= 0; i--) {
-            ValType valType = types.get(i);
-            slot -= slotCount(valType);
-            asm.store(slot, asmType(valType));
-        }
-
-        // Create long[] for numeric fields
-        asm.iconst(types.size());
-        asm.newarray(LONG_TYPE);
-
-        slot = ctx.tempSlot();
-        for (int i = 0; i < types.size(); i++) {
-            ValType valType = types.get(i);
-            if (!valType.isObjectRef()) {
-                asm.dup();
-                asm.iconst(i);
-                asm.load(slot, asmType(valType));
-                emitJvmToLong(asm, valType);
-                asm.astore(LONG_TYPE);
-            }
-            slot += slotCount(valType);
-        }
-
-        // Create Object[] for ref fields (null if none)
-        boolean hasRefs = types.stream().anyMatch(ValType::isObjectRef);
-        if (hasRefs) {
-            asm.iconst(types.size());
-            asm.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-
-            slot = ctx.tempSlot();
-            for (int i = 0; i < types.size(); i++) {
-                ValType valType = types.get(i);
-                if (valType.isObjectRef()) {
-                    asm.dup();
-                    asm.iconst(i);
-                    asm.load(slot, asmType(valType));
-                    asm.astore(OBJECT_TYPE);
-                }
-                slot += slotCount(valType);
-            }
-        } else {
-            asm.aconst(null);
-        }
+        spillToTemps(ctx, asm, types);
+        ValueArrays.longArray(asm, types, ctx.tempSlot(), RefEntry.SKIP);
+        ValueArrays.refArrayOrNull(asm, types, ctx.tempSlot());
     }
 
     /**
@@ -1546,8 +1404,7 @@ final class Emitters {
         int tableIdx = (int) ins.operand(1);
         FunctionType calleeType = ctx.types()[typeId];
 
-        int paramSlots = calleeType.params().stream().mapToInt(CompilerUtil::slotCount).sum();
-        int savedSlot = ctx.tempSlot() + paramSlots;
+        int savedSlot = ctx.tempSlot() + paramSlots(calleeType);
         asm.store(savedSlot, INT_TYPE);
 
         if (calleeType.hasObjectRefParams()) {
@@ -1574,8 +1431,7 @@ final class Emitters {
         int typeId = (int) ins.operand(0);
         FunctionType calleeType = ctx.types()[typeId];
 
-        int paramSlots = calleeType.params().stream().mapToInt(CompilerUtil::slotCount).sum();
-        int savedSlot = ctx.tempSlot() + paramSlots;
+        int savedSlot = ctx.tempSlot() + paramSlots(calleeType);
         asm.store(savedSlot, INT_TYPE);
 
         // null check
@@ -1667,41 +1523,7 @@ final class Emitters {
                 // Multi-value with refs: build Object[] from CallResult
                 int crSlot = ctx.tempSlot();
                 asm.store(crSlot, OBJECT_TYPE);
-
-                asm.iconst(returns.size());
-                asm.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-
-                int slot = 0;
-                for (int i = 0; i < returns.size(); i++) {
-                    asm.dup();
-                    asm.iconst(i);
-                    ValType retType = returns.get(i);
-                    if (retType.isObjectRef()) {
-                        asm.load(crSlot, OBJECT_TYPE);
-                        asm.iconst(slot);
-                        asm.invokevirtual(
-                                "run/endive/runtime/CallResult",
-                                "refResult",
-                                "(I)Ljava/lang/Object;",
-                                false);
-                        slot++;
-                    } else if (retType.equals(ValType.V128)) {
-                        asm.load(crSlot, OBJECT_TYPE);
-                        asm.iconst(slot);
-                        asm.invokevirtual(
-                                "run/endive/runtime/CallResult", "longResult", "(I)J", false);
-                        asm.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
-                        slot += 2;
-                    } else {
-                        asm.load(crSlot, OBJECT_TYPE);
-                        asm.iconst(slot);
-                        asm.invokevirtual(
-                                "run/endive/runtime/CallResult", "longResult", "(I)J", false);
-                        asm.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
-                        slot++;
-                    }
-                    asm.astore(OBJECT_TYPE);
-                }
+                ValueArrays.objectArrayFromCallResult(asm, returns, crSlot);
                 // Object[] left on stack — caller's emitUnboxResult will handle it
             }
         } else {

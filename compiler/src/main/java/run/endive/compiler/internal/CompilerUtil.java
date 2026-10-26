@@ -187,7 +187,7 @@ final class CompilerUtil {
 
     public static boolean needsInlineResultBoxing(List<ValType> types) {
         // value_xxx receives all results as parameters, without Memory/Instance arguments.
-        return types.stream().mapToInt(CompilerUtil::slotCount).sum() > 255;
+        return ValueArrays.slots(types) > 255;
     }
 
     public static MethodType callIndirectMethodType(FunctionType functionType) {
@@ -209,7 +209,7 @@ final class CompilerUtil {
     }
 
     public static int paramSlots(FunctionType type) {
-        return type.params().stream().mapToInt(CompilerUtil::slotCount).sum();
+        return ValueArrays.slots(type.params());
     }
 
     // The number of JVM slots taken by the wasm arguments in the method signature
