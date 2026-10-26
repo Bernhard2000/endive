@@ -2,10 +2,8 @@ package run.endive.compiler.internal;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Rewrites {@code i64} computations whose result is immediately narrowed back to {@code i32}
@@ -39,8 +37,6 @@ final class NarrowingPeephole {
             new EnumMap<>(CompilerOpCode.class);
     private static final Map<CompilerOpCode, CompilerOpCode> NARROW_LOAD =
             new EnumMap<>(CompilerOpCode.class);
-    private static final Set<CompilerOpCode> BOOLEAN_PRODUCERS =
-            EnumSet.noneOf(CompilerOpCode.class);
 
     static {
         NARROW_BINARY.put(CompilerOpCode.I64_ADD, CompilerOpCode.I32_ADD);
@@ -56,22 +52,6 @@ final class NarrowingPeephole {
         NARROW_LOAD.put(CompilerOpCode.I64_LOAD16_U, CompilerOpCode.I32_LOAD16_U);
         NARROW_LOAD.put(CompilerOpCode.I64_LOAD32_S, CompilerOpCode.I32_LOAD);
         NARROW_LOAD.put(CompilerOpCode.I64_LOAD32_U, CompilerOpCode.I32_LOAD);
-
-        for (var prefix : new String[] {"I32_", "I64_"}) {
-            for (var op :
-                    new String[] {
-                        "EQZ", "EQ", "NE", "LT_S", "LT_U", "GT_S", "GT_U", "LE_S", "LE_U", "GE_S",
-                        "GE_U"
-                    }) {
-                BOOLEAN_PRODUCERS.add(CompilerOpCode.valueOf(prefix + op));
-            }
-        }
-        for (var prefix : new String[] {"F32_", "F64_"}) {
-            for (var op : new String[] {"EQ", "NE", "LT", "GT", "LE", "GE"}) {
-                BOOLEAN_PRODUCERS.add(CompilerOpCode.valueOf(prefix + op));
-            }
-        }
-        BOOLEAN_PRODUCERS.add(CompilerOpCode.REF_IS_NULL);
     }
 
     private NarrowingPeephole() {}
@@ -96,7 +76,7 @@ final class NarrowingPeephole {
             case I32_WRAP_I64:
                 return narrowBinary(out) || narrowLoad(out);
             case I64_EXTEND_I32_U:
-                if (!out.isEmpty() && BOOLEAN_PRODUCERS.contains(last(out).opcode())) {
+                if (!out.isEmpty() && producesBoolean(last(out).opcode())) {
                     out.add(new CompilerInstruction(CompilerOpCode.I64_EXTEND_I32_S));
                     return true;
                 }
@@ -138,6 +118,11 @@ final class NarrowingPeephole {
         }
         out.set(out.size() - 1, new CompilerInstruction(narrowed, load.operands().toArray()));
         return true;
+    }
+
+    // instructions whose result is the i32 0 or 1
+    private static boolean producesBoolean(CompilerOpCode opcode) {
+        return BranchCondition.isNumericComparison(opcode) || opcode == CompilerOpCode.REF_IS_NULL;
     }
 
     private static CompilerInstruction last(List<CompilerInstruction> list) {

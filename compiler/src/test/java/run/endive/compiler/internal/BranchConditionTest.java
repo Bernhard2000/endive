@@ -295,6 +295,57 @@ public class BranchConditionTest {
     }
 
     @Test
+    public void numericComparisonsAreTheWasmComparisons() {
+        var expected = new ArrayList<String>();
+        for (var type : new String[] {"I32", "I64"}) {
+            for (var op :
+                    new String[] {
+                        "EQZ", "EQ", "NE", "LT_S", "LT_U", "GT_S", "GT_U", "LE_S", "LE_U", "GE_S",
+                        "GE_U"
+                    }) {
+                expected.add(type + "_" + op);
+            }
+        }
+        for (var type : new String[] {"F32", "F64"}) {
+            for (var op : new String[] {"EQ", "NE", "LT", "GT", "LE", "GE"}) {
+                expected.add(type + "_" + op);
+            }
+        }
+        var actual = new ArrayList<String>();
+        for (var opcode : CompilerOpCode.values()) {
+            if (BranchCondition.isNumericComparison(opcode)) {
+                actual.add(opcode.name());
+            }
+        }
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void everyFusedComparisonIsListedOnce() {
+        for (var opcode : CompilerOpCode.values()) {
+            var signedOrWide = BranchCondition.ofComparison(opcode);
+            var unsigned = BranchCondition.ofUnsignedI32Comparison(opcode);
+            assertFalse(signedOrWide.isPresent() && unsigned.isPresent(), opcode.name());
+            var condition = signedOrWide.or(() -> unsigned);
+            if (BranchCondition.isNumericComparison(opcode)) {
+                // i32.eqz is absorbed by negating the jump instead
+                assertEquals(
+                        opcode != CompilerOpCode.I32_EQZ, condition.isPresent(), opcode.name());
+                condition.ifPresent(c -> assertEquals(opcode.name(), c.name()));
+            } else {
+                assertEquals(
+                        opcode == CompilerOpCode.REF_EQ_FUSABLE,
+                        condition.isPresent(),
+                        opcode.name());
+            }
+            int kind = Emitters.branchlessBoolKind(opcode);
+            if (kind >= 0) {
+                assertTrue(BranchCondition.isNumericComparison(opcode), opcode.name());
+            }
+        }
+    }
+
+    @Test
     public void negatedJumpsAreComplements() {
         int[][] complements = {
             {Opcodes.IFEQ, Opcodes.IFNE},

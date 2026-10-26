@@ -1,6 +1,8 @@
 package run.endive.compiler.internal;
 
+import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -88,6 +90,10 @@ enum BranchCondition {
 
     private static final BranchCondition[] VALUES = values();
 
+    // CompilerOpCode lists them in the order of their Wasm opcodes, i32.eqz (0x45) to f64.ge (0x66)
+    private static final Set<CompilerOpCode> NUMERIC_COMPARISONS =
+            EnumSet.range(CompilerOpCode.I32_EQZ, CompilerOpCode.F64_GE);
+
     private final Prefix prefix;
     private final int jumpIfTrue;
 
@@ -104,6 +110,15 @@ enum BranchCondition {
     @SuppressWarnings("EnumOrdinal")
     long id() {
         return ordinal();
+    }
+
+    /**
+     * Returns whether {@code opcode} is a Wasm comparison of numbers: {@code eqz}, {@code eq},
+     * {@code ne}, {@code lt}, {@code gt}, {@code le} or {@code ge} on {@code i32}, {@code i64},
+     * {@code f32} or {@code f64}. Each pushes the {@code i32} 0 or 1.
+     */
+    static boolean isNumericComparison(CompilerOpCode opcode) {
+        return NUMERIC_COMPARISONS.contains(opcode);
     }
 
     /**
