@@ -497,17 +497,22 @@ final class WasmAnalyzer {
                     }
 
                 case END:
-                    // Check if this is the end of a TRY_TABLE block
-                    if (ins.scope().opcode() == OpCode.TRY_TABLE) {
-                        var tryCatchBlock = tryCatchBlocks.remove(ins.scope().address());
+                    {
+                        // The function's own END is the only one at depth 0. The parser gives it
+                        // itself as its scope, or the scope of an END right before it.
+                        var scope = ins.depth() == 0 ? FUNCTION_SCOPE : ins.scope();
+                        // Check if this is the end of a TRY_TABLE block
+                        if (scope.opcode() == OpCode.TRY_TABLE) {
+                            var tryCatchBlock = tryCatchBlocks.remove(scope.address());
 
-                        // Weird: sometimes we see END occur multiple times for
-                        if (tryCatchBlock != null) {
-                            analyzeTryCatchEnd(result, tryCatchBlock);
+                            // already handled if the END is unreachable
+                            if (tryCatchBlock != null) {
+                                analyzeTryCatchEnd(result, tryCatchBlock);
+                            }
                         }
+                        stack.exitScope(scope);
+                        break;
                     }
-                    stack.exitScope(ins.scope());
-                    break;
 
                 case THROW:
                     {

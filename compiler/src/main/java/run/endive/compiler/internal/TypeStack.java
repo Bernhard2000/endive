@@ -95,18 +95,25 @@ final class TypeStack {
      * Leaves a scope. Its results get the scope's declared result types: values can also arrive
      * by branches to the scope's label, so the types the fallthrough path left on the stack can
      * be narrower than what the scope may produce.
+     *
+     * @throws IllegalStateException if the scope was not entered, or the stack holds fewer values
+     *     than the scope's results
      */
     public void exitScope(Instruction scope) {
-        scopes.remove(scope);
-        restore.pop();
         var returns = scopeReturns.remove(scope);
-        if (returns != null && types().size() >= returns.size()) {
-            for (int i = 0; i < returns.size(); i++) {
-                types().pop();
-            }
-            for (ValType type : returns) {
-                types().push(type);
-            }
+        if (scopes.remove(scope) == null || returns == null) {
+            throw new IllegalStateException("Exiting a scope that was not entered: " + scope);
+        }
+        restore.pop();
+        if (types().size() < returns.size()) {
+            throw new IllegalStateException(
+                    "Scope " + scope + " ends with " + types() + ", expected results " + returns);
+        }
+        for (int i = 0; i < returns.size(); i++) {
+            types().pop();
+        }
+        for (ValType type : returns) {
+            types().push(type);
         }
     }
 
