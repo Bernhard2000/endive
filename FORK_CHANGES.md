@@ -363,9 +363,10 @@ From [FORK_AUDIT_2026-10-25.md](FORK_AUDIT_2026-10-25.md), on the branch rebased
 | F08, fork | The archive keeps round 1 outputs only: the summary now says "2 of 24" and the workload notes say where the full check ran | this section's commit |
 | F09, inherited | Blocking `Fork CI` workflow on the integration and topic branches | `CI: add a blocking fork workflow …` |
 | F10, fork | `mvn-fork.sh` rejects every repository override spelling; `AGENT.md` points at it | `Build: reject every spelling …` |
+| F11, mixed | Value-array boxing/spill helpers, one numeric-comparison set, explicit type-stack scope invariants; bytecode identical | `Compiler: build Wasm value arrays in one place` and the two commits after it |
 | F12, fork | This status header, historical labels, section 11 | this section's commit |
 | F14, inherited | Validator accepts `(ref null none)` where `eqref`, `structref`, `arrayref`, `i31ref` is expected | `Validator: accept none wherever …` |
 
-Not changed: F11 (refactoring, kept apart from these semantic fixes) and cross-instance tail calls
-themselves (F04). F01, F03, F04, F14 and the upstream-side part of F09 are upstream-relevant;
+Not changed: cross-instance tail calls themselves (F04). F11's refactoring is kept in commits of
+its own after the semantic fixes, and leaves every generated class byte-identical. F01, F03, F04, F14 and the upstream-side part of F09 are upstream-relevant;
 F03 and F14 are inherited fixes worth offering upstream.
