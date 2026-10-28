@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import run.endive.build.time.compiler.Config;
 import run.endive.build.time.compiler.Generator;
 import run.endive.compiler.InterpreterFallback;
+import run.endive.corpus.CorpusResources;
 import run.endive.runtime.ByteBufferMemory;
 import run.endive.runtime.HostFunction;
 import run.endive.runtime.ImportMemory;
@@ -273,6 +274,55 @@ public class InterpreterFallbackTest {
                         .build();
 
         assertEquals(35, instance.export("func_2").apply(0)[0]);
+    }
+
+    @Test
+    public void metaKeepsFunctionsReachableThroughTailCalls() throws Exception {
+        assertEquals(42, callFromMeta(3, "tail_call"));
+    }
+
+    @Test
+    public void metaCallRefRunsCompiledFunction() throws Exception {
+        assertEquals(42, callFromMeta(4, "call_ref"));
+    }
+
+    @Test
+    public void metaKeepsAllBodiesOnIndirectTailCall() throws Exception {
+        assertEquals(42, callFromMeta(5, "tail_call_ref"));
+    }
+
+    // Generates drop_bodies.wat with only funcId interpreted and calls export(41) through the .meta
+    private long callFromMeta(int funcId, String export) throws Exception {
+        Path dir = Path.of("target", "test-fixtures-meta");
+        Files.createDirectories(dir);
+        var file = dir.resolve("drop_bodies.wasm");
+        try (var in = CorpusResources.getResource("compiled/drop_bodies.wat.wasm")) {
+            Files.write(file, in.readAllBytes());
+        }
+
+        var name = "TestMeta" + funcId;
+        var config =
+                Config.builder()
+                        .withWasmFile(file)
+                        .withTargetSourceFolder(dir)
+                        .withTargetClassFolder(dir)
+                        .withTargetWasmFolder(dir)
+                        .withName("run.endive.testing." + name)
+                        .withInterpretedFunctions(Set.of(funcId))
+                        .build();
+        generateAll(new Generator(config));
+
+        var cl = new URLClassLoader(new URL[] {dir.toUri().toURL()});
+        var machineClass = cl.loadClass("run.endive.testing." + name + "Machine");
+        WasmModule module;
+        try (InputStream in = machineClass.getResourceAsStream(name + ".meta")) {
+            module = Parser.parse(in);
+        }
+        var instance =
+                Instance.builder(module)
+                        .withMachineFactory(createMachineFactory(machineClass))
+                        .build();
+        return instance.export(export).apply(41)[0];
     }
 
     private static HostFunction createHostFunc(List<String> hostStackTrace) {

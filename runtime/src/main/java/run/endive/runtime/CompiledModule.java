@@ -4,7 +4,7 @@ import java.util.function.Function;
 import run.endive.wasm.WasmModule;
 
 /**
- * This interface is implemented by build time compiled wasm modules.
+ * A wasm module together with a machine factory for its instances.
  */
 public interface CompiledModule {
     WasmModule wasmModule();

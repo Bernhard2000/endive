@@ -38,6 +38,7 @@ import run.endive.codegen.ModuleInterfaceCodegen;
 import run.endive.compiler.MethodPrefixer;
 import run.endive.compiler.internal.ByteClassCollector;
 import run.endive.compiler.internal.Compiler;
+import run.endive.compiler.internal.InterpretableFunctions;
 import run.endive.runtime.CompiledModule;
 import run.endive.runtime.Instance;
 import run.endive.runtime.Machine;
@@ -169,6 +170,7 @@ public class Generator {
     public void generateMetaWasm(Set<Integer> interpretedFunctions) throws IOException {
         byte[] wasmBytes = Files.readAllBytes(config.wasmFile());
         var module = Parser.parse(wasmBytes);
+        var retained = InterpretableFunctions.of(module, interpretedFunctions);
 
         var writer = new WasmWriter();
         Parser.parseWithoutDecoding(
@@ -188,7 +190,7 @@ public class Generator {
                         }
                         for (int i = 0; i < count; i++) {
                             var funcId = importFuncs + i;
-                            if (interpretedFunctions.contains(funcId)) {
+                            if (retained.contains(funcId)) {
 
                                 // Copy over the original function body from the source
                                 var bodySize = (int) readVarUInt32(source);

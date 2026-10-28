@@ -118,6 +118,23 @@ var instance = Instance.builder(module).
 
 Typically, you can obtain the list of the functions by running the compiler once with `InterpreterFallback.WARN`
 
+### Releasing Function Bodies
+
+Once compiled, the parsed function bodies are only needed by functions that run in the interpreter.
+`compileModule()` returns the machine factory together with a copy of the module that keeps only
+those bodies and no custom sections, so the rest can be garbage collected once the original module
+is no longer referenced:
+
+```java
+import run.endive.compiler.MachineFactoryCompiler;
+import run.endive.runtime.Instance;
+import run.endive.wasm.Parser;
+import java.io.File;
+
+var compiled = MachineFactoryCompiler.builder(Parser.parse(new File("your.wasm"))).compileModule();
+var instance = Instance.builder(compiled).build();
+```
+
 ### Method Names
 
 By default, the compiler names compiled methods `func_0`, `func_1`, etc. A `MethodPrefixer` lets you
