@@ -1,5 +1,7 @@
 package run.endive.redline.experimental.runner.internal;
 
+import static java.util.Objects.requireNonNullElse;
+
 import java.lang.foreign.Arena;
 import java.lang.foreign.FunctionDescriptor;
 import java.lang.foreign.Linker;
@@ -10,6 +12,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.ref.Reference;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 import run.endive.redline.experimental.api.NativeCode;
 import run.endive.redline.experimental.api.internal.CtxBuffer;
 import run.endive.redline.experimental.api.internal.InterruptWatchdog;
@@ -43,6 +46,9 @@ public final class NativeMachine implements Machine {
 
     private static final int CTX_SIZE = CtxBuffer.CTX_SIZE;
     private static final long PAGE_SIZE = 4096;
+
+    // Never reused, unlike a context address, so a stale entry cannot match a new instance
+    private static final AtomicLong OWNER_IDS = new AtomicLong();
 
     // Conversion handles for adapting downcalls to uniform (MS, MS, long[]) → long.
     // These use Wasm bit-reinterpretation (not numeric casts).
@@ -89,7 +95,9 @@ public final class NativeMachine implements Machine {
     private final MemorySegment argsBuffer;
     private final MemorySegment globalsBuffer;
     private final MemorySegment funcTypesArray;
+    private final long ownerId = OWNER_IDS.incrementAndGet();
     private MemorySegment tablePtrsArray;
+    private MemorySegment tableWriters;
     private NativeTable[] nativeTables;
     private boolean tablesInitialized;
     private final int numImports;
@@ -191,6 +199,7 @@ public final class NativeMachine implements Machine {
         ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.FUNC_TYPES_PTR, funcTypesArray.address());
         ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.MEMMOVE_PTR, PanamaExecutor.MEMMOVE_ADDR);
         ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.MEMSET_PTR, PanamaExecutor.MEMSET_ADDR);
+        ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.OWNER_ID, ownerId);
 
         byte[] image = code.image();
         this.codeRegionSize = (Math.max(image.length, 1) + PAGE_SIZE - 1) & -PAGE_SIZE;
@@ -238,6 +247,20 @@ public final class NativeMachine implements Machine {
         // An imported memory outlives this instance and may back others, so only
         // a memory this module defines is ours to close.
         this.ownsMemory = instance.imports().memoryCount() == 0;
+    }
+
+    /** Returns the id that the table entries this machine owns hold. */
+    long ownerId() {
+        return ownerId;
+    }
+
+    boolean isClosed() {
+        return closed;
+    }
+
+    /** Returns the instance this machine executes. */
+    Instance instance() {
+        return instance;
     }
 
     @Override
@@ -512,10 +535,12 @@ public final class NativeMachine implements Machine {
     }
 
     /**
-     * Compiled code only reaches this with a table operation sentinel: it emits
-     * call_indirect inline and never writes TYPE_ID, TABLE_IDX or ELEM_IDX, so the
-     * call_indirect path this used to carry could only ever have dispatched on
-     * whatever those fields happened to hold.
+     * Entry point for compiled code that needs the runner: table operations,
+     * flagged by a negative argument count, and call_indirect through an entry
+     * another instance owns.
+     *
+     * @param ctxAddr the calling function's context
+     * @return the operation's result, or 0 if it recorded an exception
      */
     @SuppressWarnings("unused")
     private long callIndirectTrampoline(long ctxAddr) {
@@ -525,11 +550,63 @@ public final class NativeMachine implements Machine {
             if (argCount < 0) {
                 return handleTableOperation(argCount);
             }
-            throw new WasmEngineException("Unexpected trampoline call: argCount " + argCount);
+            return callForeignEntry(
+                    ctx.get(ValueLayout.JAVA_INT, CtxBuffer.TYPE_ID),
+                    ctx.get(ValueLayout.JAVA_INT, CtxBuffer.TABLE_IDX),
+                    ctx.get(ValueLayout.JAVA_INT, CtxBuffer.ELEM_IDX),
+                    argCount);
         } catch (Throwable t) {
             recordHostException(t);
             return 0L;
         }
+    }
+
+    /**
+     * Calls a table entry this instance does not own, in the instance that
+     * does. Compiled code has already checked the index. The entry's type
+     * index is the owner's, so the signature is checked here by structure. The
+     * call runs through the owner's machine, against the owner's memory,
+     * globals and tables. A trap there becomes an exception that unwinds this
+     * instance too.
+     *
+     * @param typeId the expected type, in this module's index space
+     * @param tableIdx the table, in this module's index space
+     * @param elemIdx the entry
+     * @param argCount the number of arguments in argsBuffer
+     * @return a single result as raw bits, or 0 with the results left in
+     *     argsBuffer for a multi-value call
+     */
+    private long callForeignEntry(int typeId, int tableIdx, int elemIdx, int argCount) {
+        NativeTable table = nativeTables[tableIdx];
+        int funcId = table.ref(elemIdx);
+        if (funcId == Value.REF_NULL_VALUE) {
+            throw new TrapException("uninitialized element");
+        }
+        // An entry written with no owner runs in the caller, as in the interpreter
+        Instance owner = requireNonNullElse(table.instance(elemIdx), instance);
+        var expected = instance.type(typeId);
+        var actual = owner.type(owner.functionType(funcId));
+        if (!FunctionType.matches(actual, expected, instance.module().typeSection())) {
+            throw new TrapException("indirect call type mismatch");
+        }
+        long[] args = new long[argCount];
+        for (int i = 0; i < argCount; i++) {
+            args[i] = argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(i));
+        }
+        // One stack budget for the whole chain, or each instance would add its own
+        long stackLimit = ctxBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.STACK_LIMIT);
+        long[] results =
+                owner.getMachine() instanceof NativeMachine ownerMachine
+                        ? ownerMachine.callWithStackLimit(funcId, args, stackLimit)
+                        : owner.getMachine().call(funcId, args);
+        refreshMemoryPages();
+        if (expected.returns().size() > 1) {
+            for (int i = 0; i < results.length; i++) {
+                argsBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(i), results[i]);
+            }
+            return 0L;
+        }
+        return results == null || results.length == 0 ? 0L : results[0];
     }
 
     private long handleTableOperation(int opCode) {
@@ -538,17 +615,8 @@ public final class NativeMachine implements Machine {
                 int oldSize = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
                 int newSize = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(1));
                 int fillValue = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(2));
-                long tableAddr = argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(3));
                 int tblIdx = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(4));
-                boolean externRef = nativeTables[tblIdx].isExternRef();
-                var tableBuf =
-                        MemorySegment.ofAddress(tableAddr)
-                                .reinterpret(
-                                        CtxBuffer.TABLE_ENTRIES_OFFSET
-                                                + (long) newSize * CtxBuffer.TABLE_ENTRY_SIZE);
-                for (int i = oldSize; i < newSize; i++) {
-                    writeTableEntry(tableBuf, i, fillValue, externRef);
-                }
+                nativeTables[tblIdx].fill(oldSize, newSize, fillValue, instance);
                 // Update TableLimits so import validation sees the grown size
                 nativeTables[tblIdx].limits().grow(newSize - oldSize);
             }
@@ -556,45 +624,16 @@ public final class NativeMachine implements Machine {
                 int offset = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
                 int end = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(1));
                 int fillValue = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(2));
-                long tableAddr = argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(3));
                 int tblIdx = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(4));
-                boolean externRef = nativeTables[tblIdx].isExternRef();
-                var tableBuf =
-                        MemorySegment.ofAddress(tableAddr)
-                                .reinterpret(
-                                        CtxBuffer.TABLE_ENTRIES_OFFSET
-                                                + (long) end * CtxBuffer.TABLE_ENTRY_SIZE);
-                for (int i = offset; i < end; i++) {
-                    writeTableEntry(tableBuf, i, fillValue, externRef);
-                }
+                nativeTables[tblIdx].fill(offset, end, fillValue, instance);
             }
-            case -3 -> { // table copy (16-byte entries)
+            case -3 -> { // table copy
                 long srcAddr = argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
                 long dstAddr = argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(1));
                 int srcOff = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(2));
                 int dstOff = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(3));
                 int size = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(4));
-                long entrySize = CtxBuffer.TABLE_ENTRY_SIZE;
-                var srcBuf =
-                        MemorySegment.ofAddress(srcAddr)
-                                .reinterpret(
-                                        CtxBuffer.TABLE_ENTRIES_OFFSET
-                                                + (long) (srcOff + size) * entrySize);
-                var dstBuf =
-                        MemorySegment.ofAddress(dstAddr)
-                                .reinterpret(
-                                        CtxBuffer.TABLE_ENTRIES_OFFSET
-                                                + (long) (dstOff + size) * entrySize);
-                // Copy 16-byte entries with correct overlap handling
-                if (dstOff <= srcOff) {
-                    for (int i = 0; i < size; i++) {
-                        copyTableEntry(srcBuf, srcOff + i, dstBuf, dstOff + i);
-                    }
-                } else {
-                    for (int i = size - 1; i >= 0; i--) {
-                        copyTableEntry(srcBuf, srcOff + i, dstBuf, dstOff + i);
-                    }
-                }
+                tableAt(dstAddr).copyFrom(tableAt(srcAddr), srcOff, dstOff, size);
             }
             case -4 -> { // table init
                 int tableIdx = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
@@ -610,6 +649,11 @@ public final class NativeMachine implements Machine {
             case -5 -> { // elem drop
                 int elemIdx = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
                 instance.setElement(elemIdx, null);
+            }
+            case -6 -> { // first native table.set into a table
+                int tblIdx = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
+                nativeTables[tblIdx].registerWriter(this);
+                tableWriters.set(ValueLayout.JAVA_INT, (long) tblIdx * 4, 1);
             }
             case -8 -> { // memory.init
                 int segmentId = (int) argsBuffer.get(ValueLayout.JAVA_LONG, CtxBuffer.argOffset(0));
@@ -647,40 +691,19 @@ public final class NativeMachine implements Machine {
         return 0L;
     }
 
-    private void writeTableEntry(
-            MemorySegment tableBuf, int index, int funcId, boolean isExternRef) {
-        long base = CtxBuffer.TABLE_ENTRIES_OFFSET + (long) index * CtxBuffer.TABLE_ENTRY_SIZE;
-        if (funcId == Value.REF_NULL_VALUE) {
-            tableBuf.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, 0);
-            tableBuf.set(
-                    ValueLayout.JAVA_INT,
-                    base + CtxBuffer.ENTRY_FUNC_ID_OFFSET,
-                    Value.REF_NULL_VALUE);
-            tableBuf.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, 0L);
-        } else if (isExternRef) {
-            tableBuf.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, 0);
-            tableBuf.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, funcId);
-            tableBuf.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, 0L);
-        } else {
-            long funcPtr = funcTable.get(ValueLayout.JAVA_LONG, (long) funcId * 8);
-            int typeIdx = funcTypesArray.get(ValueLayout.JAVA_INT, (long) funcId * 4);
-            tableBuf.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, typeIdx);
-            tableBuf.set(ValueLayout.JAVA_INT, base + CtxBuffer.ENTRY_FUNC_ID_OFFSET, funcId);
-            tableBuf.set(ValueLayout.JAVA_LONG, base + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, funcPtr);
+    /**
+     * Finds this instance's table whose native buffer is at {@code address}.
+     *
+     * @param address a table buffer address
+     * @return the table
+     */
+    private NativeTable tableAt(long address) {
+        for (NativeTable table : nativeTables) {
+            if (table.nativeBuffer().address() == address) {
+                return table;
+            }
         }
-    }
-
-    /** Copy a single 16-byte table entry from src[srcIdx] to dst[dstIdx]. */
-    private static void copyTableEntry(
-            MemorySegment src, int srcIdx, MemorySegment dst, int dstIdx) {
-        long srcBase = CtxBuffer.TABLE_ENTRIES_OFFSET + (long) srcIdx * CtxBuffer.TABLE_ENTRY_SIZE;
-        long dstBase = CtxBuffer.TABLE_ENTRIES_OFFSET + (long) dstIdx * CtxBuffer.TABLE_ENTRY_SIZE;
-        int typeIdx = src.get(ValueLayout.JAVA_INT, srcBase + CtxBuffer.ENTRY_TYPE_IDX_OFFSET);
-        int funcId = src.get(ValueLayout.JAVA_INT, srcBase + CtxBuffer.ENTRY_FUNC_ID_OFFSET);
-        long funcPtr = src.get(ValueLayout.JAVA_LONG, srcBase + CtxBuffer.ENTRY_FUNC_PTR_OFFSET);
-        dst.set(ValueLayout.JAVA_INT, dstBase + CtxBuffer.ENTRY_TYPE_IDX_OFFSET, typeIdx);
-        dst.set(ValueLayout.JAVA_INT, dstBase + CtxBuffer.ENTRY_FUNC_ID_OFFSET, funcId);
-        dst.set(ValueLayout.JAVA_LONG, dstBase + CtxBuffer.ENTRY_FUNC_PTR_OFFSET, funcPtr);
+        throw new WasmEngineException("no table at " + address);
     }
 
     // --- Memory grow upcall stub ---
@@ -801,6 +824,7 @@ public final class NativeMachine implements Machine {
         // Just collect references and build the pointer array.
         this.nativeTables = new NativeTable[tableCount];
         this.tablePtrsArray = arena.allocate((long) tableCount * 8, 8);
+        this.tableWriters = arena.allocate((long) tableCount * 4, 4).fill((byte) 0);
 
         for (int i = 0; i < tableCount; i++) {
             var table = instance.table(i);
@@ -816,6 +840,7 @@ public final class NativeMachine implements Machine {
         }
 
         ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.TABLE_PTRS, tablePtrsArray.address());
+        ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.TABLE_WRITERS_PTR, tableWriters.address());
     }
 
     /** Package-private: used by NativeTable to resolve funcId → funcPtr across modules. */
@@ -907,6 +932,15 @@ public final class NativeMachine implements Machine {
 
     @Override
     public long[] call(int funcId, long[] args) throws WasmEngineException {
+        return callWithStackLimit(funcId, args, 0L);
+    }
+
+    /** Calls with the stack limit an outermost call starts from, 0 to anchor a new one. */
+    private long[] callWithStackLimit(int funcId, long[] args, long stackLimit) {
+        if (closed) {
+            // Its native code and buffers are gone, but a table may still hold its functions
+            throw new WasmEngineException("instance is closed");
+        }
         if (funcId < numImports) {
             // Host import — delegate directly
             var imprt = instance.imports().function(funcId);
@@ -914,6 +948,9 @@ public final class NativeMachine implements Machine {
         }
 
         var handle = downcalls[funcId];
+        if (handle == null) {
+            throw new WasmEngineException("Function " + funcId + " not compiled");
+        }
 
         try {
             boolean outermostCall = callDepth++ == 0;
@@ -927,7 +964,7 @@ public final class NativeMachine implements Machine {
             // against where the outer call began, or every level moves the
             // limit deeper and the guard stops firing.
             if (outermostCall) {
-                ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.STACK_LIMIT, 0L);
+                ctxBuffer.set(ValueLayout.JAVA_LONG, CtxBuffer.STACK_LIMIT, stackLimit);
             }
 
             if (!memBaseInitialized) {

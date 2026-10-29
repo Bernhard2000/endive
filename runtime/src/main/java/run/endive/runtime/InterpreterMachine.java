@@ -2127,20 +2127,8 @@ public class InterpreterMachine implements Machine {
         if (funcId == REF_NULL_VALUE) {
             throw new TrapException("Trapped on call_ref on null function reference");
         }
-        var typeId = instance.functionType(funcId);
-        var type = instance.type(typeId);
-        // given a list of param types, let's pop those params off the stack
-        // and pass as args to the function call
-        var extracted = extractArgsAndRefsForParams(stack, type.params(), instance);
-        call(
-                stack,
-                instance,
-                callStack,
-                funcId,
-                (long[]) extracted[0],
-                (Object[]) extracted[1],
-                type,
-                false);
+        // same as a call to funcId
+        CALL(index -> funcId);
     }
 
     private static void F64_NEG(MStack stack) {

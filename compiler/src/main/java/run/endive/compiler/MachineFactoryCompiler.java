@@ -1,9 +1,13 @@
 package run.endive.compiler;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -13,7 +17,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import run.endive.compiler.internal.ClassLoadingCollector;
+import run.endive.compiler.internal.CompilerResult;
+import run.endive.compiler.internal.InterpretableFunctions;
 import run.endive.compiler.internal.MachineFactory;
+import run.endive.runtime.CompiledModule;
 import run.endive.runtime.Instance;
 import run.endive.runtime.Machine;
 import run.endive.wasm.WasmEngineException;
@@ -23,6 +30,8 @@ import run.endive.wasm.WasmModule;
  * Compiles WASM function bodies to JVM byte code that can be used as a machine factory for {@link Instance}'s.
  */
 public final class MachineFactoryCompiler {
+
+    private static final String INTERPRETED_FUNCTIONS = "interpretedFunctions";
 
     private MachineFactoryCompiler() {
         // no instances
@@ -127,6 +136,20 @@ public final class MachineFactoryCompiler {
         }
 
         public Function<Instance, Machine> compile() {
+            return compileFactory(false);
+        }
+
+        /**
+         * Compiles the module and returns it together with a machine factory for instances of it,
+         * see {@link Instance#builder(CompiledModule)}. The returned module is a copy without
+         * custom sections that keeps only the function bodies the interpreter may run, see {@link
+         * WasmModule#stripped(Set)}. The module passed to the builder is left unchanged.
+         */
+        public CompiledModule compileModule() {
+            return compileFactory(true);
+        }
+
+        private MachineFactory compileFactory(boolean strip) {
             try {
 
                 // Can we load the byte codes from the cache?
@@ -134,8 +157,7 @@ public final class MachineFactoryCompiler {
                 if (useCache) {
                     byte[] cachedData = cache.get(module.digest());
                     if (cachedData != null) {
-                        var collector = loadClassLoadingCollector(cachedData);
-                        return new MachineFactory(module, collector.machineFactory());
+                        return machineFactory(loadCompilerResult(cachedData), strip);
                     }
                 }
 
@@ -145,21 +167,32 @@ public final class MachineFactoryCompiler {
                                 .withClassCollectorFactory(ClassLoadingCollector::new)
                                 .build()
                                 .compile();
-                var collector = (ClassLoadingCollector) result.collector();
 
                 if (useCache) {
                     // store results in the cache to speed the next time.
-                    cache.putIfAbsent(module.digest(), storeClassLoadingCollector(collector));
+                    cache.putIfAbsent(module.digest(), storeCompilerResult(result));
                 }
 
-                return new MachineFactory(module, collector.machineFactory());
+                return machineFactory(result, strip);
             } catch (IOException e) {
                 throw new WasmEngineException(e);
             }
         }
+
+        private MachineFactory machineFactory(CompilerResult result, boolean strip) {
+            var factory = ((ClassLoadingCollector) result.collector()).machineFactory();
+            var interpreted = result.interpretedFunctions();
+            // Cache entries written by older versions don't record the interpreted functions.
+            if (!strip || interpreted == null) {
+                return new MachineFactory(module, factory);
+            }
+            var stripped = module.stripped(InterpretableFunctions.of(module, interpreted));
+            return new MachineFactory(stripped, factory);
+        }
     }
 
-    private static byte[] storeClassLoadingCollector(ClassLoadingCollector collector) {
+    private static byte[] storeCompilerResult(CompilerResult result) {
+        var collector = (ClassLoadingCollector) result.collector();
         try {
             // Create JAR in memory
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -167,6 +200,11 @@ public final class MachineFactoryCompiler {
                 // Store the properties file
                 var properties = new Properties();
                 properties.put("mainClass", collector.mainClassName());
+                properties.put(
+                        INTERPRETED_FUNCTIONS,
+                        result.interpretedFunctions().stream()
+                                .map(String::valueOf)
+                                .collect(joining(",")));
                 ByteArrayOutputStream propsBaos = new ByteArrayOutputStream();
                 properties.store(propsBaos, "");
 
@@ -190,9 +228,9 @@ public final class MachineFactoryCompiler {
         }
     }
 
-    private static ClassLoadingCollector loadClassLoadingCollector(byte[] jarData)
-            throws IOException {
+    private static CompilerResult loadCompilerResult(byte[] jarData) throws IOException {
         var collector = new ClassLoadingCollector();
+        Set<Integer> interpretedFunctions = null;
 
         // It was previously compiled, just load it from JAR.
         try (JarInputStream jis = new JarInputStream(new ByteArrayInputStream(jarData))) {
@@ -206,6 +244,14 @@ public final class MachineFactoryCompiler {
                     // Load properties
                     properties.load(jis);
                     mainClass = properties.getProperty("mainClass");
+                    var interpreted = properties.getProperty(INTERPRETED_FUNCTIONS);
+                    if (interpreted != null) {
+                        interpretedFunctions =
+                                Arrays.stream(interpreted.split(","))
+                                        .filter(id -> !id.isEmpty())
+                                        .map(Integer::valueOf)
+                                        .collect(toSet());
+                    }
                 } else if (entry.getName().endsWith(".class")) {
                     // Load class file
                     String className = entry.getName().replace('/', '.').replace(".class", "");
@@ -231,6 +277,6 @@ public final class MachineFactoryCompiler {
                 }
             }
         }
-        return collector;
+        return new CompilerResult(collector, interpretedFunctions);
     }
 }
