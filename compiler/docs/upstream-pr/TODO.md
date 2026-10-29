@@ -20,7 +20,12 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
 
 ## Done
 
-- [x] Rebased onto current upstream main. Full build with `-am` passes; `compiler` (Error
+- [x] 2026-10-26: cherry-picked onto upstream `bce75ae6` as `pr/fuse-branch-conditions-v2`,
+      with `Assisted-by: Claude Code` trailers (item 4). Checks on that branch: CHECKS-V2.
+- [x] 2026-10-26: the fork (`c5219baf`, which contains both commits) passes the `Fork CI` build
+      on Temurin 17.0.21 and 27.0.1, and on 17.0.21 also with unsigned compare fusion forced on
+      ([jdk17-jdk27-validation-2026-10-26.md](../jdk17-jdk27-validation-2026-10-26.md)).
+- [x] 2026-10-18, on `1580f534`: rebased onto then-current upstream main. Full build with `-am` passes; `compiler` (Error
       Prone `-Werror`, Checkstyle, Spotless check), `compiler-tests` (34,120 spec tests),
       `machine-tests` (247) and `wabt` (6) pass on JDK 21.
 - [x] Fork branch: `compiler`, `wabt` and `machine-tests` pass on Temurin 17.0.20.1, the JDK
@@ -34,13 +39,13 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
 1. **Decide the PR shape.** Options:
    - (a) one PR with both commits. This is the current branch. Upstream squash-merges, so the
      split only helps review.
-   - (b) two PRs: first `e4105edf` alone (small, easy to review), then `3ba75b28` on top.
+   - (b) two PRs: first `c912093c` alone (small, easy to review), then `e8074daf` on top.
      Likely easier to get accepted, given CONTRIBUTING's "simple code … measurable benefits"
      philosophy.
    - (c) split commit 2 further: numeric (constants, unsigned `i64`, Go booleans) and GC null
      tests. These are independent in code, apart from `BranchCondition`.
 2. **Re-fetch upstream and rebase** right before opening:
-   `git fetch upstream main && git rebase upstream/main pr/fuse-branch-conditions`, then rerun
+   `git fetch upstream main && git rebase upstream/main pr/fuse-branch-conditions-v2`, then rerun
    the checks below.
 3. **Rerun the local checks after the rebase.** Watch out for the three local traps in
    "Environment notes" below.
@@ -51,16 +56,16 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
 4. **AI tool policy.** (Read 2026-10-18: tools must not be co-authors; agents must not open
    PRs without human approval. See [OPEN_PRS.md](OPEN_PRS.md) "Before opening".) CONTRIBUTING points to the
    [Bytecode Alliance AI Tool Use Policy](https://github.com/bytecodealliance/governance/blob/main/AI_TOOL_POLICY.md).
-   Read it and adjust the "AI assistance" section of the PR description and the commit
-   trailers to match. The first commit keeps the original `Co-Authored-By: Claude Opus 5`
-   trailer. The fork commit's `Claude-Session:` URL line was dropped from the PR copy.
+   Read it and adjust the "AI assistance" section of the PR description to match. Done on the
+   v2 branch: both commits carry `Assisted-by: Claude Code` instead of `Co-Authored-By`, and
+   the fork commit's `Claude-Session:` URL line is not in the PR copy.
 5. **Proofread and own the description.** Check that every claim in PR_DESCRIPTION.md
    matches the final branch. Re-measure if the rebase changes anything in `compiler/`.
 6. **Push the branch to your fork and open the PR** (from your fork, per CONTRIBUTING):
    ```sh
-   git push -u origin pr/fuse-branch-conditions
+   git push -u origin pr/fuse-branch-conditions-v2
    gh pr create --repo bytecodealliance/endive --base main \
-       --head Bernhard2000:pr/fuse-branch-conditions \
+       --head Bernhard2000:pr/fuse-branch-conditions-v2 \
        --title "Compiler: fuse conditions into the branches and selects that consume them" \
        --body-file <(sed '1,/^---$/d' compiler/docs/upstream-pr/PR_DESCRIPTION.md)
    ```
@@ -71,7 +76,8 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
 
 7. **Run CI that could not run locally.** Upstream CI covers Java 11/17/21/25 × Linux, macOS,
    Windows and ARM, plus Android API 28/35. Not run locally:
-   - **Java 11**: done 2026-10-18 on Temurin 11.0.32.1: `compiler` (48), `wabt` (6),
+   - **Java 17**: CHECKS-V2-17
+   - **Java 11**: done 2026-10-18 on Temurin 11.0.32.1 (old base `1580f534`): `compiler` (48), `wabt` (6),
      `compiler-tests` (34,110) and `machine-tests` (228) pass.
    - **Windows + Java 11/17**: that is where the C2 bug used to show up as flaky failures
      (see #134: "20 parallel Windows+Java 11 CI runs"). Consider asking maintainers for
@@ -126,7 +132,7 @@ description draft is [PR_DESCRIPTION.md](PR_DESCRIPTION.md).
   `wasm-tools.wasm.stale-2025`.
 - A local `redline/cranelift_bridge.wasm` (built 19 Sep) shadows the pinned bridge and breaks
   Redline compilation on upstream main. It is restored for the fork branch; move it aside when
-  building `pr/fuse-branch-conditions`.
+  building `pr/fuse-branch-conditions-v2`.
 - `compiler/src/test/resources/run/endive/approvals/ApprovalTest.verifyLotsOfArgs.approved.txt`
   is gitignored and generated on first run. The fork's copy (with the ABI changes) makes
   `verifyLotsOfArgs` fail on upstream-based branches. Move it aside there.
